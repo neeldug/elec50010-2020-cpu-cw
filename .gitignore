@@ -1,1 +1,4 @@
 .idea
+test/assembly/*
+
+!test/assembly/*.sh
