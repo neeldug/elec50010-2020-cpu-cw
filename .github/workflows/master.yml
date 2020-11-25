@@ -2,9 +2,13 @@ on:
   pull_request:
     branches:
       - master
+      - cpu-design
+      - testbench
   push:
     branches:
       - master
+      - cpu-design
+      - testbench
 
 name: Continuous Integration
 
