@@ -112,9 +112,9 @@ module datapath(
 	input [2:0] alucontrol,
 	output zero,
 	input [31:0] instr_readdata,
-	input [31:0] readdata,
+	input [31:0] data_readdata,
 	output [31:0] pc,
-	output [31:0] aluout, writedata);
+	output [31:0] data_address, data_writedata);
 
 wire [4:0] writereg;
 wire [31:0] pcnext, pcnextbr, pcplus4, pcbranch;
@@ -141,15 +141,20 @@ mux2 #(32) pcmux(pcplus4, pcbranch, pcsrc, pcnextbr);
 //Register file
 regfile register(clk, regwrite, instr_address[25:21], instr_address[20:16], write_reg, result, srca, data_writedata);
 
-mux2 #(5) wrmux(instr_address[20:16], instr[15:11], rzgdst, writereg);
+mux2 #(5) wrmux(instr_address[20:16], instr_address[15:11], regdst, writereg);
 
-mux2 #(32) resmux(aluout, data_readdata, memtoreg, result);
+mux2 #(32) resmux(data_address, data_readdata, memtoreg, result);
 
 signext se(instr_address[15:0], signimm);
 
+// ALU file
+mux2 #(32) srcbmux(data_writedata, signimm, alusrc, srcb);
 
+alumodule alu(alucontrol, srca, srcb, zero, data_address); 
 
 endmodule
+
+
 
 // Implementation of the register file
 module regfile(
