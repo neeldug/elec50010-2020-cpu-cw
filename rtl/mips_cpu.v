@@ -140,10 +140,40 @@ mux2 #(32) pcmux(pcplus4, pcbranch, pcsrc, pcnextbr);
 
  
 		
+//Register file
+regfile register(clk, regwrite, instr_address[25:21], instr_address[20:16], write_reg, result, srca, data_writedata);
+
+mux2 #(5) wrmux(instr_address[20:16], instr[15:11], rzgdst, writereg);
+
+mux2 #(32) resmux(aluout, data_readdata, memtoreg, result);
+
+signext se(instr_address[15:0], signimm);
+
+
+
+endmodule
+
+// Implementation of the register file
+module regfile(
+	input 		clk,
+	input 		we3,
+	input [4:0] ra1, ra2, wa3,
+	input [31:0] wd3,
+	output [31:0] rd1, rd2
+	);
+	
+	reg[31:0] rf[31:0];
+	//three ported register file
+	//read two ports combinationally
+	//write third port on rising edge of clock
+	//register 0 hardwired to 0
+	
+	always @(posedge clk)
+		if(we3) rf[wa3] <= wd3;
 		
-
-
-
+	assign rd1 = (ra1 ! = 0) ? rf[ra1] : 0;
+	assign rd2 = (ra2 ! = 0) ? rf[ra2] : 0;
+endmodule
 
 // Implementation of reusable functions used in datapath
 
