@@ -19,7 +19,7 @@ wire [2:0] alucontrol;
 
 controller control(instr_readdata[31:26], instr_readdata[5:0], zero, memtoreg, data_write, pcsrc, alusrc, regdst, regwrite, jump, alucontrol);
 
-datapath datap(clk, rest, memtoreg, pcsrc, alusrc, regdst, regwrite, jump, alucontrol, zero, pc, instr_readdata, aluout, data_writedata, data_readdata);
+datapath datap(clk, reset, clk_enable, memtoreg, pcsrc, alusrc, regdst, regwrite, jump, alucontrol, zero, pc, instr_readdata, aluout, data_writedata, data_readdata);
 
 endmodule
 
@@ -100,7 +100,7 @@ endmodule
 // The default: case(funct) replaces an iterative: 2'b10 & 6'bxxxxxx (funct) 
 
 module datapath(
-	input clk, reset,
+	input clk, reset, clk_enable,
 	input memtoreg, pcsrc,
 	input alusrc, regdst,
 	input regwrite, jump,
@@ -119,7 +119,7 @@ wire [31:0] result;
 
 // Program counter regfile
 
-flipflopr #(32) pcreg(clk, reset, pc, pcnext);
+flipflopr #(32) pcreg(clk, reset, clk_enable, pc, pcnext);
 
 adder pcplus4(pcnext, 32'b100, pcplus4);
 
@@ -198,13 +198,13 @@ module shiftleft2(
 endmodule
 	
 module flipflopr #(parameter WIDTH)(
-	input clk, reset,
+	input clk, reset, clk_enable,
 	input [WIDTH-1:0] d,
 	output reg [WIDTH-1:0] q);
 
-	always @(posedge clk, posedge reset)
-		if(reset) q <= 0;
-		else	  q <= d;
+	always_ff @(posedge clk, posedge reset)
+		if(reset) 				q <= 0;
+		else if(clk_enable) 	q <= d;
 endmodule 
 	
 module signext(
