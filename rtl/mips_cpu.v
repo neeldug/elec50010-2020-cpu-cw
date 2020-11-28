@@ -12,12 +12,7 @@ module CPU_MIPS_harvard(
 	output data_write,				//control signal Data memory write enable for data
 	output data_read,
 	output [31:0] data_writedata,
-	input [31:0] data_readdata,
-	
-	
-
-	output [31:0] aluout, writedata,
-	input [31:0] readdata);
+	input [31:0] data_readdata);
 	
 wire memtoreg, branch, alusrc, regdst, regwrite, jump;
 wire [2:0] alucontrol;
