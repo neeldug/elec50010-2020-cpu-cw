@@ -16,24 +16,22 @@ module CPU_MIPS_harvard(
 	
 	
 
-	input [31:0] instr,
-	output		memwrite,
 	output [31:0] aluout, writedata,
 	input [31:0] readdata);
 	
 wire memtoreg, branch, alusrc, regdst, regwrite, jump;
 wire [2:0] alucontrol;
 
-controller control(instr_readdata[31:26], instr_readdata[5:0], zero, memtoreg, memwrite, pcsrc, alusrc, 			 regdst, regwrite, jump, alucontrol);
+controller control(instr_readdata[31:26], instr_readdata[5:0], zero, memtoreg, data_write, pcsrc, alusrc, regdst, regwrite, jump, alucontrol);
 
-datapath datap(clk, rest, memtoreg, pcsrc, alusrc, regdst, regwrite, jump, alucontrol, zero, pc, instr, aluout, data_writedata, data_readdata);
+datapath datap(clk, rest, memtoreg, pcsrc, alusrc, regdst, regwrite, jump, alucontrol, zero, pc, instr_readdata, aluout, data_writedata, data_readdata);
 
 endmodule
 
 module controller(
 	input [5:0] op, funct,
 	input zero
-	output memtoreg, memwrite,
+	output memtoreg, data_write,
 	output pcsrc, alusrc,
 	output regdst, regwrite,
 	output jump,
@@ -42,7 +40,7 @@ module controller(
 wire [1:0] aluop;
 wire branch;
 
-maindec md(op, memtoreg, memwrite, branch, alusrc, regdst, regwrite, jump, aluop);
+maindec md(op, memtoreg, data_write, branch, alusrc, regdst, regwrite, jump, aluop);
 
 aludec ad(funct, aluop, alucontrol);
 
@@ -52,7 +50,7 @@ endmodule
 
 module maindec(
 	input [5:0] op, funct,
-	output memtoreg, memwrite,
+	output memtoreg, data_write,
 	output branch, alusrc
 	output regdst, regwrite,
 	output jump,
@@ -60,7 +58,7 @@ module maindec(
 	
 reg [8:0] controls;
 
-assign {regwrite, regdst, alusrc, branch, memwrite, memtoreg, jump, aluop} = controls;
+assign {regwrite, regdst, alusrc, branch, data_write, memtoreg, jump, aluop} = controls;
 
 // Assign 8 elements names as aluop consist of 2 bits so rightfully fills the reg controls.
 // Correspond to the bits below from left to right in the same order (starting with regwrite and ending with aluop).
@@ -113,7 +111,7 @@ module datapath(
 	input regwrite, jump,
 	input [2:0] alucontrol,
 	output zero,
-	input [31:0] instr,
+	input [31:0] instr_readdata,
 	input [31:0] readdata,
 	output [31:0] pc,
 	output [31:0] aluout, writedata);
@@ -210,10 +208,10 @@ module flipflopr #(parameter WIDTH)(
 endmodule 
 	
 module signext(
-	input [15:0] instr,
+	input [15:0] instr_readdata,
 	output [31:0] signimm);
 	
-	assign signimm = {{16{instr[15]}},instr};
+	assign signimm = {{16{instr_readdata[15]}},instr_readdata};
 endmodule
 	
 	
