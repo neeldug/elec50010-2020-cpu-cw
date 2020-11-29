@@ -5,7 +5,105 @@ module alumodule(
 	output zero,
 	output [31:0] y);
 
-case(funct)
+reg[31:0] x;
+reg[64:0] r1,r2,z;
+reg[31:0] HI,LO;
+
+case(control)
+		3'b00000: y <= a & b;						//AND
+		3'b00001: y <= a | b;						//OR
+		3'b00010: y <= a ^ b;						//XOR
+		3'b00011: y <= a + b;						//ADD
+		3'b00100: y <= a + (~b +1);					//SUB
+		3'b00101: y <= (a < b);						//SLT Unsigned
+		
+		3'b00110: begin
+					if(a[31] != b[31])begin			//SLT
+							if(a[31] > b[31])begin
+									y <= 1;
+							end else begin
+									y <= 0;
+							end
+					end else begin
+							if(a<b)begin
+									y <= 1;
+							end else begin
+									y <= 0;
+							end
+					end
+				  end
+				  			  
+		3'b00111: y <= (b << 16);							//Load upper Immidiate
+		3'b01000: y <= ;
+		3'b0: y <= ;
+		3'b: y <= a << (b[10:6]);							//shift left logical: we take the shift variable from instr[10:6] included in the Immediate field
+		
+		3'b: y <= a << b;									//shift left logical variable
+		
+		3'b: begin											//shift right arithmetic
+				x = a;
+				for(i = b[10:6]; i>0; i = i-1)begin
+						if(a[31] == 1)
+								x = {1'b1,x[31:1]};
+						else
+								x = {1'b0,x[31:1]};
+				end
+				y <= x;
+			 end
+			 
+		3'b: begin											//shift right logical
+				x = a;
+				for(i = b[10:6]; i>0; i = i-1)begin
+					x = {1'b0,x[31:1]};					
+				end
+				y <= x;
+			 end
+			 
+//		3'b: y <= a >> (b[10:6]);							//shift right logical
+
+		3'b: begin											//shift right arithmetic variable
+				x = a;
+				for(i = b[31:0]; i>0; i = i-1)begin
+						if(a[31] == 1)
+								x = {1'b1,x[31:1]};
+						else
+								x = {1'b0,x[31:1]};
+				end
+				y <= x;
+			 end	
+			 	
+		3'b: begin											//shift right logical variable
+				x = a;
+				for(i = b[31:0]; i>0; i = i-1)begin
+					x = {1'b0,x[31:1]};
+				end
+				y <= x;
+			 end	 	
+			 				
+//		3'b: y <= a >> b;									//shift right logical variable
+		
+		3'b: begin											//Multiplication
+				r1 = {32'b0,a[31:0]};
+				r2 = {32'b0,b[31:0]};
+				z = r1 * r2;
+				HI = z >> 32;
+				LO = (z << 32) >> 32;
+			 end
+		
+		3'b111: 
+		
+		always @(y)begin
+				if(y==0)begin
+					zero <= 1;
+				end else begin
+					zero <= 0;
+				end
+		end
+
+endmodule
+
+
+
 
 
 
