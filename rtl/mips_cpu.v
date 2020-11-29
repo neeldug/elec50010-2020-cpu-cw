@@ -17,7 +17,7 @@ module CPU_MIPS_harvard(
 wire memtoreg, branch, alusrc, regdst, regwrite, jump;
 wire [2:0] alucontrol;
 
-controller control(instr_readdata[31:26], instr_readdata[5:0], zero, memtoreg, data_write, pcsrc, alusrc, regdst, regwrite, jump, alucontrol);
+controller control(instr_readdata[31:26], instr_readdata[5:0], instr_readdata[20:16] zero, memtoreg, data_write, pcsrc, alusrc, regdst, regwrite, jump, alucontrol);
 
 datapath datap(clk, reset, clk_enable, memtoreg, pcsrc, alusrc, regdst, regwrite, jump, alucontrol, zero, pc, instr_readdata, aluout, data_writedata, data_readdata);
 
@@ -25,6 +25,7 @@ endmodule
 
 module controller(
 	input [5:0] op, funct,
+	input [4:0] dest,
 	input zero
 	output memtoreg, data_write,
 	output pcsrc, alusrc,
@@ -45,6 +46,7 @@ endmodule
 
 module maindec(
 	input [5:0] op, funct,
+	input [4:0] dest,
 	output memtoreg, data_write,
 	output branch, alusrc
 	output regdst, regwrite,
@@ -60,12 +62,41 @@ assign {regwrite, regdst, alusrc, branch, data_write, memtoreg, jump, aluop} = c
 
 always @(*)
 	case(op)
-		6'b000000: controls <= 9'b110000010; //R-type instruction
-		6'b100011: controls <= 9'b101001000; //LW
-		6'b101011: controls <= 9'b001010000; //SW
-		6'b000100: controls <= 9'b000100001; //BEQ
-		6'b001000: controls <= 9'b101000000; //ADDI
-		6'b000010: controls <= 9'b000000100; //J
+		6'b000000: case(funct)
+						6'b001001: controls <= 9'b100000100; //Jump and link register
+						6'b001000: controls <= 9'b010000110; //Jump register
+						default: controls <= 9'b110000010; //R-type instruction
+					endcase
+		6'b100000: controls <= 9'b101001000; //Load byte
+		6'b100100: controls <= 9'b101001000; //Load byte unsigned
+		6'b100001: controls <= 9'b101001000; //Load halfword
+		6'b100101: controls <= 9'b101001000; //Load halfword unisigned
+		6'b001111: controls <= 9'b101001000; //Load upper immidiate
+		6'b100011: controls <= 9'b101001000; //Load word
+		6'b100010: controls <= 9'b101001000; //Load word left
+		6'b100110: controls <= 9'b101001000; //Load word right
+		6'b101000: controls <= 9'b001010000; //Store byte
+		6'b101001: controls <= 9'b001010000; //Store halfword
+		6'b101011: controls <= 9'b001010000; //Store word
+		6'b000100: controls <= 9'b000100001; //Branch on = 0
+		6'b000001: case(dest)
+						5'b00001: controls <= 9'b000100001; //Branch on >= 0
+						5'b10001: controls <= 9'b100100001; //Branch on >= 0 /link (regwrite active)
+						5'b00000: controls <= 9'b000100001; //Branch on < 0
+						5'b10000: controls <= 9'b100100001; //Branch on < 0 /link
+						default: controls <= 9'bxxxxxxxxx;
+					endcase
+		6'b000111: controls <= 9'b000100001; //Branch on > 0
+		6'b000110: controls <= 9'b000100001; //Branch on <= 0
+		6'b000101: controls <= 9'b000100001; //Branch on != 0
+		6'b001001: controls <= 9'b101000010; //ADD unsigned immediate
+		6'b000010: controls <= 9'b000000100; //Jump
+		6'b000011: controls <= 9'b100000100; //Jump and link
+		6'b001100: controls <= 9'b101000010; //ANDI
+		6'b001101: controls <= 9'b101000010; //ORI
+		6'b001110: controls <= 9'b101000010; //XORI
+		6'b001010: controls <= 9'b101000010; //Set on less than immediate (signed)
+		6'b001011: controls <= 9'b101000010; //Set on less than immediate unsigned
 		default:   controls <= 9'bxxxxxxxxx; //???
 	endcase
 endmodule
@@ -90,6 +121,7 @@ always @(*)
 			6'b100100: alucontrol <= 3'b000; //AND
 			6'b100101: alucontrol <= 3'b001; //OR
 			6'b101010: alucontrol <= 3'b111; //Set Less Then (SLT)
+			6'b100100: alucontrol <= 
 			default:   alucontrol <= 3'bxxx; //???
 		endcase
 	endcase
