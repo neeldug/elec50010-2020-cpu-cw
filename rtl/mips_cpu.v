@@ -116,7 +116,7 @@ always @(*)
 	case(aluop)							//edge what if we have a 2'b11 eventhough it is illegal
 	
 		2'b00: alucontrol <= 3'b010; //ADD
-		2'b01: alucontrol <= 3'b110; //SUB
+		2'b01: alucontrol <= 3'b110; //SUB 
 		2'b10: case(op)
 //			6'b100000: alucontrol <= 5'b; //Load byte				//not necessary for harvard
 			6'b100100: alucontrol <= 5'b; //Load byte unsigned
