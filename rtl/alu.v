@@ -5,8 +5,9 @@ module alumodule(
 	output logic zero,
 	output logic [31:0] y);
 
-reg[31:0] x;
-reg[64:0] r1,r2,z;
+logic [31:0] x;
+logic [64:0] r1,r2,z;
+logic i;
 reg[31:0] HI,LO;
 
 always @(*)begin
