@@ -1,40 +1,40 @@
 module CPU_MIPS_harvard(
-	input clk, reset,
-	output active,
-	output [31:0] register_v0,
+	input logic clk, reset,
+	output logic active,
+	output logic [31:0] register_v0,
 	
-	input clk_enable,
+	input logic clk_enable,
 	
-	output [31:0] instr_address,	//PC Next
-	input [31:0] instr_readdata,	//Data stored at address determined by PCnext
+	output logic [31:0] instr_address,	//PC Next
+	input logic [31:0] instr_readdata,	//Data stored at address determined by PCnext
 	
-	output [31:0] data_address,		//ALU_result
-	output data_write,				//control signal Data memory write enable for data
-	output data_read,
-	output [31:0] data_writedata,
-	input [31:0] data_readdata);
+	output logic [31:0] data_address,		//ALU_result
+	output logic data_write,				//control signal Data memory write enable for data
+	output logic data_read,
+	output logic [31:0] data_writedata,
+	input logic [31:0] data_readdata);
 	
-wire memtoreg, branch, alusrc, regdst, regwrite, jump;
-wire [4:0] alucontrol;
+logic memtoreg, branch, alusrc, regdst, regwrite, jump;
+logic [4:0] alucontrol;
 
-controller control(instr_readdata[31:26], instr_readdata[5:0], instr_readdata[20:16] zero, memtoreg, data_write, pcsrc, alusrc, regdst, regwrite, jump, alucontrol);
+controller control(instr_readdata[31:26], instr_readdata[5:0], instr_readdata[20:16], zero, memtoreg, data_write, pcsrc, alusrc, regdst, regwrite, jump, alucontrol);
 
 datapath datap(clk, reset, clk_enable, memtoreg, pcsrc, alusrc, regdst, regwrite, jump, alucontrol, zero, pc, instr_readdata, aluout, data_writedata, data_readdata);
 
 endmodule
 
 module controller(
-	input [5:0] op, funct,
-	input [4:0] dest,
-	input zero
-	output memtoreg, data_write,
-	output pcsrc, alusrc,
-	output regdst, regwrite,
-	output jump,
-	output [4:0] alucontrol);
+	input logic [5:0] op, funct,
+	input logic [4:0] dest,
+	input logic zero,
+	output logic memtoreg, data_write,
+	output logic pcsrc, alusrc,
+	output logic regdst, regwrite,
+	output logic jump,
+	output logic [4:0] alucontrol);
 	
-wire [1:0] aluop;
-wire branch;
+logic [1:0] aluop;
+logic branch;
 
 maindec md(op, memtoreg, data_write, branch, alusrc, regdst, regwrite, jump, aluop);
 
@@ -45,17 +45,17 @@ assign pcsrc = branch & zero;
 endmodule
 
 module maindec(
-	input [5:0] op, funct,
-	input [4:0] dest,
-	output memtoreg, data_write,
-	output branch, alusrc
-	output regdst, regwrite,
-	output jump,
-	output [1:0] aluop);
+	input logic [5:0] op, funct,
+	input logic [4:0] dest,
+	output logic memtoreg, data_write,
+	output logic branch, alusrc,
+	output logic regdst,
+	output logic regwrite, jump,
+	output logic [1:0] aluop);
 	
 reg [8:0] controls;
 
-assign {regwrite, regdst, alusrc, branch, data_write, memtoreg, jump, aluop} = controls;
+assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg, jump, aluop} = controls;
 
 // Assign 8 elements names as aluop consist of 2 bits so rightfully fills the reg controls.
 // Correspond to the bits below from left to right in the same order (starting with regwrite and ending with aluop).
@@ -65,6 +65,8 @@ always @(*)
 		6'b000000: case(funct)
 						6'b001001: controls <= 9'b100000100; //Jump and link register
 						6'b001000: controls <= 9'b010000110; //Jump register
+						6'b010001: controls <= 9'b100000010; //Move to high       No need to write enable register?
+						6'b010100: controls <= 9'b100000010; //Move to low		  As HI and LO are reg in ALU module
 						default: controls <= 9'b110000010; //R-type instruction
 					endcase
 		6'b100000: controls <= 9'b101001000; //Load byte
@@ -106,23 +108,23 @@ endmodule
 // In order to understand this section please refer to page 376 of the book (table 7.3)
 
 module aludec(
-	input [5:0] funct,op,
-	input [1:0] aluop,
-	output reg [4:0] alucontrol);
+	input logic [5:0] funct,op,
+	input logic [1:0] aluop,
+	output logic [4:0] alucontrol);
 
 always @(*)
 	case(aluop)							//edge what if we have a 2'b11 eventhough it is illegal
 	
 		2'b00: alucontrol <= 3'b010; //ADD
-		2'b01: alucontrol <= 3'b110; //SUB
+		2'b01: alucontrol <= 3'b110; //SUB 
 		2'b10: case(op)
-			6'b100000: alucontrol <= 5'b; //Load byte				//not necessary for harvard
+//			6'b100000: alucontrol <= 5'b; //Load byte				//not necessary for harvard
 			6'b100100: alucontrol <= 5'b; //Load byte unsigned
-			6'b100001: alucontrol <= 5'b; //Load halfword			//not necessary for harvard
+//			6'b100001: alucontrol <= 5'b; //Load halfword			//not necessary for harvard
 			6'b100101: alucontrol <= 5'b; //Load halfword unisigned
 			6'b001111: alucontrol <= 5'b; //Load upper immidiate
 			6'b100011: alucontrol <= 5'b; //Load word
-			6'b100010: alucontrol <= 5'b; //Load word left          //not necessary for harvard
+//			6'b100010: alucontrol <= 5'b; //Load word left          //not necessary for harvard
 			6'b100110: alucontrol <= 5'b; //Load word right
 			6'b101000: alucontrol <= 5'b; //Store byte
 			6'b101001: alucontrol <= 5'b; //Store halfword
@@ -181,22 +183,22 @@ endmodule
 // The default: case(funct) replaces an iterative: 2'b10 & 6'bxxxxxx (funct) 
 
 module datapath(
-	input clk, reset, clk_enable,
-	input memtoreg, pcsrc,
-	input alusrc, regdst,
-	input regwrite, jump,
-	input [4:0] alucontrol,
-	output zero,
-	input [31:0] instr_readdata,
-	input [31:0] data_readdata,
-	output [31:0] pc,
-	output [31:0] data_address, data_writedata);
+	input logic clk, reset, clk_enable,
+	input logic memtoreg, pcsrc,
+	input logic alusrc, regdst,
+	input logic regwrite, jump,
+	input logic [4:0] alucontrol,
+	output logic zero,
+	input logic [31:0] instr_readdata,
+	input logic [31:0] data_readdata,
+	output logic [31:0] pc,
+	output logic [31:0] data_address, data_writedata);
 
-wire [4:0] writereg;
-wire [31:0] pcnext, pcnextbr, pcplus4, pcbranch;
-wire [31:0] signimm, signimmsh;
-wire [31:0] srca, srcb;
-wire [31:0] result;
+logic [4:0] writereg;
+logic [31:0] pcnext, pcnextbr, pcplus4, pcbranch;
+logic [31:0] signimm, signimmsh;
+logic [31:0] srca, srcb;
+logic [31:0] result;
 
 // Program counter regfile
 
@@ -215,13 +217,13 @@ mux2 #(32) pcmux(pcplus4, pcbranch, pcsrc, pcnextbr);
  
 		
 //Register file
-regfile register(clk, regwrite, instr_address[25:21], instr_address[20:16], write_reg, result, srca, data_writedata);
+regfile register(clk, regwrite, instr_address[25:21], instr_address[20:16], writereg, result, srca, data_writedata);
 
 mux2 #(5) wrmux(instr_address[20:16], instr_address[15:11], regdst, writereg);
 
 mux2 #(32) resmux(data_address, data_readdata, memtoreg, result);
 
-signext se(instr_address[15:0], signimm);
+signext se(instr_address[15:0], signimm); 
 
 // ALU file
 mux2 #(32) srcbmux(data_writedata, signimm, alusrc, srcb);
@@ -234,63 +236,63 @@ endmodule
 
 // Implementation of the register file
 module regfile(
-	input 		clk,
-	input 		we3,
-	input [4:0] ra1, ra2, wa3,
-	input [31:0] wd3,
-	output [31:0] rd1, rd2
+	input logic 		clk,
+	input logic 		we3,
+	input logic [4:0] ra1, ra2, wa3,
+	input logic [31:0] wd3,
+	output logic [31:0] rd1, rd2
 	);
 	
 	reg[31:0] rf[31:0];
 	//three ported register file
 	//read two ports combinationally
 	//write third port on rising edge of clock
-	//register 0 hardwired to 0
+	//register 0 hardwir3d to 0
 	
 	always @(posedge clk)
 		if(we3) rf[wa3] <= wd3;
 		
-	assign rd1 = (ra1 ! = 0) ? rf[ra1] : 0;
-	assign rd2 = (ra2 ! = 0) ? rf[ra2] : 0;
+	assign rd1 = (ra1 != 0) ? rf[ra1] : 0;
+	assign rd2 = (ra2 != 0) ? rf[ra2] : 0;
 endmodule
 
 // Implementation of reusable functions used in datapath
 
-module mux2 #(parameter WIDTH)(
-	input [WIDTH - 1:0] a, b,
-	input s,
-	output [WIDTH - 1:0] y);
+module mux2 #(parameter WIDTH =8)(
+	input logic [WIDTH - 1:0] a, b,
+	input logic s,
+	output logic [WIDTH - 1:0] y);
 
 	assign y = s ? a : b;
 endmodule
 
 module adder(
-	input [31:0] a,b,
-	output [31:0] y);
+	input logic [31:0] a,b,
+	output logic [31:0] y);
 
 	assign y = a + b;
 endmodule
 
 module shiftleft2(
-	input [31:0] a,
-	output [31:0] y);
+	input logic [31:0] a,
+	output logic [31:0] y);
 
 	assign y = {{a[29:0]} , 2'b00};
 endmodule
 	
-module flipflopr #(parameter WIDTH)(
-	input clk, reset, clk_enable,
-	input [WIDTH-1:0] d,
-	output reg [WIDTH-1:0] q);
+module flipflopr #(parameter WIDTH =8)(
+	input logic clk, reset, clk_enable,
+	input logic [WIDTH-1:0] d,
+	output logic [WIDTH-1:0] q);
 
-	always_ff @(posedge clk, posedge reset)
+	always @(posedge clk, posedge reset)
 		if(reset) 				q <= 0;
 		else if(clk_enable) 	q <= d;
 endmodule 
 	
 module signext(
-	input [15:0] instr_readdata,
-	output [31:0] signimm);
+	input logic [15:0] instr_readdata,
+	output logic [31:0] signimm);
 	
 	assign signimm = {{16{instr_readdata[15]}},instr_readdata};
 endmodule
