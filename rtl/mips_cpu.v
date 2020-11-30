@@ -15,7 +15,7 @@ module CPU_MIPS_harvard(
 	input [31:0] data_readdata);
 	
 wire memtoreg, branch, alusrc, regdst, regwrite, jump;
-wire [2:0] alucontrol;
+wire [4:0] alucontrol;
 
 controller control(instr_readdata[31:26], instr_readdata[5:0], instr_readdata[20:16] zero, memtoreg, data_write, pcsrc, alusrc, regdst, regwrite, jump, alucontrol);
 
@@ -31,7 +31,7 @@ module controller(
 	output pcsrc, alusrc,
 	output regdst, regwrite,
 	output jump,
-	output [2:0] alucontrol);
+	output [4:0] alucontrol);
 	
 wire [1:0] aluop;
 wire branch;
@@ -106,42 +106,73 @@ endmodule
 // In order to understand this section please refer to page 376 of the book (table 7.3)
 
 module aludec(
-	input [5:0] funct,
+	input [5:0] funct,op,
 	input [1:0] aluop,
-	output reg [2:0] alucontrol);
+	output reg [4:0] alucontrol);
 
 always @(*)
 	case(aluop)							//edge what if we have a 2'b11 eventhough it is illegal
 	
 		2'b00: alucontrol <= 3'b010; //ADD
 		2'b01: alucontrol <= 3'b110; //SUB
-		default: case(funct)
-			6'b100000: alucontrol <= 5'b00011; //ADD -> ADD
-			6'b100100: alucontrol <= 5'b00000; //AND -> AND
-			6'b100011: alucontrol <= 5'b00100; //SUB unsigned -> SUBU
-			6'b100101: alucontrol <= 5'b00001; //bitwise OR -> OR
-			6'b100110: alucontrol <= 5'b00010; //bitwise XOR -> XOR
-			6'b101010: alucontrol <= 5'b00110; //SLT -> SLT
-			6'b101011: alucontrol <= 5'b00101; //SLTUnsigned -> SLTU
-			6'b011001: alucontrol <= 5'b00111; //Multiply unsigned -> MULTU
-			6'b011000: alucontrol <= 5'b01000; //Multiply -> MULT
-			6'b000000: alucontrol <= 5'b01001; //Shift left logical ->SLL
-			6'b000100: alucontrol <= 5'b01010; //Shift left logical variable -> SLLV
-			6'b000011: alucontrol <= 5'b01011; //Shift right arithmetic -> SRA
-			6'b000010: alucontrol <= 5'b01100; //Shift right logical -> SRL
-			6'b000111: alucontrol <= 5'b01101; //Shift right arithmetic variable -> SRAV
-			6'b000110: alucontrol <= 5'b01110; //Shift right logical variable -> SRLV
-			6'b000000: alucontrol <= 5'b00000;
-			6'b000000: alucontrol <= 5'b00000;
-			6'b000000: alucontrol <= 5'b00000;
-			6'b000000: alucontrol <= 5'b00000;
-			6'b000000: alucontrol <= 5'b00000;
-			6'b010001: alucontrol <= 5'b00000; //MTHI
-			6'b010100: alucontrol <= 5'b00000; //MTLO
-			6'b000000: alucontrol <= 5'b00000;
-			6'b000000: alucontrol <= 5'b00000;
-			default:   alucontrol <= 5'bxxxxx; //???
-		endcase
+		2'b10: case(op)
+			6'b100000: alucontrol <= 5'b; //Load byte				//not necessary for harvard
+			6'b100100: alucontrol <= 5'b; //Load byte unsigned
+			6'b100001: alucontrol <= 5'b; //Load halfword			//not necessary for harvard
+			6'b100101: alucontrol <= 5'b; //Load halfword unisigned
+			6'b001111: alucontrol <= 5'b; //Load upper immidiate
+			6'b100011: alucontrol <= 5'b; //Load word
+			6'b100010: alucontrol <= 5'b; //Load word left          //not necessary for harvard
+			6'b100110: alucontrol <= 5'b; //Load word right
+			6'b101000: alucontrol <= 5'b; //Store byte
+			6'b101001: alucontrol <= 5'b; //Store halfword
+			6'b101011: alucontrol <= 5'b; //Store word
+			6'b000100: alucontrol <= 5'b00100; //Branch on = 0 use SUBU
+			6'b000001: case(dest)
+						5'b00001: alucontrol <= 5'b00110; //Branch on >= 0 use SLT
+						5'b10001: alucontrol <= 5'b00110; //Branch on >= 0 /link (regwrite active) use SLT mod in control sign
+						5'b00000: alucontrol <= 5'b; //Branch on < 0 
+						5'b10000: alucontrol <= 5'b; //Branch on < 0 /link
+						default: alucontrol <= 5'bxxxxx;
+					endcase
+			6'b000111: alucontrol <= 5'b; //Branch on > 0
+			6'b000110: alucontrol <= 5'b; //Branch on <= 0
+			6'b000101: alucontrol <= 5'b; //Branch on != 0
+			6'b001001: alucontrol <= 5'b00011; //ADD unsigned immediate
+			6'b000010: alucontrol <= 5'b; //Jump
+			6'b000011: alucontrol <= 5'b; //Jump and link
+			6'b001100: alucontrol <= 5'b00000; //ANDI
+			6'b001101: alucontrol <= 5'b00001; //ORI
+			6'b001110: alucontrol <= 5'b00010; //XORI
+			6'b001010: alucontrol <= 5'b00110; //Set on less than immediate (signed)
+			6'b001011: alucontrol <= 5'b00101; //Set on less than immediate unsigned
+			
+			6'b000000: case(funct)
+							6'b100001: alucontrol <= 5'b00011; //ADD -> ADDU
+							6'b100100: alucontrol <= 5'b00000; //AND -> AND
+							6'b100011: alucontrol <= 5'b00100; //SUB unsigned -> SUBU
+							6'b100101: alucontrol <= 5'b00001; //bitwise OR -> OR
+							6'b100110: alucontrol <= 5'b00010; //bitwise XOR -> XOR
+							6'b101010: alucontrol <= 5'b00110; //SLT -> SLT
+							6'b101011: alucontrol <= 5'b00101; //SLTUnsigned -> SLTU
+							6'b011001: alucontrol <= 5'b00111; //Multiply unsigned -> MULTU
+							6'b011000: alucontrol <= 5'b01000; //Multiply -> MULT
+							6'b000000: alucontrol <= 5'b01001; //Shift left logical ->SLL
+							6'b000100: alucontrol <= 5'b01010; //Shift left logical variable -> SLLV
+							6'b000011: alucontrol <= 5'b01011; //Shift right arithmetic -> SRA
+							6'b000010: alucontrol <= 5'b01100; //Shift right logical -> SRL
+							6'b000111: alucontrol <= 5'b01101; //Shift right arithmetic variable -> SRAV
+							6'b000110: alucontrol <= 5'b01110; //Shift right logical variable -> SRLV
+							6'b011010: alucontrol <= 5'b01111; //Divide signed DIV
+							6'b011011: alucontrol <= 5'b10000; //Divide unsigned DIVU
+							6'b010001: alucontrol <= 5'b10001; //MTHI
+							6'b010100: alucontrol <= 5'b10010; //MTLO
+							6'b000000: alucontrol <= 5'b00000;
+							6'b000000: alucontrol <= 5'b00000;
+							default:   alucontrol <= 5'bxxxxx; //???
+						endcase
+			default: alucontrol <= 5'bxxxxx; //???		
+			endcase	
 	endcase
 endmodule
 
@@ -154,7 +185,7 @@ module datapath(
 	input memtoreg, pcsrc,
 	input alusrc, regdst,
 	input regwrite, jump,
-	input [2:0] alucontrol,
+	input [4:0] alucontrol,
 	output zero,
 	input [31:0] instr_readdata,
 	input [31:0] data_readdata,

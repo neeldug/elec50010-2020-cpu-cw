@@ -1,5 +1,5 @@
 module alumodule(
-	input [2:0] control,
+	input [4:0] control,
 	input [31:0] a,
 	input [31:0] b,
 	output zero,
@@ -10,14 +10,14 @@ reg[64:0] r1,r2,z;
 reg[31:0] HI,LO;
 
 case(control)
-		3'b00000: y <= a & b;						//AND
-		3'b00001: y <= a | b;						//OR
-		3'b00010: y <= a ^ b;						//XOR
-		3'b00011: y <= a + b;						//ADD
-		3'b00100: y <= a + (~b +1);					//SUBU
-		3'b00101: y <= (a < b);						//SLT Unsigned
+		5'b00000: y <= a & b;						//AND
+		5'b00001: y <= a | b;						//OR
+		5'b00010: y <= a ^ b;						//XOR
+		5'b00011: y <= a + b;						//ADDU
+		5'b00100: y <= a + (~b +1);					//SUBU
+		5'b00101: y <= (a < b);						//SLT Unsigned
 		
-		3'b00110: begin								//SLT signed
+		5'b00110: begin								//SLT signed
 					if(a[31] != b[31])begin			
 							if(a[31] > b[31])begin
 									y <= 1;
@@ -33,7 +33,7 @@ case(control)
 					end
 				  end
 		
-		3'b00111: begin											//MULTU Multiplication unsigned
+		5'b00111: begin											//MULTU Multiplication unsigned
 				r1 = {32'b0,a[31:0]};
 				r2 = {32'b0,b[31:0]};
 				z = r1 * r2;
@@ -41,7 +41,7 @@ case(control)
 				LO <= (z << 32) >> 32;
 			 end
 		
-		3'b01000: begin											//MULT multiplication signed
+		5'b01000: begin											//MULT multiplication signed
 				if(a[31] == b[31])begin
 					if((a[31] == 0) & (b[31] == 0))begin
 						r1 = {32'b0,a[31:0]};
@@ -73,11 +73,11 @@ case(control)
 				end
 			end
 				  			  
-		3'b01001: y <= a << (b[10:6]);							//shift left logical: we take the shift variable from instr[10:6] included in the Immediate field
+		5'b01001: y <= a << (b[10:6]);							//shift left logical: we take the shift variable from instr[10:6] included in the Immediate field
 		
-		3'b01010: y <= a << b;									//shift left logical variable
+		5'b01010: y <= a << b;									//shift left logical variable
 		
-		3'b01011: begin											//shift right arithmetic
+		5'b01011: begin											//shift right arithmetic
 				x = a;
 				for(i = b[10:6]; i>0; i = i-1)begin
 						if(a[31] == 1)
@@ -88,7 +88,7 @@ case(control)
 				y <= x;
 			 end
 			 
-		3'b01100: begin											//shift right logical
+		5'b01100: begin											//shift right logical
 				x = a;
 				for(i = b[10:6]; i>0; i = i-1)begin
 					x = {1'b0,x[31:1]};					
@@ -96,9 +96,9 @@ case(control)
 				y <= x;
 			 end
 			 
-//		3'b: y <= a >> (b[10:6]);							//shift right logical
+//		5'b: y <= a >> (b[10:6]);							//shift right logical
 
-		3'b01101: begin											//shift right arithmetic variable
+		5'b01101: begin											//shift right arithmetic variable
 				x = a;
 				for(i = b[31:0]; i>0; i = i-1)begin
 						if(a[31] == 1)
@@ -109,7 +109,7 @@ case(control)
 				y <= x;
 			 end	
 			 	
-		3'b01110: begin											//shift right logical variable
+		5'b01110: begin											//shift right logical variable
 				x = a;
 				for(i = b[31:0]; i>0; i = i-1)begin
 					x = {1'b0,x[31:1]};
@@ -117,11 +117,14 @@ case(control)
 				y <= x;
 			 end	 	
 			 				
-//		3'b: y <= a >> b;									//shift right logical variable
+//		5'b: y <= a >> b;									//shift right logical variable
 		
-		3'b00111: y <= (b << 16);							//Load upper Immidiate
-		3'b01000: y <= ;
-		3'b0: y <= ;
+		5'b01111: y <= (b << 16);							//Load upper Immidiate
+		5'b10000: y <= ;									//Divid: DIV
+		5'b10001: y <= ;									//Divid unsigned: DIVU
+		5'b10010: y <= HI[31:0];							//MTHI: move to High
+		5'b10011: y <= LO[31:0];							//MTLO: move to Low
+		5'b0: y <= ;
 		
 		always @(y)begin
 				if(y==0)begin
