@@ -14,11 +14,11 @@ case(control)
 		3'b00001: y <= a | b;						//OR
 		3'b00010: y <= a ^ b;						//XOR
 		3'b00011: y <= a + b;						//ADD
-		3'b00100: y <= a + (~b +1);					//SUB
+		3'b00100: y <= a + (~b +1);					//SUBU
 		3'b00101: y <= (a < b);						//SLT Unsigned
 		
-		3'b00110: begin
-					if(a[31] != b[31])begin			//SLT
+		3'b00110: begin								//SLT signed
+					if(a[31] != b[31])begin			
 							if(a[31] > b[31])begin
 									y <= 1;
 							end else begin
@@ -32,15 +32,52 @@ case(control)
 							end
 					end
 				  end
+		
+		3'b00111: begin											//MULTU Multiplication unsigned
+				r1 = {32'b0,a[31:0]};
+				r2 = {32'b0,b[31:0]};
+				z = r1 * r2;
+				HI <= z >> 32;
+				LO <= (z << 32) >> 32;
+			 end
+		
+		3'b01000: begin											//MULT multiplication signed
+				if(a[31] == b[31])begin
+					if((a[31] == 0) & (b[31] == 0))begin
+						r1 = {32'b0,a[31:0]};
+						r2 = {32'b0,b[31:0]};
+						z = r1 * r2;
+						HI <= z >> 32;
+						LO <= (z << 32) >> 32;
+					end else begin
+						r1 = {32'b0,(~a[31:0] +1)};
+						r2 = {32'b0,(~b[31:0] +1)};
+						z = r1 * r2;
+						HI <= z >> 32;
+						LO <= (z << 32) >> 32;
+					end
+				end else begin
+					if((a[31] == 0) & (b[31] == 1))begin
+						r1 = {32'b0,a[31:0]};
+						r2 = {32'b0,(~b[31:0] +1)};
+						z = ~(r1 * r2) +1; 
+						HI <= sra32(z[63:0]);
+						LO <= sra32(z << 32);
+					end else begin
+						r1 = {32'b0,(~a[31:0] +1)};
+						r2 = {32'b0,b[31:0]};
+						z = ~(r1 * r2) +1; 
+						HI <= sra32(z[63:0]);
+						LO <= sra32(z << 32);
+					end
+				end
+			end
 				  			  
-		3'b00111: y <= (b << 16);							//Load upper Immidiate
-		3'b01000: y <= ;
-		3'b0: y <= ;
-		3'b: y <= a << (b[10:6]);							//shift left logical: we take the shift variable from instr[10:6] included in the Immediate field
+		3'b01001: y <= a << (b[10:6]);							//shift left logical: we take the shift variable from instr[10:6] included in the Immediate field
 		
-		3'b: y <= a << b;									//shift left logical variable
+		3'b01010: y <= a << b;									//shift left logical variable
 		
-		3'b: begin											//shift right arithmetic
+		3'b01011: begin											//shift right arithmetic
 				x = a;
 				for(i = b[10:6]; i>0; i = i-1)begin
 						if(a[31] == 1)
@@ -51,7 +88,7 @@ case(control)
 				y <= x;
 			 end
 			 
-		3'b: begin											//shift right logical
+		3'b01100: begin											//shift right logical
 				x = a;
 				for(i = b[10:6]; i>0; i = i-1)begin
 					x = {1'b0,x[31:1]};					
@@ -61,7 +98,7 @@ case(control)
 			 
 //		3'b: y <= a >> (b[10:6]);							//shift right logical
 
-		3'b: begin											//shift right arithmetic variable
+		3'b01101: begin											//shift right arithmetic variable
 				x = a;
 				for(i = b[31:0]; i>0; i = i-1)begin
 						if(a[31] == 1)
@@ -72,7 +109,7 @@ case(control)
 				y <= x;
 			 end	
 			 	
-		3'b: begin											//shift right logical variable
+		3'b01110: begin											//shift right logical variable
 				x = a;
 				for(i = b[31:0]; i>0; i = i-1)begin
 					x = {1'b0,x[31:1]};
@@ -82,15 +119,9 @@ case(control)
 			 				
 //		3'b: y <= a >> b;									//shift right logical variable
 		
-		3'b: begin											//Multiplication
-				r1 = {32'b0,a[31:0]};
-				r2 = {32'b0,b[31:0]};
-				z = r1 * r2;
-				HI <= z >> 32;
-				LO <= (z << 32) >> 32;
-			 end
-		
-		3'b111: 
+		3'b00111: y <= (b << 16);							//Load upper Immidiate
+		3'b01000: y <= ;
+		3'b0: y <= ;
 		
 		always @(y)begin
 				if(y==0)begin
@@ -103,7 +134,19 @@ case(control)
 endmodule
 
 
-
+function [63:0] sra32 (input [63:0] a);
+reg [31:0] x;
+		
+	begin											
+		x = a;
+		for(i = 32; i>0; i = i-1)begin
+			if(a[63] == 1)
+				x = {1'b1,x[63:1]};
+			else
+				x = {1'b0,x[63:1]};
+			end
+		sra32 = x;
+	end
 
 
 

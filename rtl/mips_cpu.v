@@ -116,13 +116,31 @@ always @(*)
 		2'b00: alucontrol <= 3'b010; //ADD
 		2'b01: alucontrol <= 3'b110; //SUB
 		default: case(funct)
-			6'b100000: alucontrol <= 3'b010; //ADD
-			6'b100010: alucontrol <= 3'b110; //SUB
-			6'b100100: alucontrol <= 3'b000; //AND
-			6'b100101: alucontrol <= 3'b001; //OR
-			6'b101010: alucontrol <= 3'b111; //Set Less Then (SLT)
-			6'b100100: alucontrol <= 
-			default:   alucontrol <= 3'bxxx; //???
+			6'b100000: alucontrol <= 5'b00011; //ADD -> ADD
+			6'b100100: alucontrol <= 5'b00000; //AND -> AND
+			6'b100011: alucontrol <= 5'b00100; //SUB unsigned -> SUBU
+			6'b100101: alucontrol <= 5'b00001; //bitwise OR -> OR
+			6'b100110: alucontrol <= 5'b00010; //bitwise XOR -> XOR
+			6'b101010: alucontrol <= 5'b00110; //SLT -> SLT
+			6'b101011: alucontrol <= 5'b00101; //SLTUnsigned -> SLTU
+			6'b011001: alucontrol <= 5'b00111; //Multiply unsigned -> MULTU
+			6'b011000: alucontrol <= 5'b01000; //Multiply -> MULT
+			6'b000000: alucontrol <= 5'b01001; //Shift left logical ->SLL
+			6'b000100: alucontrol <= 5'b01010; //Shift left logical variable -> SLLV
+			6'b000011: alucontrol <= 5'b01011; //Shift right arithmetic -> SRA
+			6'b000010: alucontrol <= 5'b01100; //Shift right logical -> SRL
+			6'b000111: alucontrol <= 5'b01101; //Shift right arithmetic variable -> SRAV
+			6'b000110: alucontrol <= 5'b01110; //Shift right logical variable -> SRLV
+			6'b000000: alucontrol <= 5'b00000;
+			6'b000000: alucontrol <= 5'b00000;
+			6'b000000: alucontrol <= 5'b00000;
+			6'b000000: alucontrol <= 5'b00000;
+			6'b000000: alucontrol <= 5'b00000;
+			6'b010001: alucontrol <= 5'b00000; //MTHI
+			6'b010100: alucontrol <= 5'b00000; //MTLO
+			6'b000000: alucontrol <= 5'b00000;
+			6'b000000: alucontrol <= 5'b00000;
+			default:   alucontrol <= 5'bxxxxx; //???
 		endcase
 	endcase
 endmodule
