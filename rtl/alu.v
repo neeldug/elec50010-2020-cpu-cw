@@ -119,11 +119,12 @@ case(control)
 			 				
 //		5'b: y <= a >> b;									//shift right logical variable
 		
-		5'b01111: y <= (b << 16);							//Load upper Immidiate
-		5'b10000: y <= ;									//Divid: DIV
-		5'b10001: y <= ;									//Divid unsigned: DIVU
-		5'b10010: y <= HI[31:0];							//MTHI: move to High
-		5'b10011: y <= LO[31:0];							//MTLO: move to Low
+		5'b01111: y <= ;									//Divid: DIV
+		5'b10000: y <= ;									//Divid unsigned: DIVU
+		5'b10001: y <= HI[31:0];							//MTHI: move to High
+		5'b10010: y <= LO[31:0];							//MTLO: move to Low
+		
+		5'b10011: y <= (b << 16);							//Load upper Immidiate
 		5'b0: y <= ;
 		
 		always @(y)begin
