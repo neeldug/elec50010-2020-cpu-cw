@@ -1,15 +1,16 @@
 module alumodule(
-	input [4:0] control,
-	input [31:0] a,
-	input [31:0] b,
-	output zero,
-	output [31:0] y);
+	input logic [4:0] control,
+	input logic [31:0] a,
+	input logic [31:0] b,
+	output logic zero,
+	output logic [31:0] y);
 
 reg[31:0] x;
 reg[64:0] r1,r2,z;
 reg[31:0] HI,LO;
 
-case(control)
+always @(*)begin
+	case(control)
 		5'b00000: y <= a & b;						//AND
 		5'b00001: y <= a | b;						//OR
 		5'b00010: y <= a ^ b;						//XOR
@@ -151,6 +152,10 @@ case(control)
 		5'b10011: y <= (b << 16);							//Load upper Immidiate
 		5'b0: y <= ;
 		
+	endcase
+end
+
+
 		always @(y)begin
 				if(y==0)begin
 					zero <= 1;
@@ -161,6 +166,14 @@ case(control)
 
 endmodule
 
+
+
+
+
+
+
+
+/*		Synthax error
 
 function [63:0] sra32 (input [63:0] a);
 reg [31:0] x;
@@ -175,8 +188,9 @@ reg [31:0] x;
 			end
 		sra32 = x;
 	end
+endfunction
 
-
+*/
 
 module ands(
 	input [31:0] a,b,
