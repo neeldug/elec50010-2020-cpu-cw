@@ -53,7 +53,7 @@ module maindec(
 	output regwrite, jump,
 	output [1:0] aluop);
 	
-reg [9:0] controls;
+reg [8:0] controls;
 
 assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg, jump, aluop} = controls;
 
@@ -63,43 +63,43 @@ assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg, jump, 
 always @(*)
 	case(op)
 		6'b000000: case(funct)
-						6'b001001: controls <= 10'b1000000100; //Jump and link register
-						6'b001000: controls <= 10'b0010000110; //Jump register
-						6'b010001: controls <= 10'b1110000010; //Move to high
-						6'b010100: controls <= 10'b1110000010; //Move to low
-						default: controls <= 10'b1010000010; //R-type instruction
+						6'b001001: controls <= 9'b100000100; //Jump and link register
+						6'b001000: controls <= 9'b010000110; //Jump register
+						6'b010001: controls <= 9'b110000010; //Move to high
+						6'b010100: controls <= 9'b110000010; //Move to low
+						default: controls <= 9'b110000010; //R-type instruction
 					endcase
-		6'b100000: controls <= 10'b1001001000; //Load byte
-		6'b100100: controls <= 10'b1001001000; //Load byte unsigned
-		6'b100001: controls <= 10'b1001001000; //Load halfword
-		6'b100101: controls <= 10'b1001001000; //Load halfword unisigned
-		6'b001111: controls <= 10'b1001001000; //Load upper immidiate
-		6'b100011: controls <= 10'b1001001000; //Load word
-		6'b100010: controls <= 10'b1001001000; //Load word left
-		6'b100110: controls <= 10'b1001001000; //Load word right
-		6'b101000: controls <= 10'b0001010000; //Store byte
-		6'b101001: controls <= 10'b0001010000; //Store halfword
-		6'b101011: controls <= 10'b0001010000; //Store word
-		6'b000100: controls <= 10'b0000100001; //Branch on = 0
+		6'b100000: controls <= 9'b101001000; //Load byte
+		6'b100100: controls <= 9'b101001000; //Load byte unsigned
+		6'b100001: controls <= 9'b101001000; //Load halfword
+		6'b100101: controls <= 9'b101001000; //Load halfword unisigned
+		6'b001111: controls <= 9'b101001000; //Load upper immidiate
+		6'b100011: controls <= 9'b101001000; //Load word
+		6'b100010: controls <= 9'b101001000; //Load word left
+		6'b100110: controls <= 9'b101001000; //Load word right
+		6'b101000: controls <= 9'b001010000; //Store byte
+		6'b101001: controls <= 9'b001010000; //Store halfword
+		6'b101011: controls <= 9'b001010000; //Store word
+		6'b000100: controls <= 9'b000100001; //Branch on = 0
 		6'b000001: case(dest)
-						5'b00001: controls <= 10'b0000100001; //Branch on >= 0
-						5'b10001: controls <= 10'b1000100001; //Branch on >= 0 /link (regwrite active)
-						5'b00000: controls <= 10'b0000100001; //Branch on < 0
-						5'b10000: controls <= 10'b1000100001; //Branch on < 0 /link
-						default: controls <= 10'bxxxxxxxxxx;
+						5'b00001: controls <= 9'b000100001; //Branch on >= 0
+						5'b10001: controls <= 9'b100100001; //Branch on >= 0 /link (regwrite active)
+						5'b00000: controls <= 9'b000100001; //Branch on < 0
+						5'b10000: controls <= 9'b100100001; //Branch on < 0 /link
+						default: controls <= 9'bxxxxxxxxx;
 					endcase
-		6'b000111: controls <= 10'b0000100001; //Branch on > 0
-		6'b000110: controls <= 10'b0000100001; //Branch on <= 0
-		6'b000101: controls <= 10'b0000100001; //Branch on != 0
-		6'b001001: controls <= 10'b1001000010; //ADD unsigned immediate
-		6'b000010: controls <= 10'b0000000100; //Jump
-		6'b000011: controls <= 10'b1000000100; //Jump and link
-		6'b001100: controls <= 10'b1001000010; //ANDI
-		6'b001101: controls <= 10'b1001000010; //ORI
-		6'b001110: controls <= 10'b1001000010; //XORI
-		6'b001010: controls <= 10'b1001000010; //Set on less than immediate (signed)
-		6'b001011: controls <= 10'b1001000010; //Set on less than immediate unsigned
-		default:   controls <= 10'bxxxxxxxxxx; //???
+		6'b000111: controls <= 9'b000100001; //Branch on > 0
+		6'b000110: controls <= 9'b000100001; //Branch on <= 0
+		6'b000101: controls <= 9'b000100001; //Branch on != 0
+		6'b001001: controls <= 9'b101000010; //ADD unsigned immediate
+		6'b000010: controls <= 9'b000000100; //Jump
+		6'b000011: controls <= 9'b100000100; //Jump and link
+		6'b001100: controls <= 9'b101000010; //ANDI
+		6'b001101: controls <= 9'b101000010; //ORI
+		6'b001110: controls <= 9'b101000010; //XORI
+		6'b001010: controls <= 9'b101000010; //Set on less than immediate (signed)
+		6'b001011: controls <= 9'b101000010; //Set on less than immediate unsigned
+		default:   controls <= 9'bxxxxxxxxx; //???
 	endcase
 endmodule
 
@@ -118,13 +118,13 @@ always @(*)
 		2'b00: alucontrol <= 3'b010; //ADD
 		2'b01: alucontrol <= 3'b110; //SUB
 		2'b10: case(op)
-			6'b100000: alucontrol <= 5'b; //Load byte				//not necessary for harvard
+//			6'b100000: alucontrol <= 5'b; //Load byte				//not necessary for harvard
 			6'b100100: alucontrol <= 5'b; //Load byte unsigned
-			6'b100001: alucontrol <= 5'b; //Load halfword			//not necessary for harvard
+//			6'b100001: alucontrol <= 5'b; //Load halfword			//not necessary for harvard
 			6'b100101: alucontrol <= 5'b; //Load halfword unisigned
 			6'b001111: alucontrol <= 5'b; //Load upper immidiate
 			6'b100011: alucontrol <= 5'b; //Load word
-			6'b100010: alucontrol <= 5'b; //Load word left          //not necessary for harvard
+//			6'b100010: alucontrol <= 5'b; //Load word left          //not necessary for harvard
 			6'b100110: alucontrol <= 5'b; //Load word right
 			6'b101000: alucontrol <= 5'b; //Store byte
 			6'b101001: alucontrol <= 5'b; //Store halfword
@@ -185,7 +185,7 @@ endmodule
 module datapath(
 	input clk, reset, clk_enable,
 	input memtoreg, pcsrc,
-	input alusrc, regdst2, regdst1,
+	input alusrc, regdst,
 	input regwrite, jump,
 	input [4:0] alucontrol,
 	output zero,
@@ -194,7 +194,7 @@ module datapath(
 	output [31:0] pc,
 	output [31:0] data_address, data_writedata);
 
-wire [4:0] writereg1, writereg2;
+wire [4:0] writereg;
 wire [31:0] pcnext, pcnextbr, pcplus4, pcbranch;
 wire [31:0] signimm, signimmsh;
 wire [31:0] srca, srcb;
@@ -217,10 +217,9 @@ mux2 #(32) pcmux(pcplus4, pcbranch, pcsrc, pcnextbr);
  
 		
 //Register file
-regfile register(clk, regwrite, instr_address[25:21], instr_address[20:16], writereg2, result, srca, data_writedata);
+regfile register(clk, regwrite, instr_address[25:21], instr_address[20:16], writereg, result, srca, data_writedata);
 
-mux2 #(5) wrmux(instr_address[20:16], instr_address[15:11], regdst1, writereg1);
-mux2 #(5) wrmux2(writereg1, instr_address[25:21], regdst2, writereg2);
+mux2 #(5) wrmux(instr_address[20:16], instr_address[15:11], regdst, writereg);
 
 mux2 #(32) resmux(data_address, data_readdata, memtoreg, result);
 
