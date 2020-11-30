@@ -53,7 +53,7 @@ case(control)
 						r1 = {32'b0,(~a[31:0] +1)};
 						r2 = {32'b0,(~b[31:0] +1)};
 						z = r1 * r2;
-						HI <= z >> 32;
+						HI <= z >> 32;				//QST: is it still 64bit? if so just take directly z[63:32]
 						LO <= (z << 32) >> 32;
 					end
 				end else begin
@@ -119,11 +119,35 @@ case(control)
 			 				
 //		5'b: y <= a >> b;									//shift right logical variable
 		
-		5'b01111: y <= ;									//Divid: DIV
-		5'b10000: y <= ;									//Divid unsigned: DIVU
+		5'b01111: begin										//Divid: DIV
+					if(a[31] == b[31])begin
+						if((a[31] == 0) & (b[31] == 0))begin
+							HI <= a % b;
+							LO <= a / b;
+						end else begin
+							r1 = ~a[31:0] +1;
+							r2 = ~b[31:0] +1;
+							HI <= -(r1 % r2) + r2;
+							LO <= r1 / r2 + 1;
+						end
+					end else begin
+						if((a[31] == 0) & (b[31] == 1))begin
+							r2 = ~b[31:0] +1;
+							HI <= a % r2;
+							LO <= -(a / r2);
+						end else begin
+							r1 = ~a[31:0] +1;
+							HI <= -(r1 % b) + b;
+							LO <= -(r1 / b + 1);
+						end
+					end
+				end
+		5'b10000: begin										//Divid unsigned: DIVU
+					HI <= a % b;
+					LO <= a / b;
+				end
 		5'b10001: y <= HI[31:0];							//MTHI: move to High
 		5'b10010: y <= LO[31:0];							//MTLO: move to Low
-		
 		5'b10011: y <= (b << 16);							//Load upper Immidiate
 		5'b0: y <= ;
 		
