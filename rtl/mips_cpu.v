@@ -17,7 +17,7 @@ module CPU_MIPS_harvard(
 logic memtoreg, branch, alusrc, regdst, regwrite, jump;
 logic [4:0] alucontrol;
 
-controller control(instr_readdata[31:26], instr_readdata[5:0], instr_readdata[20:16] zero, memtoreg, data_write, pcsrc, alusrc, regdst, regwrite, jump, alucontrol);
+controller control(instr_readdata[31:26], instr_readdata[5:0], instr_readdata[20:16], zero, memtoreg, data_write, pcsrc, alusrc, regdst, regwrite, jump, alucontrol);
 
 datapath datap(clk, reset, clk_enable, memtoreg, pcsrc, alusrc, regdst, regwrite, jump, alucontrol, zero, pc, instr_readdata, aluout, data_writedata, data_readdata);
 
@@ -48,8 +48,8 @@ module maindec(
 	input logic [5:0] op, funct,
 	input logic [4:0] dest,
 	output logic memtoreg, data_write,
-	output logic branch, alusrc
-	output logic regdst2, regdst1,
+	output logic branch, alusrc,
+	output logic regdst,
 	output logic regwrite, jump,
 	output logic [1:0] aluop);
 	
@@ -252,13 +252,13 @@ module regfile(
 	always @(posedge clk)
 		if(we3) rf[wa3] <= wd3;
 		
-	assign rd1 = (ra1 ! = 0) ? rf[ra1] : 0;
-	assign rd2 = (ra2 ! = 0) ? rf[ra2] : 0;
+	assign rd1 = (ra1 != 0) ? rf[ra1] : 0;
+	assign rd2 = (ra2 != 0) ? rf[ra2] : 0;
 endmodule
 
 // Implementation of reusable functions used in datapath
 
-module mux2 #(parameter WIDTH)(
+module mux2 #(parameter WIDTH =8)(
 	input logic [WIDTH - 1:0] a, b,
 	input logic s,
 	output logic [WIDTH - 1:0] y);
@@ -280,12 +280,12 @@ module shiftleft2(
 	assign y = {{a[29:0]} , 2'b00};
 endmodule
 	
-module flipflopr #(parameter WIDTH)(
+module flipflopr #(parameter WIDTH =8)(
 	input logic clk, reset, clk_enable,
 	input logic [WIDTH-1:0] d,
-	output logic reg [WIDTH-1:0] q);
+	output logic [WIDTH-1:0] q);
 
-	always_ff @(posedge clk, posedge reset)
+	always @(posedge clk, posedge reset)
 		if(reset) 				q <= 0;
 		else if(clk_enable) 	q <= d;
 endmodule 
