@@ -124,6 +124,34 @@ case(control)
 		5'b10001: y <= ;									//Divid unsigned: DIVU
 		5'b10010: y <= HI[31:0];							//MTHI: move to High
 		5'b10011: y <= LO[31:0];							//MTLO: move to Low
+
+		5'b10100: begin										 //Branch on < 0 
+					if(a < 0)begin			
+								y <= 0;
+					end
+		
+		5'b10101: begin										 //Branch on < 0 /link 
+					if(a < 0)begin			
+								y <= 0;
+					end
+
+		5'b10110: begin										 //Branch on > 0  
+					if(a > 0)begin			
+								y <= 0;
+					end
+		
+		5'b10111: begin										 //Branch on <= 0  
+					if(a <= 0)begin			
+								y <= 0;
+					end
+
+		5'b11000: begin										 //Branch on != 0  
+					if(a != 0)begin			
+								y <= 0;
+					end
+		
+
+		
 		5'b0: y <= ;
 		
 		always @(y)begin

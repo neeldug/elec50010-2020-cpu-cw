@@ -131,13 +131,13 @@ always @(*)
 			6'b000001: case(dest)
 						5'b00001: alucontrol <= 5'b00110; //Branch on >= 0 use SLT
 						5'b10001: alucontrol <= 5'b00110; //Branch on >= 0 /link (regwrite active) use SLT mod in control sign
-						5'b00000: alucontrol <= 5'b; //Branch on < 0 
-						5'b10000: alucontrol <= 5'b; //Branch on < 0 /link
+						5'b00000: alucontrol <= 5'b10100; //Branch on < 0 
+						5'b10000: alucontrol <= 5'b10101; //Branch on < 0 /link
 						default: alucontrol <= 5'bxxxxx;
 					endcase
-			6'b000111: alucontrol <= 5'b; //Branch on > 0
-			6'b000110: alucontrol <= 5'b; //Branch on <= 0
-			6'b000101: alucontrol <= 5'b; //Branch on != 0
+			6'b000111: alucontrol <= 5'b10110; //Branch on > 0
+			6'b000110: alucontrol <= 5'b10111; //Branch on <= 0
+			6'b000101: alucontrol <= 5'b11000; //Branch on != 0
 			6'b001001: alucontrol <= 5'b00011; //ADD unsigned immediate
 			6'b000010: alucontrol <= 5'b; //Jump
 			6'b000011: alucontrol <= 5'b; //Jump and link
