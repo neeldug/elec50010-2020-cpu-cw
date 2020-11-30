@@ -110,7 +110,7 @@ endmodule
 module aludec(
 	input logic [5:0] funct,op,
 	input logic [1:0] aluop,
-	output logic reg [4:0] alucontrol);
+	output logic [4:0] alucontrol);
 
 always @(*)
 	case(aluop)							//edge what if we have a 2'b11 eventhough it is illegal
@@ -223,7 +223,7 @@ mux2 #(5) wrmux(instr_address[20:16], instr_address[15:11], regdst, writereg);
 
 mux2 #(32) resmux(data_address, data_readdata, memtoreg, result);
 
-signext se(instr_address[15:0], signimm);
+signext se(instr_address[15:0], signimm); 
 
 // ALU file
 mux2 #(32) srcbmux(data_writedata, signimm, alusrc, srcb);
@@ -247,7 +247,7 @@ module regfile(
 	//three ported register file
 	//read two ports combinationally
 	//write third port on rising edge of clock
-	//register 0 hardwired to 0
+	//register 0 hardwir3d to 0
 	
 	always @(posedge clk)
 		if(we3) rf[wa3] <= wd3;
