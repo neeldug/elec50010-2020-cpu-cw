@@ -14,12 +14,12 @@ module CPU_MIPS_harvard(
 	output logic [31:0] data_writedata,
 	input logic [31:0] data_readdata);
 	
-logic memtoreg, branch, alusrc, regdst, regwrite, jump;
+logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump;
 logic [4:0] alucontrol;
 
-controller control(instr_readdata[31:26], instr_readdata[5:0], instr_readdata[20:16], zero, memtoreg, data_write, pcsrc, alusrc, regdst, regwrite, jump, alucontrol);
+controller control(instr_readdata[31:26], instr_readdata[5:0], instr_readdata[20:16], zero, memtoreg1, memtoreg1, data_write, pcsrc, alusrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol);
 
-datapath datap(clk, reset, clk_enable, memtoreg, pcsrc, alusrc, regdst, regwrite, jump, alucontrol, zero, pc, instr_readdata, aluout, data_writedata, data_readdata);
+datapath datap(clk, reset, clk_enable, memtoreg2, memtoreg1, pcsrc, alusrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol, zero, pc, instr_readdata, aluout, data_writedata, data_readdata);
 
 endmodule
 
@@ -31,13 +31,13 @@ module controller(
 	output logic pcsrc, alusrc,
 	output logic regdst2, regdst1,
 	output logic regwrite, data_write,
-	output logic jump,
+	output logic jump1, jump,
 	output logic [4:0] alucontrol);
 	
 logic [1:0] aluop;
 logic branch;
 
-maindec md(op, memtoreg2, memtoreg1, data_write, branch, alusrc, regdst2, regdst1, regwrite, jump, aluop);
+maindec md(op, memtoreg2, memtoreg1, data_write, branch, alusrc, regdst2, regdst1, regwrite, jump1, jump, aluop);
 
 aludec ad(funct, aluop, alucontrol);
 
@@ -51,7 +51,8 @@ module maindec(
 	output logic memtoreg2, memtoreg1, data_write,
 	output logic branch, alusrc,
 	output logic regdst2, regdst1,
-	output logic regwrite, jump,
+	output logic regwrite,
+	output logic jump1, jump,
 	output logic [1:0] aluop);
 	
 reg [10:0] controls;
@@ -69,8 +70,14 @@ always @(*)begin
 always @(*)
 	case(op)
 		6'b000000: case(funct)									//link in reg not $31
-						6'b001001: controls <= 11'b10000000100; //Jump and link register
-						6'b001000: controls <= 11'b00100000110; //Jump register
+						6'b001001: begin 						//Jump and link register
+									controls <= 11'b10000000100;
+									jump1 <= 1;
+								end
+						6'b001000: begin						//Jump register
+									controls <= 11'b00100000110; 
+									jump1 <= 1;
+								end
 						6'b010001: controls <= 11'b10000000010; //Move to high       No need to write enable register?
 						6'b010100: controls <= 11'b10000000010; //Move to low		  As HI and LO are reg in ALU module
 						default: controls <= 11'b10100000010; //R-type instruction
