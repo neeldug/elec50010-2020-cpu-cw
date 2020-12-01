@@ -135,17 +135,18 @@ always @(*)
 		2'b00: alucontrol <= 5'b00011; //ADD -- USED FOR LOAD AND STORE INSTRUCTIONS
 		2'b01: alucontrol <= 5'b00100; //SUB 
 		2'b10: case(op)
-/*//			6'b100000: alucontrol <= 5'b; //Load byte				//not necessary for harvard
+/*			6'b100000: alucontrol <= 5'b; //Load byte				
 			6'b100100: alucontrol <= 5'b; //Load byte unsigned
-//			6'b100001: alucontrol <= 5'b; //Load halfword			//not necessary for harvard
+			6'b100001: alucontrol <= 5'b; //Load halfword			
 			6'b100101: alucontrol <= 5'b; //Load halfword unsigned
 			6'b001111: alucontrol <= 5'b; //Load upper immidiate
 			6'b100011: alucontrol <= 5'b; //Load word
-//			6'b100010: alucontrol <= 5'b; //Load word left          //not necessary for harvard
+			6'b100010: alucontrol <= 5'b; //Load word left         
 			6'b100110: alucontrol <= 5'b; //Load word right
 			6'b101000: alucontrol <= 5'b; //Store byte
 			6'b101001: alucontrol <= 5'b; //Store halfword
-			6'b101011: alucontrol <= 5'b; //Store word */
+			6'b101011: alucontrol <= 5'b; //Store word
+*/			
 			6'b000100: alucontrol <= 5'b00100; //Branch on = 0 use SUBU
 			6'b000001: case(dest)
 						5'b00001: alucontrol <= 5'b00110; //Branch on >= 0 use SLT
@@ -186,8 +187,8 @@ always @(*)
 							6'b011011: alucontrol <= 5'b10000; //Divide unsigned DIVU
 							6'b010001: alucontrol <= 5'b10001; //MTHI
 							6'b010100: alucontrol <= 5'b10010; //MTLO
-							6'b000000: alucontrol <= 5'b00000;
-							6'b000000: alucontrol <= 5'b00000;
+							6'b001000: alucontrol <= 5'b11001; //Jump register JR
+							6'b001001: alucontrol <= 5'b00000; //Jump and link register
 							default:   alucontrol <= 5'bxxxxx; //???
 						endcase
 			default: alucontrol <= 5'bxxxxx; //???		
@@ -215,11 +216,11 @@ module datapath(
 	output logic [31:0] pc,
 	output logic [31:0] data_address, data_writedata);
 
-logic [4:0] writereg1, writereg2;
+logic [4:0] writereg1, writereg;
 logic [31:0] pcnext, pcnextbr, pcplus4, pcbranch, pclink;
 logic [31:0] signimm, signimmsh;
 logic [31:0] srca, srcb;
-logic [31:0] result1, result2;
+logic [31:0] result1, result;
 
 // Program counter regfile
 
@@ -231,7 +232,7 @@ shiftleft2 immshift(signimm, signimmsh);
 
 adder pcbranch(signimmsh, pcplus4, pcbranch);
 
-mux2 #(32) pcmux((mux2 #(32) pcmux1(pcplus4, pcbranch, pcsrc, pcnextbr1)), (mux2 #(32) pcmux2(instr_address[25:0], result2, jump1, pcnextbr2)), jump, pcnextbr)
+mux2 #(32) pcmux((mux2 #(32) pcmux1(pcplus4, pcbranch, pcsrc, pcnextbr1)), (mux2 #(32) pcmux2(instr_address[25:0], result, jump1, pcnextbr2)), jump, pcnextbr)
 
 mux2 #(32) pcmux(pcplus4, pcbranch, pcsrc, pcnextbr);
 
@@ -239,15 +240,15 @@ mux2 #(32) pcmux(pcplus4, pcbranch, pcsrc, pcnextbr);
 
 	
 //Register file
-regfile register(clk, regwrite, instr_address[25:21], instr_address[20:16], writereg2, result2, srca, data_writedata);
+regfile register(clk, regwrite, instr_address[25:21], instr_address[20:16], writereg, result, srca, data_writedata);
 
 mux2 #(5) wrmux(instr_address[20:16], instr_address[15:11], regdst1, writereg1);
-mux2 #(5) wrmux2(writereg1, 5'b11111, regdst2, writereg2);
+mux2 #(5) wrmux2(writereg1, 5'b11111, regdst2, writereg);
 
 adder pcbranch(pcplus4, 32'b100, pclink);
 
 mux2 #(32) resmux(data_address, data_readdata, memtoreg1, result1);
-mux2 #(32) resmux2(result1, pclink, memtoreg2, result2);
+mux2 #(32) resmux2(result1, pclink, memtoreg2, result);
 
 signext se(instr_address[15:0], signimm); 
 

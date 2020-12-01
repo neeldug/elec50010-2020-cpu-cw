@@ -187,7 +187,7 @@ always @(*)begin
 		
 		5'b11000: y <= (b << 16);							//Load upper Immidiate
 
-		5'b0: y <= ; 
+		5'b11001: y <= a;									//Jump register JR
 		
 	endcase
 end
