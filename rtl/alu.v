@@ -154,33 +154,33 @@ always @(*)begin
 				end
 		5'b10001: y <= HI[31:0];							//MTHI: move to High
 		5'b10010: y <= LO[31:0];							//MTLO: move to Low
-		5'b10011: y <= (b << 16);							//Load upper Immidiate
 
-		5'b10100: begin										 //Branch on < 0 
+		5'b10011: begin										 //Branch on < 0 
 					if(a < 0)begin			
 								y <= 0;
 					end
 		
-		5'b10101: begin										 //Branch on < 0 /link 
+		5'b10100: begin										 //Branch on < 0 /link 
 					if(a < 0)begin			
 								y <= 0;
 					end
 
-		5'b10110: begin										 //Branch on > 0  
+		5'b10101: begin										 //Branch on > 0  
 					if(a > 0)begin			
 								y <= 0;
 					end
 		
-		5'b10111: begin										 //Branch on <= 0  
+		5'b10110: begin										 //Branch on <= 0  
 					if(a <= 0)begin			
 								y <= 0;
 					end
 
-		5'b11000: begin										 //Branch on != 0  
+		5'b10111: begin										 //Branch on != 0  
 					if(a != 0)begin			
 								y <= 0;
 					end
 		
+		5'b11000: y <= (b << 16);							//Load upper Immidiate
 
 		5'b0: y <= ; 
 		
