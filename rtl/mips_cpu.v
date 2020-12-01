@@ -39,9 +39,9 @@ logic branch;
 maindec md(op, memtoreg, data_write, branch, alusrc, regdst, regwrite, jump, aluop);
 
 aludec ad(funct, aluop, alucontrol);
-
-assign pcsrc = branch & zero;
-
+	always @(*) begin
+		assign pcsrc <= branch & zero;
+	end
 endmodule
 
 module maindec(
@@ -54,9 +54,10 @@ module maindec(
 	output logic [1:0] aluop);
 	
 reg [8:0] controls;
-
-assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg, jump, aluop} = controls;
-
+	
+	always @(*) begin
+		assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg, jump, aluop} <= controls;
+	end
 // Assign 8 elements names as aluop consist of 2 bits so rightfully fills the reg controls.
 // Correspond to the bits below from left to right in the same order (starting with regwrite and ending with aluop).
 
