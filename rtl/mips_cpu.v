@@ -41,7 +41,7 @@ maindec md(op, memtoreg2, memtoreg1, data_write, branch, alusrc, regdst2, regdst
 
 aludec ad(funct, aluop, alucontrol);
 	always @(*) begin
-		assign pcsrc <= branch & zero;
+		assign pcsrc = branch & zero;
 	end
 endmodule
 
@@ -60,9 +60,9 @@ reg [10:0] controls;
 
 
 //Probably needs to use a always@(*)
-always @(*)begin
-	assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg2, memtoreg1, jump, aluop} = controls;
-	end
+
+assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg2, memtoreg1, jump, aluop} = controls;
+
 
 // Assign 11 elements names as aluop consist of 2 bits so rightfully fills the reg controls.
 // Correspond to the bits below from left to right in the same order (starting with regwrite and ending with aluop).
@@ -335,33 +335,3 @@ module signext(
 	
 	assign signimm = {{16{instr_readdata[15]}},instr_readdata};
 endmodule
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-

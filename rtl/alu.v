@@ -124,7 +124,6 @@ always @(*)begin
 	
 
 		
-		5'b0: y <= ;
 		5'b01111: begin										//Divid: DIV
 					if(a[31] == b[31])begin
 						if((a[31] == 0) & (b[31] == 0))begin
