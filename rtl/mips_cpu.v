@@ -222,7 +222,7 @@ logic [31:0] result1, result2;
 
 // Program counter regfile
 
-flipflopr #(32) pcreg(clk, reset, clk_enable, pc, pcnext);
+flipflopr #(32) pcreg(clk, reset, clk_enable, pcnextbr, pcnext);
 
 adder pcplus4(pcnext, 32'b100, pcplus4);
 
@@ -230,7 +230,7 @@ shiftleft2 immshift(signimm, signimmsh);
 
 adder pcbranch(signimmsh, pcplus4, pcbranch);
 
-mux2 #(32) pcmux(
+mux2 #(32) pcmux((mux2 #(32) pcmux1(pcplus4, pcbranch, pcsrc, pcnextbr1)), (mux2 #(32) pcmux2(instr_address[25:0], result2, jump1, pcnextbr2)), jump, pcnextbr)
 
 mux2 #(32) pcmux(pcplus4, pcbranch, pcsrc, pcnextbr);
 
