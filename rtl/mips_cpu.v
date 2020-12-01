@@ -40,9 +40,9 @@ logic branch;
 maindec md(op, memtoreg2, memtoreg1, data_write, branch, alusrc, regdst2, regdst1, regwrite, jump1, jump, aluop);
 
 aludec ad(funct, aluop, alucontrol);
-
-assign pcsrc = branch & zero;
-
+	always @(*) begin
+		assign pcsrc <= branch & zero;
+	end
 endmodule
 
 module maindec(
@@ -54,6 +54,7 @@ module maindec(
 	output logic regwrite,
 	output logic jump1, jump,
 	output logic [1:0] aluop);
+	
 	
 reg [10:0] controls;
 
@@ -131,20 +132,20 @@ module aludec(
 always @(*)
 	case(aluop)							//edge what if we have a 2'b11 eventhough it is illegal
 	
-		2'b00: alucontrol <= 3'b010; //ADD
-		2'b01: alucontrol <= 3'b110; //SUB 
+		2'b00: alucontrol <= 5'b00011; //ADD -- USED FOR LOAD AND STORE INSTRUCTIONS
+		2'b01: alucontrol <= 5'b00100; //SUB 
 		2'b10: case(op)
-//			6'b100000: alucontrol <= 5'b; //Load byte				//not necessary for harvard
+/*//			6'b100000: alucontrol <= 5'b; //Load byte				//not necessary for harvard
 			6'b100100: alucontrol <= 5'b; //Load byte unsigned
 //			6'b100001: alucontrol <= 5'b; //Load halfword			//not necessary for harvard
-			6'b100101: alucontrol <= 5'b; //Load halfword unisigned
+			6'b100101: alucontrol <= 5'b; //Load halfword unsigned
 			6'b001111: alucontrol <= 5'b; //Load upper immidiate
 			6'b100011: alucontrol <= 5'b; //Load word
 //			6'b100010: alucontrol <= 5'b; //Load word left          //not necessary for harvard
 			6'b100110: alucontrol <= 5'b; //Load word right
 			6'b101000: alucontrol <= 5'b; //Store byte
 			6'b101001: alucontrol <= 5'b; //Store halfword
-			6'b101011: alucontrol <= 5'b; //Store word
+			6'b101011: alucontrol <= 5'b; //Store word */
 			6'b000100: alucontrol <= 5'b00100; //Branch on = 0 use SUBU
 			6'b000001: case(dest)
 						5'b00001: alucontrol <= 5'b00110; //Branch on >= 0 use SLT
@@ -362,9 +363,4 @@ endmodule
 	
 	
 	
-	
-	
-	
-	
 
-	
