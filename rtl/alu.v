@@ -39,8 +39,8 @@ always @(*)begin
 				r1 = {32'b0,a[31:0]};
 				r2 = {32'b0,b[31:0]};
 				z = r1 * r2;
-				HI <= z >> 32;
-				LO <= (z << 32) >> 32;
+				HI <= z[63:32];
+				LO <= z[31:0];
 			 end
 		
 		5'b01000: begin											//MULT multiplication signed
@@ -55,22 +55,22 @@ always @(*)begin
 						r1 = {32'b0,(~a[31:0] +1)};
 						r2 = {32'b0,(~b[31:0] +1)};
 						z = r1 * r2;
-						HI <= z >> 32;				//QST: is it still 64bit? if so just take directly z[63:32]
-						LO <= (z << 32) >> 32;
+						HI <= z[63:32];
+						LO <= z[31:0];
 					end
 				end else begin
 					if((a[31] == 0) & (b[31] == 1))begin
 						r1 = {32'b0,a[31:0]};
 						r2 = {32'b0,(~b[31:0] +1)};
 						z = ~(r1 * r2) +1; 
-						HI <= sra32(z[63:0]);
-						LO <= sra32(z << 32);
+						HI <= z[63:32];
+						LO <= z[31:0];
 					end else begin
 						r1 = {32'b0,(~a[31:0] +1)};
 						r2 = {32'b0,b[31:0]};
 						z = ~(r1 * r2) +1; 
-						HI <= sra32(z[63:0]);
-						LO <= sra32(z << 32);
+						HI <= z[63:32];
+						LO <= z[31:0];
 					end
 				end
 			end
@@ -158,27 +158,32 @@ always @(*)begin
 		5'b10011: begin										 //Branch on < 0 
 					if(a < 0)begin			
 								y <= 0;
-					end
+					end else y <= 1;
+				end
 		
 		5'b10100: begin										 //Branch on < 0 /link 
 					if(a < 0)begin			
 								y <= 0;
-					end
+					end else y <= 1;
+				end
 
 		5'b10101: begin										 //Branch on > 0  
 					if(a > 0)begin			
 								y <= 0;
-					end
+					end else y <= 1;
+				end
 		
 		5'b10110: begin										 //Branch on <= 0  
 					if(a <= 0)begin			
 								y <= 0;
-					end
+					end else y <= 1;
+				end
 
 		5'b10111: begin										 //Branch on != 0  
 					if(a != 0)begin			
 								y <= 0;
-					end
+					end else y <= 1;
+				end
 		
 		5'b11000: y <= (b << 16);							//Load upper Immidiate
 
@@ -223,122 +228,3 @@ reg [31:0] x;
 endfunction
 
 */
-
-module ands(
-	input [31:0] a,b,
-	output [31:0] y);
-	
-	assign y = a & b;
-endmodule
-
-module ors(
-	input [31:0] a,b,
-	output [31:0] y);
- 	
- 	assign y = a | b;
-endmodule
-
-module xors(
-	input [31:0] a,b,
-	output [31:0] y);
-	
-	assign y = a^b;
-endmodule
-
-module add(
-	input [31:0] a,b,
-	output [31:0] y);
-	
-	assign y = a+b;
-endmodule
-
-module beq(
-	input [31:0] a,b,
-	output [31:0] y);
-	
-	assign y = (a==b);
-endmodule
-
-module bgez(
-	input [31:0] a,
-	output [31:0] y);
-	
-	assign y = (a>=0);
-endmodule
-
-// module bgezal same as bgez solution add control signal to link PCplus4 and register $31
-
-module bgtz(
-	input [31:0] a,
-	output [31:0] y);
-	
-	assign y = (a > 0);
-endmodule
-
-module blez(
-	input [31:0] a,
-	output [31:0] y);
-	
-	assign y = (a <= 0);
-endmodule
-	
-module bltz(
-	input [31:0] a,
-	output [31:0] y);
-	
-	assign y = (a < 0);
-endmodule
-
-module bne(
-	input [31:0] a,b,
-	output [31:0] y);
-	
-	assign y = (a != b);
-endmodule
-
-module div(
-	input [31:0] a,
-	output [31:0] y);
-	
-	assign y = (a <= 0);
-endmodule
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
