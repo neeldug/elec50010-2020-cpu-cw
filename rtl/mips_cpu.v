@@ -27,16 +27,17 @@ module controller(
 	input logic [5:0] op, funct,
 	input logic [4:0] dest,
 	input logic zero,
-	output logic memtoreg, data_write,
+	output logic memtoreg2, memtoreg1,
 	output logic pcsrc, alusrc,
-	output logic regdst, regwrite,
+	output logic regdst2, regdst1,
+	output logic regwrite, data_write,
 	output logic jump,
 	output logic [4:0] alucontrol);
 	
 logic [1:0] aluop;
 logic branch;
 
-maindec md(op, memtoreg, data_write, branch, alusrc, regdst, regwrite, jump, aluop);
+maindec md(op, memtoreg2, memtoreg1, data_write, branch, alusrc, regdst2, regdst1, regwrite, jump, aluop);
 
 aludec ad(funct, aluop, alucontrol);
 
@@ -47,65 +48,73 @@ endmodule
 module maindec(
 	input logic [5:0] op, funct,
 	input logic [4:0] dest,
-	output logic memtoreg, data_write,
+	output logic memtoreg2, memtoreg1, data_write,
 	output logic branch, alusrc,
-	output logic regdst,
+	output logic regdst2, regdst1,
 	output logic regwrite, jump,
 	output logic [1:0] aluop);
 	
-reg [8:0] controls;
+reg [10:0] controls;
 
-assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg, jump, aluop} = controls;
 
-// Assign 8 elements names as aluop consist of 2 bits so rightfully fills the reg controls.
+//Probably needs to use a always@(*)
+always @(*)begin
+	assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg2, memtoreg1, jump, aluop} = controls;
+	end
+
+// Assign 11 elements names as aluop consist of 2 bits so rightfully fills the reg controls.
 // Correspond to the bits below from left to right in the same order (starting with regwrite and ending with aluop).
+
 
 always @(*)
 	case(op)
-		6'b000000: case(funct)
-						6'b001001: controls <= 9'b100000100; //Jump and link register
-						6'b001000: controls <= 9'b010000110; //Jump register
-						6'b010001: controls <= 9'b100000010; //Move to high       No need to write enable register?
-						6'b010100: controls <= 9'b100000010; //Move to low		  As HI and LO are reg in ALU module
-						default: controls <= 9'b110000010; //R-type instruction
+		6'b000000: case(funct)									//link in reg not $31
+						6'b001001: controls <= 11'b10000000100; //Jump and link register
+						6'b001000: controls <= 11'b00100000110; //Jump register
+						6'b010001: controls <= 11'b10000000010; //Move to high       No need to write enable register?
+						6'b010100: controls <= 11'b10000000010; //Move to low		  As HI and LO are reg in ALU module
+						default: controls <= 11'b10100000010; //R-type instruction
 					endcase
-		6'b100000: controls <= 9'b101001000; //Load byte
-		6'b100100: controls <= 9'b101001000; //Load byte unsigned
-		6'b100001: controls <= 9'b101001000; //Load halfword
-		6'b100101: controls <= 9'b101001000; //Load halfword unisigned
-		6'b001111: controls <= 9'b101001000; //Load upper immidiate
-		6'b100011: controls <= 9'b101001000; //Load word
-		6'b100010: controls <= 9'b101001000; //Load word left
-		6'b100110: controls <= 9'b101001000; //Load word right
-		6'b101000: controls <= 9'b001010000; //Store byte
-		6'b101001: controls <= 9'b001010000; //Store halfword
-		6'b101011: controls <= 9'b001010000; //Store word
-		6'b000100: controls <= 9'b000100001; //Branch on = 0
+		6'b100000: controls <= 11'b10010001000; //Load byte
+		6'b100100: controls <= 11'b10010001000; //Load byte unsigned
+		6'b100001: controls <= 11'b10010001000; //Load halfword
+		6'b100101: controls <= 11'b10010001000; //Load halfword unisigned
+		6'b001111: controls <= 11'b10010001000; //Load upper immidiate
+		6'b100011: controls <= 11'b10010001000; //Load word
+		6'b100010: controls <= 11'b10010001000; //Load word left
+		6'b100110: controls <= 11'b10010001000; //Load word right
+		6'b101000: controls <= 11'b00010100000; //Store byte
+		6'b101001: controls <= 11'b00010100000; //Store halfword
+		6'b101011: controls <= 11'b00010100000; //Store word
+		6'b000100: controls <= 11'b00001000001; //Branch on = 0
 		6'b000001: case(dest)
-						5'b00001: controls <= 9'b000100001; //Branch on >= 0
-						5'b10001: controls <= 9'b100100001; //Branch on >= 0 /link (regwrite active)
-						5'b00000: controls <= 9'b000100001; //Branch on < 0
-						5'b10000: controls <= 9'b100100001; //Branch on < 0 /link
-						default: controls <= 9'bxxxxxxxxx;
+						5'b00001: controls <= 11'b00001000001; //Branch on >= 0
+						5'b10001: controls <= 11'b11001010001; //Branch on >= 0 /link (regwrite active)
+						5'b00000: controls <= 11'b00001000001; //Branch on < 0
+						5'b10000: controls <= 11'b11001010001; //Branch on < 0 /link
+						default:  controls <= 11'bxxxxxxxxxxx;
 					endcase
-		6'b000111: controls <= 9'b000100001; //Branch on > 0
-		6'b000110: controls <= 9'b000100001; //Branch on <= 0
-		6'b000101: controls <= 9'b000100001; //Branch on != 0
-		6'b001001: controls <= 9'b101000010; //ADD unsigned immediate
-		6'b000010: controls <= 9'b000000100; //Jump
-		6'b000011: controls <= 9'b100000100; //Jump and link
-		6'b001100: controls <= 9'b101000010; //ANDI
-		6'b001101: controls <= 9'b101000010; //ORI
-		6'b001110: controls <= 9'b101000010; //XORI
-		6'b001010: controls <= 9'b101000010; //Set on less than immediate (signed)
-		6'b001011: controls <= 9'b101000010; //Set on less than immediate unsigned
-		default:   controls <= 9'bxxxxxxxxx; //???
+		6'b000111: controls <= 11'b00001000001; //Branch on > 0
+		6'b000110: controls <= 11'b00001000001; //Branch on <= 0
+		6'b000101: controls <= 11'b00001000001; //Branch on != 0
+		6'b001001: controls <= 11'b10010000010; //ADD unsigned immediate
+		6'b000010: controls <= 11'b00000000100; //Jump
+		6'b000011: controls <= 11'b11000010100; //Jump and link
+		6'b001100: controls <= 11'b10010000010; //ANDI
+		6'b001101: controls <= 11'b10010000010; //ORI
+		6'b001110: controls <= 11'b10010000010; //XORI
+		6'b001010: controls <= 11'b10010000010; //Set on less than immediate (signed)
+		6'b001011: controls <= 11'b10010000010; //Set on less than immediate unsigned
+		default:   controls <= 11'bxxxxxxxxxxx; //???
 	endcase
 endmodule
+
 
 // We are currently setting all the control signals by looking at the opcode of the instrunctions
 // We created an reg (=array) of control signals so that it is easier to implement.
 // In order to understand this section please refer to page 376 of the book (table 7.3)
+
+
 
 module aludec(
 	input logic [5:0] funct,op,
@@ -178,14 +187,18 @@ always @(*)
 	endcase
 endmodule
 
+
 // In this module we are setting the control signals for the ALU. Refer to the table 7.2 page 376.
 // Note: The aluop can't be 2'b11. 
-// The default: case(funct) replaces an iterative: 2'b10 & 6'bxxxxxx (funct) 
+// The default: case(funct) replaces an iterative: 2'b10 & 5'bxxxxx (funct) 
+
+
 
 module datapath(
 	input logic clk, reset, clk_enable,
-	input logic memtoreg, pcsrc,
-	input logic alusrc, regdst,
+	input logic memtoreg2, memtoreg1,
+	input logic alusrc, pcsrc,
+	input logic regdst2, regdest1,
 	input logic regwrite, jump,
 	input logic [4:0] alucontrol,
 	output logic zero,
@@ -194,11 +207,11 @@ module datapath(
 	output logic [31:0] pc,
 	output logic [31:0] data_address, data_writedata);
 
-logic [4:0] writereg;
-logic [31:0] pcnext, pcnextbr, pcplus4, pcbranch;
+logic [4:0] writereg1, writereg2;
+logic [31:0] pcnext, pcnextbr, pcplus4, pcbranch, pclink;
 logic [31:0] signimm, signimmsh;
 logic [31:0] srca, srcb;
-logic [31:0] result;
+logic [31:0] result1, result2;
 
 // Program counter regfile
 
@@ -210,18 +223,23 @@ shiftleft2 immshift(signimm, signimmsh);
 
 adder pcbranch(signimmsh, pcplus4, pcbranch);
 
+mux2 #(32) pcmux(
+
 mux2 #(32) pcmux(pcplus4, pcbranch, pcsrc, pcnextbr);
 
 //another mux ?
 
- 
-		
+	
 //Register file
-regfile register(clk, regwrite, instr_address[25:21], instr_address[20:16], writereg, result, srca, data_writedata);
+regfile register(clk, regwrite, instr_address[25:21], instr_address[20:16], writereg2, result2, srca, data_writedata);
 
-mux2 #(5) wrmux(instr_address[20:16], instr_address[15:11], regdst, writereg);
+mux2 #(5) wrmux(instr_address[20:16], instr_address[15:11], regdst1, writereg1);
+mux2 #(5) wrmux2(writereg1, 5'b11111, regdst2, writereg2);
 
-mux2 #(32) resmux(data_address, data_readdata, memtoreg, result);
+adder pcbranch(pcplus4, 32'b100, pclink);
+
+mux2 #(32) resmux(data_address, data_readdata, memtoreg1, result1);
+mux2 #(32) resmux2(result1, pclink, memtoreg2, result2);
 
 signext se(instr_address[15:0], signimm); 
 
@@ -231,6 +249,7 @@ mux2 #(32) srcbmux(data_writedata, signimm, alusrc, srcb);
 alumodule alu(alucontrol, srca, srcb, zero, data_address); 
 
 endmodule
+
 
 
 
@@ -256,6 +275,9 @@ module regfile(
 	assign rd2 = (ra2 != 0) ? rf[ra2] : 0;
 endmodule
 
+
+
+
 // Implementation of reusable functions used in datapath
 
 module mux2 #(parameter WIDTH =8)(
@@ -265,6 +287,14 @@ module mux2 #(parameter WIDTH =8)(
 
 	assign y = s ? a : b;
 endmodule
+
+module mux4 #(parameter WIDTH =8)(
+	input logic [WIDTH - 1:0] a, b,
+	input logic s1, s2,
+	output logic [WIDTH - 1:0] y);
+	
+	
+	
 
 module adder(
 	input logic [31:0] a,b,
