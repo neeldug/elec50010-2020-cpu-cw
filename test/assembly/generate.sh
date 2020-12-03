@@ -2,4 +2,4 @@
 
 BASEDIR=$(dirname "$0")
 
-mips-linux-gnu-gcc -S -mfp32 -march=mips1 "$1" -o "$BASEDIR""/"$(basename "$1" .c).asm.txt
+mips-linux-gnu-gcc -S -EB -mfp32 -march=mips1 "$1" -o "$BASEDIR""/"$(basename "$1" .c).asm.txt
