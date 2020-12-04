@@ -8,6 +8,7 @@ module alumodule(
 logic [31:0] x;
 logic [63:0] r1,r2,z;
 logic [4:0] i;
+logic [31:0] y;
 reg[31:0] HI,LO;
 
 always @(*)begin
@@ -102,7 +103,7 @@ always @(*)begin
 
 		5'b01101: begin											//shift right arithmetic variable
 				x = a;
-				for(i = b[31:0]; i>0; i = i-1)begin
+				for(y = b[31:0]; y>0; y = y-1)begin
 						if(a[31] == 1)
 								x = {1'b1,x[31:1]};
 						else
@@ -113,7 +114,7 @@ always @(*)begin
 			 	
 		5'b01110: begin											//shift right logical variable
 				x = a;
-				for(i = b[31:0]; i>0; i = i-1)begin
+				for(y = b[31:0]; y>0; y = y-1)begin
 					x = {1'b0,x[31:1]};
 				end
 				y = x;
