@@ -232,9 +232,10 @@ shiftleft2 immshift(signimm, signimmsh);
 
 adder pcbranch(signimmsh, pcplus4, pcbranch);
 
-mux2 #(32) pcmux((mux2 #(32) pcmux1(pcplus4, pcbranch, pcsrc, pcnextbr1)), (mux2 #(32) pcmux2(instr_address[25:0], result, jump1, pcnextbr2)), jump, pcnextbr)
+mux2 #(32) pcmux1(pcplus4, pcbranch, pcsrc, pcnextbr1);
+mux2 #(32) pcmux2(instr_address[25:0], result, jump1, pcnextbr2);
 
-mux2 #(32) pcmux(pcplus4, pcbranch, pcsrc, pcnextbr);
+mux2 #(32) pcmux(pcnextbr1, pcnextbr2, jump, pcnextbr);
 
 //another mux ?
 
