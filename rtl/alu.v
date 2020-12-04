@@ -182,7 +182,7 @@ always @(*)begin
 		5'b10111: y = (b << 16);							//Load upper Immidiate
 
 		5'b11000: y = a;									//Jump register JR
-	default: y = 32'bxxxxx	//???	
+	default: y = 32'bxxxxx	//???	 
 	endcase
 end
 
