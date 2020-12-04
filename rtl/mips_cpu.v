@@ -247,7 +247,7 @@ regfile register(clk, regwrite, instr_address[25:21], instr_address[20:16], writ
 mux2 #(5) wrmux(instr_address[20:16], instr_address[15:11], regdst1, writereg1);
 mux2 #(5) wrmux2(writereg1, 5'b11111, regdst2, writereg);
 
-adder pcbranch(pcplus4, 32'b100, pclink);
+adder pcbrlink(pcplus4, 32'b100, pclink);
 
 mux2 #(32) resmux(data_address, data_readdata, memtoreg1, result1);
 mux2 #(32) resmux2(result1, pclink, memtoreg2, result);
