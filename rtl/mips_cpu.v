@@ -14,7 +14,8 @@ module CPU_MIPS_harvard(
 	output logic [31:0] data_writedata,
 	input logic [31:0] data_readdata);
 	
-logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc, pc;
+logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc;
+logic [31:0] pc;
 logic [4:0] alucontrol;
 
 controller control(instr_readdata[31:26], instr_readdata[5:0], instr_readdata[20:16], zero, memtoreg1, memtoreg1, data_write, pcsrc, alusrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol);
@@ -72,7 +73,7 @@ always @(*)
 	case(op)
 		6'b000000: case(funct)									//link in reg not $31
 						6'b001001: begin 						//Jump and link register
-									controls <= 11'b10000000100;
+									controls = 11'b10000000100;
 									jump1 = 1;
 								end
 						6'b001000: begin						//Jump register
