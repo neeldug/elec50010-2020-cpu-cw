@@ -195,6 +195,7 @@ always @(*)
 						endcase
 			default: alucontrol = 5'bxxxxx; //???		
 			endcase	
+	default: alucontrol = 5'bxxxxx;	//case aluop= 11 ???
 	endcase
 endmodule
 
