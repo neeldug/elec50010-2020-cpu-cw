@@ -39,7 +39,7 @@ logic branch;
 
 maindec md(op, funct, dest, memtoreg2, memtoreg1, data_write, branch, alusrc, regdst2, regdst1, regwrite, jump1, jump, aluop);
 
-aludec ad(funct, aluop, alucontrol);
+aludec ad(funct, op, aluop, alucontrol);
 	always @(*) begin
 		assign pcsrc = branch & zero;
 	end
