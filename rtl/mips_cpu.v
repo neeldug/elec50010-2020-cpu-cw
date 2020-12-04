@@ -227,11 +227,11 @@ logic [31:0] result1, result;
 
 flipflopr #(32) pcreg(clk, reset, clk_enable, pcnextbr, pcnext);
 
-adder pcplus4(pcnext, 32'b100, pcplus4);
+adder pcpl4(pcnext, 32'b100, pcplus4);
 
 shiftleft2 immshift(signimm, signimmsh);
 
-adder pcbranch(signimmsh, pcplus4, pcbranch);
+adder pcbr(signimmsh, pcplus4, pcbranch);
 
 mux2 #(32) pcmux1(pcplus4, pcbranch, pcsrc, pcnextbr1);
 mux2 #(32) pcmux2(instr_address[25:0], result, jump1, pcnextbr2);
