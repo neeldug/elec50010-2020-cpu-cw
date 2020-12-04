@@ -19,7 +19,7 @@ logic [4:0] alucontrol;
 
 controller control(instr_readdata[31:26], instr_readdata[5:0], instr_readdata[20:16], zero, memtoreg1, memtoreg1, data_write, pcsrc, alusrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol);
 
-datapath datap(clk, reset, clk_enable, memtoreg2, memtoreg1, pcsrc, alusrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol, zero, pc, instr_readdata, aluout, data_writedata, data_readdata);
+datapath datap(clk, reset, clk_enable, memtoreg2, memtoreg1, alusrc, pcsrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol, zero, pc, instr_readdata, data_readdata, data_address, data_writedata);
 
 endmodule
 
@@ -202,7 +202,6 @@ endmodule
 // Note: The aluop can't be 2'b11. 
 // The default: case(funct) replaces an iterative: 2'b10 & 5'bxxxxx (funct) 
 
-datapath datap(clk, reset, clk_enable, memtoreg2, memtoreg1, alusrc, pcsrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol, zero, pc, instr_readdata, data_readdata, data_address, data_writedata);
 
 module datapath(
 	input logic clk, reset, clk_enable,
