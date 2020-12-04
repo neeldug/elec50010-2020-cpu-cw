@@ -152,42 +152,36 @@ always @(*)begin
 					HI = a % b;
 					LO = a / b;
 				end
-		5'b10001: y = HI[31:0];							//MTHI: move to High
-		5'b10010: y = LO[31:0];							//MTLO: move to Low
+		5'b10001: y = HI[31:0];								//MTHI: move to High
+		5'b10010: y = LO[31:0];								//MTLO: move to Low
 
-		5'b10011: begin										 //Branch on < 0 
-					if(a < 0)begin			
-								y = 0;
-					end else y = 1;
+		5'b10011: begin										 //Branch on < 0 and Branch on < 0 / link
+					if(a[31] == 1)begin			
+								y = 32'b0;
+					end else y = {31'b0, 1'b1};
+				end
+
+		5'b10100: begin										 //Branch on > 0  
+					if(a[31] == 0 & a != 32'b0)begin			
+								y = 32'b0;
+					end else y = {31'b0, 1'b1};
 				end
 		
-		5'b10100: begin										 //Branch on < 0 /link 
-					if(a < 0)begin			
-								y = 0;
-					end else y = 1;
+		5'b10101: begin										 //Branch on = 0  
+					if(a == 32'b0)begin			
+								y = 32'b0;
+					end else y = {31'b0, 1'b1};
 				end
 
-		5'b10101: begin										 //Branch on > 0  
-					if(a > 0)begin			
-								y = 0;
-					end else y = 1;
+		5'b10110: begin										 //Branch on != 0  
+					if(a != 32'b0)begin			
+								y = 32'b0;
+					end else y = {31'b0, 1'b1};
 				end
 		
-		5'b10110: begin										 //Branch on = 0  
-					if(a == 0)begin			
-								y = 0;
-					end else y = 1;
-				end
+		5'b10111: y = (b << 16);							//Load upper Immidiate
 
-		5'b10111: begin										 //Branch on != 0  
-					if(a != 0)begin			
-								y = 0;
-					end else y = 1;
-				end
-		
-		5'b11000: y = (b << 16);							//Load upper Immidiate
-
-		5'b11001: y = a;									//Jump register JR
+		5'b11000: y = a;									//Jump register JR
 		
 	endcase
 end
