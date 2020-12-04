@@ -202,7 +202,7 @@ endmodule
 // Note: The aluop can't be 2'b11. 
 // The default: case(funct) replaces an iterative: 2'b10 & 5'bxxxxx (funct) 
 
-
+datapath datap(clk, reset, clk_enable, memtoreg2, memtoreg1, alusrc, pcsrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol, zero, pc, instr_readdata, data_readdata, data_address, data_writedata);
 
 module datapath(
 	input logic clk, reset, clk_enable,
@@ -213,9 +213,9 @@ module datapath(
 	input logic jump1, jump,
 	input logic [4:0] alucontrol,
 	output logic zero,
+	output logic [31:0] pc,
 	input logic [31:0] instr_readdata,
 	input logic [31:0] data_readdata,
-	output logic [31:0] pc,
 	output logic [31:0] data_address, data_writedata);
 
 logic [4:0] writereg1, writereg;
