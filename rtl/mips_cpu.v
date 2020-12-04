@@ -39,7 +39,7 @@ logic branch;
 
 maindec md(op, funct, dest, memtoreg2, memtoreg1, data_write, branch, alusrc, regdst2, regdst1, regwrite, jump1, jump, aluop);
 
-aludec ad(funct, op, aluop, alucontrol);
+aludec ad(funct, op, dest, aluop, alucontrol);
 	always @(*) begin
 		assign pcsrc = branch & zero;
 	end
@@ -126,6 +126,7 @@ endmodule
 
 module aludec(
 	input logic [5:0] funct,op,
+	input logic [4:0] dest,
 	input logic [1:0] aluop,
 	output logic [4:0] alucontrol);
 
