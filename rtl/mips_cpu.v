@@ -19,7 +19,7 @@ logic [4:0] alucontrol;
 
 controller control(instr_readdata[31:26], instr_readdata[5:0], instr_readdata[20:16], zero, memtoreg1, memtoreg1, data_write, pcsrc, alusrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol);
 
-datapath datap(clk, reset, clk_enable, memtoreg2, memtoreg1, alusrc, pcsrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol, zero, pc, instr_readdata, data_readdata, data_address, data_writedata);
+datapath datap(clk, reset, clk_enable, memtoreg2, memtoreg1, alusrc, pcsrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol, zero, pc, instr_readdata, data_readdata, data_address, data_writedata, instr_address[25:0]);
 
 endmodule
 
@@ -215,7 +215,8 @@ module datapath(
 	output logic [31:0] pc,
 	input logic [31:0] instr_readdata,
 	input logic [31:0] data_readdata,
-	output logic [31:0] data_address, data_writedata);
+	output logic [31:0] data_address, data_writedata
+	output logic [25:0] instr_address);
 
 logic [4:0] writereg1, writereg;
 logic [31:0] pcnext, pcnextbr, pcplus4, pcbranch, pclink;
@@ -234,7 +235,7 @@ shiftleft2 immshift(signimm, signimmsh);
 adder pcbr(signimmsh, pcplus4, pcbranch);
 
 mux2 #(32) pcmux1(pcplus4, pcbranch, pcsrc, pcnextbr1);
-mux2 #(32) pcmux2(instr_address[25:0], result, jump1, pcnextbr2);
+mux2 #(32) pcmux2(instr_address, result, jump1, pcnextbr2);
 
 mux2 #(32) pcmux(pcnextbr1, pcnextbr2, jump, pcnextbr);
 
