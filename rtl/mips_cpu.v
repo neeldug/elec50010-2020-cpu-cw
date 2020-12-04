@@ -37,7 +37,7 @@ module controller(
 logic [1:0] aluop;
 logic branch;
 
-maindec md(op, memtoreg2, memtoreg1, data_write, branch, alusrc, regdst2, regdst1, regwrite, jump1, jump, aluop);
+maindec md(op, funct, dest, memtoreg2, memtoreg1, data_write, branch, alusrc, regdst2, regdst1, regwrite, jump1, jump, aluop);
 
 aludec ad(funct, aluop, alucontrol);
 	always @(*) begin
@@ -208,7 +208,8 @@ module datapath(
 	input logic memtoreg2, memtoreg1,
 	input logic alusrc, pcsrc,
 	input logic regdst2, regdest1,
-	input logic regwrite, jump,
+	input logic regwrite,
+	input logic jump1, jump,
 	input logic [4:0] alucontrol,
 	output logic zero,
 	input logic [31:0] instr_readdata,
