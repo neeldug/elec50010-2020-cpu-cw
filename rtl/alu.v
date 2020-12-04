@@ -173,7 +173,7 @@ always @(*)begin
 				end
 		
 		5'b10110: begin										 //Branch on = 0  
-					if(a = 0)begin			
+					if(a == 0)begin			
 								y = 0;
 					end else y = 1;
 				end
