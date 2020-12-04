@@ -220,7 +220,7 @@ module datapath(
 
 logic [4:0] writereg1, writereg;
 logic [31:0] pcnext, pcnextbr, pcplus4, pcbranch, pclink;
-logic [31:0] signimm, signimmsh;
+logic [31:0] signimm, signimmsh, pcnextbr1, pcnextbr2;
 logic [31:0] srca, srcb;
 logic [31:0] result1, result;
 
