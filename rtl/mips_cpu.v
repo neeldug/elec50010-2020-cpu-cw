@@ -215,7 +215,7 @@ module datapath(
 	output logic [31:0] pc,
 	input logic [31:0] instr_readdata,
 	input logic [31:0] data_readdata,
-	output logic [31:0] data_address, data_writedata
+	output logic [31:0] data_address, data_writedata,
 	output logic [25:0] instr_address);
 
 logic [4:0] writereg1, writereg;
