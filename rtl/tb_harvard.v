@@ -61,7 +61,7 @@ module tb_harvard;
 	end
 
 	$display("Testbench: Finished. Active = 0");
-	$display("Final value of register v0 = ");
+	$display("Final value of register v0 = %d", register_v0);
 
 	$finish;
 
