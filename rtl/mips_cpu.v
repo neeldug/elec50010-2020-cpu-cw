@@ -235,7 +235,7 @@ shiftleft2 immshift(signimm, signimmsh);
 adder pcbr(signimmsh, pcplus4, pcbranch);
 
 mux2 #(32) pcmux1(pcplus4, pcbranch, pcsrc, pcnextbr1);
-mux2 #(32) pcmux2(instr_address, result, jump1, pcnextbr2);
+mux2 #(32) pcmux2({5'b0,instr_address}, result, jump1, pcnextbr2);
 
 mux2 #(32) pcmux(pcnextbr1, pcnextbr2, jump, pcnextbr);
 
