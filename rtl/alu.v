@@ -6,7 +6,7 @@ module alumodule(
 	output logic [31:0] y);
 
 logic [31:0] x;
-logic [64:0] r1,r2,z;
+logic [63:0] r1,r2,z;
 logic i;
 reg[31:0] HI,LO;
 
@@ -22,15 +22,15 @@ always @(*)begin
 		5'b00110: begin								//SLT signed
 					if(a[31] != b[31])begin			
 							if(a[31] > b[31])begin
-									y = 1;
+									y = {31'b0,1'b1};
 							end else begin
-									y = 0;
+									y = 32'b0;
 							end
 					end else begin
 							if(a<b)begin
-									y = 1;
+									y = {31'b0,1'b1};
 							end else begin
-									y = 0;
+									y = 32'b0;
 							end
 					end
 				  end
