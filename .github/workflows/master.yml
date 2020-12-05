@@ -25,7 +25,7 @@ jobs:
       - name: Install Verilator
         run: sudo apt-get install -y verilator
       - name: Run Linter
-        run:
+        run: |
           shopt -s extglob #Enables exclusion for wildcard
           verilator --lint-only rtl/mips_cpu.v rtl/!(mips_cpu).v
   test:
