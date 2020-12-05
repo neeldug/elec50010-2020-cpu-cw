@@ -2,3 +2,4 @@
 test/assembly/*
 
 !test/assembly/*.sh
+test/binary/*

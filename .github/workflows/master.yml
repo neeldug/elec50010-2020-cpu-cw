@@ -39,4 +39,4 @@ jobs:
       - name: Run Testbench (Bus)
         run: ./test/test_mips_cpu_bus.sh
       - name: Run Testbench (Harvard)
-        run: ./test/test_mips_cpu_harvard.sh
+        run: ./test/test_mips_cpu_harvard.sh rtl

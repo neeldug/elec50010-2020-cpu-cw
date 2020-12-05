@@ -1,8 +1,5 @@
-int addu_test() {
-    unsigned int x = 4294967295;
+int main() {
+    unsigned int x = 8;
     x += 1;
-}
-
-void main() {
-    int x = addu_test();
+    return x;
 }
