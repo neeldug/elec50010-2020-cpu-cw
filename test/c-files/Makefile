@@ -27,6 +27,9 @@ MIPS_LDFLAGS = -nostdlib -Wl,-melf32btsmip -march=mips1 -nostartfiles -mno-check
 
 %.s: %.c
 	$(MIPS_CC) $(MIPS_CPPFLAGS) -S $< -o $@
+
+%.asm.txt: %.s
+	mv $< ../assembly/$@
 # Link MIPS object file (.o), producing .elf, using memory locations specified in spec
 %.mips.elf: %.mips.o
 	$(MIPS_CC) $(MIPS_CPPFLAGS) $(MIPS_LDFLAGS) -T linker.ld $< -o $@
@@ -40,7 +43,7 @@ MIPS_LDFLAGS = -nostdlib -Wl,-melf32btsmip -march=mips1 -nostartfiles -mno-check
 	$(MIPS_OBJDUMP) -j .text -D $< > $@
 
 %.hex.txt : %.mips.bin
-	od $< > $@
+	od $< > ../binary/$@
 
 # Build simulator
 bin/mips_simulator: src/simulator.cpp
