@@ -45,11 +45,11 @@ MIPS_LDFLAGS = -nostdlib -Wl,-melf32btsmip -march=mips1 -nostartfiles -mno-check
 %.hex.txt : %.mips.bin
 	od -An -w4 -t x4 $< > ../binary/$@
 
-%.static.bin: %.c
-	$(MIPS_CC) $(MIPS_CPPFLAGS) $< -static -o $@
+%.bin: %.c
+	$(MIPS_CC) $(MIPS_CPPFLAGS) $< -o $@
 
-%.ref.txt : %.static.bin
-	qemu-mipsel $<; echo $$? > ../reference/$@
+%.ref.txt : %.bin
+	qemu-mipsel -L /usr/mipsel-linux-gnu $<; echo $$? > ../reference/$@
 
 ## Build simulator
 #bin/mips_simulator: src/simulator.cpp
