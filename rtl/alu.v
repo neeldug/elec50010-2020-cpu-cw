@@ -124,7 +124,7 @@ always @(*)begin
 		
 	
 
-/*		
+		
 		5'b01111: begin										//Divid: DIV
 					if(a[31] == b[31])begin
 						if((a[31] == 0) & (b[31] == 0))begin
@@ -152,7 +152,7 @@ always @(*)begin
 					HI = a % b;
 					LO = a / b;
 				end
-*/
+
 		5'b10001: y = HI[31:0];								//MTHI: move to High
 		5'b10010: y = LO[31:0];								//MTLO: move to Low
 
@@ -189,7 +189,7 @@ end
 
 
 		always @(y)begin
-				if(y==0)begin
+				if(y==32'b0)begin
 					zero = 1;
 				end else begin
 					zero = 0;
