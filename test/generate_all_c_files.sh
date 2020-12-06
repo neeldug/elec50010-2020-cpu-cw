@@ -7,4 +7,5 @@ for file in *.c; do
   TESTNAME=$(basename "$file" | cut -f 1 -d '.')
   make "$TESTNAME".asm.txt
   make "$TESTNAME".hex.txt
+  make "$TESTNAME".ref.txt
 done

@@ -7,10 +7,10 @@ CC = g++
 CPPFLAGS = -W -Wall
 
 # For MIPS binaries. Turn on all warnings, enable all optimisations and link everything statically
-MIPS_CC = mips-linux-gnu-gcc
-MIPS_OBJCOPY = mips-linux-gnu-objcopy
-MIPS_OBJDUMP = mips-linux-gnu-objdump
-MIPS_CPPFLAGS = -W -Wall -O3 -fno-builtin -march=mips1 -mfp32 -EL
+MIPS_CC = mipsel-linux-gnu-gcc
+MIPS_OBJCOPY = mipsel-linux-gnu-objcopy
+MIPS_OBJDUMP = mipsel-linux-gnu-objdump
+MIPS_CPPFLAGS = -W -Wall -O3 -fno-builtin -march=mips1 -mfp32
 MIPS_LDFLAGS = -nostdlib -Wl,-melf32btsmip -march=mips1 -nostartfiles -mno-check-zero-division -Wl,--gpsize=0 -static -Wl,-Bstatic -Wl,--build-id=none
 
 # Compile C file (.c) into MIPS object file (.o)
@@ -43,17 +43,23 @@ MIPS_LDFLAGS = -nostdlib -Wl,-melf32btsmip -march=mips1 -nostartfiles -mno-check
 	$(MIPS_OBJDUMP) -j .text -D $< > $@
 
 %.hex.txt : %.mips.bin
-	od $< > ../binary/$@
+	od -An -w4 -t x4 $< > ../binary/$@
 
-# Build simulator
-bin/mips_simulator: src/simulator.cpp
-	mkdir -p bin
-	$(CC) $(CPPFLAGS) src/simulator.cpp -o bin/mips_simulator
+%.static.bin: %.c
+	$(MIPS_CC) $(MIPS_CPPFLAGS) $< -static -o $@
 
-# Dummy for build simulator to conform to spec
-simulator: bin/mips_simulator
+%.ref.txt : %.static.bin
+	qemu-mipsel $<; echo $$? > ../reference/$@
 
-# Dummy for build testbench to conform to spec. Could do nothing
-testbench:
-	@echo "Nothing to do"
+## Build simulator
+#bin/mips_simulator: src/simulator.cpp
+#	mkdir -p bin
+#	$(CC) $(CPPFLAGS) src/simulator.cpp -o bin/mips_simulator
+#
+## Dummy for build simulator to conform to spec
+#simulator: bin/mips_simulator
+#
+## Dummy for build testbench to conform to spec. Could do nothing
+#testbench:
+#	@echo "Nothing to do"
 
