@@ -12,7 +12,8 @@ module datapath(
 	input logic [31:0] instr_readdata,
 	input logic [31:0] data_readdata,
 	output logic [31:0] data_address, data_writedata,
-	output logic [25:0] instr_address);
+	output logic [25:0] instr_address,
+	output logic [31:0] register_v0);
 
 
 logic [4:0] writereg1, writereg;
@@ -45,7 +46,7 @@ mux2 #(32) pcmux(pcnextbr1, pcnextbr2, jump, pcnextbr);
 
 	
 //Register file
-regfile register(clk, regwrite, instr_address[25:21], instr_address[20:16], writereg, result, srca, data_writedata);
+regfile register(clk, regwrite, instr_address[25:21], instr_address[20:16], writereg, result, srca, data_writedata, register_v0);
 
 mux2 #(5) wrmux(instr_address[20:16], instr_address[15:11], regdst1, writereg1);
 mux2 #(5) wrmux2(writereg1, 5'b11111, regdst2, writereg);
