@@ -43,7 +43,7 @@ MIPS_LDFLAGS = -nostdlib -Wl,-melf32btsmip -march=mips1 -nostartfiles -mno-check
 	$(MIPS_OBJDUMP) -j .text -D $< > $@
 
 %.hex.txt : %.mips.bin
-	od -An -w4 -t x4 $< > ../binary/$@
+	 od -An -w4 -t x4 $< > ../binary/$@; sed -i '1 s/^/@BFC00000\n/' ../binary/$@
 
 %.bin: %.c
 	$(MIPS_CC) $(MIPS_CPPFLAGS) $< -o $@
