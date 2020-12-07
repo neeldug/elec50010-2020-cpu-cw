@@ -5,8 +5,8 @@ module CPU_MIPS_harvard(
 	
 	input logic clk_enable,
 	
-	output logic [31:0] instr_address,	//PC Next
-	input logic [31:0] instr_readdata,	//Data stored at address determined by PCnext
+	output logic [31:0] instr_address,		//PC Next
+	input logic [31:0] instr_readdata,		//Data stored at address determined by PCnext
 	
 	output logic [31:0] data_address,		//ALU_result
 	output logic data_write,				//control signal Data memory write enable for data
@@ -17,8 +17,9 @@ module CPU_MIPS_harvard(
 logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc;
 logic [31:0] pc;
 logic [4:0] alucontrol;
+logic [2:0] loadcontrol;
 
-controller control(instr_readdata[31:26], instr_readdata[5:0], instr_readdata[20:16], zero, memtoreg1, memtoreg1, data_write, pcsrc, alusrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol);
+controller control(instr_readdata[31:26], instr_readdata[5:0], instr_readdata[20:16], zero, memtoreg1, memtoreg1, data_write, pcsrc, alusrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol, loadcontrol);
 
 datapath datap(clk, reset, clk_enable, memtoreg2, memtoreg1, alusrc, pcsrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol, zero, pc, instr_readdata, data_readdata, data_address, data_writedata, instr_address[25:0]);
 
@@ -33,12 +34,13 @@ module controller(
 	output logic regdst2, regdst1,
 	output logic regwrite, data_write,
 	output logic jump1, jump,
-	output logic [4:0] alucontrol);
+	output logic [4:0] alucontrol,
+	output logic [2:0] loadcontrol);
 	
 logic [1:0] aluop;
 logic branch;
 
-maindec md(op, funct, dest, memtoreg2, memtoreg1, data_write, branch, alusrc, regdst2, regdst1, regwrite, jump1, jump, aluop);
+maindec md(op, funct, dest, memtoreg2, memtoreg1, data_write, branch, alusrc, regdst2, regdst1, regwrite, jump1, jump, aluop, loadcontrol);
 
 aludec ad(funct, op, dest, aluop, alucontrol);
 	always @(*) begin
@@ -54,7 +56,8 @@ module maindec(
 	output logic regdst2, regdst1,
 	output logic regwrite,
 	output logic jump1, jump,
-	output logic [1:0] aluop);
+	output logic [1:0] aluop,
+	output logic loadcontrol);
 	
 	
 reg [10:0] controls;
@@ -84,14 +87,40 @@ always @(*)
 						6'b010100: controls = 11'b10000000010; //Move to low		  As HI and LO are reg in ALU module
 						default: controls = 11'b10100000010; //R-type instruction
 					endcase
-		6'b100000: controls = 11'b10010001000; //Load byte
-		6'b100100: controls = 11'b10010001000; //Load byte unsigned
-		6'b100001: controls = 11'b10010001000; //Load halfword
-		6'b100101: controls = 11'b10010001000; //Load halfword unisigned
-		6'b001111: controls = 11'b10010001000; //Load upper immidiate
-		6'b100011: controls = 11'b10010001000; //Load word
-		6'b100010: controls = 11'b10010001000; //Load word left
-		6'b100110: controls = 11'b10010001000; //Load word right
+					
+		6'b100000: begin
+					controls = 11'b10010001000; //Load byte
+					loadcontrol = 3'b000;
+				   end
+		6'b100100: begin
+					controls = 11'b10010001000; //Load byte unsigned
+					loadcontrol = 3'b001;
+				   end
+		6'b100001: begin
+					controls = 11'b10010001000; //Load halfword
+					loadcontrol = 3'b010;
+				   end
+		6'b100101: begin
+					controls = 11'b10010001000; //Load halfword unisigned
+					loadcontrol = 3'b011;
+				   end
+		6'b001111: begin
+					controls = 11'b10010001000; //Load upper immidiate
+					loadcontrol = 3'b100;
+				   end
+		6'b100011: begin
+					controls = 11'b10010001000; //Load word
+					loadcontrol = 3'b101;
+				   end
+		6'b100010: begin
+					controls = 11'b10010001000; //Load word left
+					loadcontrol = 3'b110;
+				   end
+		6'b100110: begin
+					controls = 11'b10010001000; //Load word right
+					loadcontrol = 3'b111sss;
+				   end
+
 		6'b101000: controls = 11'b00010100000; //Store byte
 		6'b101001: controls = 11'b00010100000; //Store halfword
 		6'b101011: controls = 11'b00010100000; //Store word
@@ -224,7 +253,7 @@ logic [4:0] writereg1, writereg;
 logic [31:0] pcnext, pcnextbr, pcplus4, pcbranch, pclink;
 logic [31:0] signimm, signimmsh, pcnextbr1, pcnextbr2;
 logic [31:0] srca, srcb;
-logic [31:0] result1, result;
+logic [31:0] result2, result1, result;
 
 // Program counter regfile
 
@@ -254,8 +283,10 @@ mux2 #(5) wrmux2(writereg1, 5'b11111, regdst2, writereg);
 
 adder pcbrlink(pcplus4, 32'b100, pclink);
 
-mux2 #(32) resmux(data_address, data_readdata, memtoreg1, result1);
-mux2 #(32) resmux2(result1, pclink, memtoreg2, result);
+loadselector loadsel(data_readdata, loadcontrol, result1);
+
+mux2 #(32) resmux(data_address, result1, memtoreg1, result2);
+mux2 #(32) resmux2(result2, pclink, memtoreg2, result);
 
 signext se(instr_address[15:0], signimm); 
 
@@ -265,8 +296,6 @@ mux2 #(32) srcbmux(data_writedata, signimm, alusrc, srcb);
 alumodule alu(alucontrol, srca, srcb, zero, data_address); 
 
 endmodule
-
-
 
 
 // Implementation of the register file
