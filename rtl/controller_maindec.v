@@ -98,7 +98,7 @@ always @(*)
 endmodule
 
 
-// We are currently setting all the control signals by looking at the opcode of the instrunctions
+// We are currently setting all the control signals by looking at the opcode of the instrunctions.
 // We created an reg (=array) of control signals so that it is easier to implement.
-// In order to understand this section please refer to page 376 of the book (table 7.3)
+// In order to understand this section please refer to page 376 of the book (table 7.3) for team.
 

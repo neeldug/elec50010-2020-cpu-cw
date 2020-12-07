@@ -62,7 +62,7 @@ always @(*)
 							6'b011011: alucontrol = 5'b10000; //Divide unsigned DIVU
 							6'b010001: alucontrol = 5'b10001; //MTHI
 							6'b010100: alucontrol = 5'b10010; //MTLO
-							6'b001000: alucontrol = 5'b11000; //Jump register JR
+							6'b001000: alucontrol = 5'b10111; //Jump register JR
 							6'b001001: alucontrol = 5'b00000; //Jump and link register
 							default:   alucontrol = 5'bxxxxx; //???
 						endcase
@@ -73,8 +73,8 @@ always @(*)
 endmodule
 
 
-// In this module we are setting the control signals for the ALU. Refer to the table 7.2 page 376.
+// In this module we are setting the control signals for the ALU. Refer to the table 7.2 page 376. (for team)
 // Note: The aluop can't be 2'b11. 
-// The default: case(funct) replaces an iterative: 2'b10 & 5'bxxxxx (funct) 
+// The default: case(funct) replaces an iterative: 2'b10 & 5'bxxxxx (funct).
 
 

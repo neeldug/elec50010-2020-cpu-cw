@@ -179,10 +179,8 @@ always @(*)begin
 								y = 32'b0;
 					end else y = {31'b0, 1'b1};
 				end
-		
-		5'b10111: y = (b << 16);							//Load upper Immidiate
 
-		5'b11000: y = a;									//Jump register JR
+		5'b10111: y = a;									//Jump register JR
 	default: y = 32'bxxxxx;	//???	 
 	endcase
 end
