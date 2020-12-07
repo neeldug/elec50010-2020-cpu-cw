@@ -13,14 +13,12 @@ module regfile(
 	//write third port on rising edge of clock
 	//register 0 hardwir3d to 0
 	
-	always @(posedge clk)begin
+	always @(posedge clk)
 		if(we3) rf[wa3] <= wd3;
 		
 	assign rd1 = (ra1 != 0) ? rf[ra1] : 0;
 	assign rd2 = (ra2 != 0) ? rf[ra2] : 0;
 	assign reg_v0 = rf[2];
-	
-	end
 endmodule
 
 
