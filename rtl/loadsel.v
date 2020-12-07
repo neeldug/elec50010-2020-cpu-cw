@@ -1,6 +1,6 @@
-module loadselector(
+module loadstore(
 	input logic [31:0] a,
-	input logic [2:0] controls,
+	input logic [3:0] controls,
 	output logic [31:0] y
 	);
 
@@ -8,7 +8,7 @@ reg [31:0] z;
 
 always @(*)begin
 	case(controls)
-		3'b000: begin					//Load byte signed
+		4'b0000: begin					//Load byte signed
 					if(a[7] == 1)begin
 						y = {24'b1, a[7:0]};
 					end else begin
@@ -16,9 +16,9 @@ always @(*)begin
 					end
 				end
 				
-		3'b001: y = {24'b0, a[7:0]};	//Load byte unsigned
+		4'b0001: y = {24'b0, a[7:0]};	//Load byte unsigned
 		
-		3'b010: begin					//Load halfword signed
+		4'b0010: begin					//Load halfword signed
 					if(a[15] == 1)begin
 						y = {16'b1, a[15:0]};
 					end else begin
@@ -26,13 +26,13 @@ always @(*)begin
 					end
 				end 
 				
-		3'b011: y = {16'b0, a[15:0]};	//Load halfword unsigned
+		4'b0011: y = {16'b0, a[15:0]};	//Load halfword unsigned
 		
-		3'b100: y = (b << 16);			//Load upper Immediate
+		4'b0100: y = (b << 16);			//Load upper Immediate
 		
-		3'b101: y = a;					//Load word
+		4'b0101: y = a;					//Load word
 		
-		3'b110: begin					//Load word left
+		4'b0110: begin					//Load word left
 					if( == 0)begin
 						y = {a[7:0], 24'b0};
 					end else if( == 1)begin
@@ -44,7 +44,7 @@ always @(*)begin
 					end
 				 end
 				 
-		3'b111: begin					//Load word right
+		4'b0111: begin					//Load word right
 					if( == 0)begin
 						y = {24'b0, a[7:0]};
 					end else if( == 1)begin
