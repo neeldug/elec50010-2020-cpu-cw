@@ -1,6 +1,6 @@
-module instr_mem(
+module data_mem(
 	input logic clk,
-	input logic[31:0] data_adress,
+	input logic[31:0] data_address,
 	input logic[31:0] data_writedata,
 	input logic data_write,
 	output logic[31:0] data_readdata
@@ -25,8 +25,8 @@ module instr_mem(
 	//clockedge read and write with write control signal
 	always @(posedge clk) begin
 		if(data_write) begin
-			dmem[data_adress] <= data_writedata;
+			dmem[data_address] <= data_writedata;
 		end
-		data_readdata <= dmem[data_adress];
+		data_readdata <= dmem[data_address];
 	end
 endmodule

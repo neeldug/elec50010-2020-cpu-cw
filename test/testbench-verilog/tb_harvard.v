@@ -1,7 +1,8 @@
 module tb_harvard;
 
-    parameter RAM_FILE =  /*default test case if not specified*/;
-    parameter TIMEOUT_CYCLES = /*default value*/;
+    parameter INSTR_INIT_FILE =  /*default test case if not specified*/;
+    parameter DATA_INIT_FILE = /*default data if not specified*/;
+    parameter TIMEOUT_CYCLES = 10000;
 
     timeunit 1ns / 10ps;
 
@@ -21,10 +22,10 @@ module tb_harvard;
     logic[31:0] data_writedata;
     logic[31:0] data_readdata;
 
-    /*INSTR RAM NAME*/ #(RAM_FILE) instRAMInst(/*connect wires*/);
-    /*DATA RAM NAME*/ dataRAMInst(/*connect wires*/);
+    instruction_mem #(INSTR_INIT_FILE) instRAMInst(instr_address, instr_readdata);
+    data_mem #(DATA_INIT_FILE) dataRAMInst(clk, data_address, data_writedata, data_write, data_readdata);
 
-    /*MIPS CPU NAME*/ cpuInst(clk, reset, active, register_v0, clk_enable, instr_address, instr_readdata, data_address, data_write, data_read, 				      data_writedata, data_readdata);
+    mips_cpu_harvard cpuInst(clk, reset, active, register_v0, clk_enable, instr_address, instr_readdata, data_address, data_write, data_read, 				      data_writedata, data_readdata);
 
     //Setting up a clock
     initial begin
@@ -55,7 +56,7 @@ module tb_harvard;
 	//Checking reset was successful
 	assert(active==1) else $display("Testbench: CPU didn't set active high after reset");
 
-	//Looping until the CPU finished (sets active low) 
+	//Looping until the CPU finished (sets active low) - add clk_enable logic here
 	while(active) begin
 	    @(posedge clk);
 	end
