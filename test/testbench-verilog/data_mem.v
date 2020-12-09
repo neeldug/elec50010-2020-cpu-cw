@@ -8,7 +8,7 @@ module data_mem (
 
   parameter str DATA_INIT_FILE = "";
 
-  reg [31:0] dmem[4294967295:0];
+  reg [31:0] dmem[4294967296];
 
   //data initialization
   initial begin

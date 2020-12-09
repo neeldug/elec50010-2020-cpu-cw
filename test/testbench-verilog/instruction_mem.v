@@ -5,7 +5,7 @@ module instruction_mem (
 
   parameter str INSTR_INIT_FILE = "";
 
-  reg [31:0] imem[4294967295:0];
+  reg [31:0] imem[4294967296];
 
   //initialization
   initial begin
