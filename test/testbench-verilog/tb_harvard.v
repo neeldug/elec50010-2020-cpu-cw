@@ -1,10 +1,10 @@
+timeunit 1ns / 10ps;
+
 module tb_harvard;
 
-  parameter str INSTR_INIT_FILE = ""  /*default test case if not specified*/;
-  parameter str DATA_INIT_FILE = ""  /*default data if not specified*/;
-  parameter unsigned TIMEOUT_CYCLES = 10000;
-
-  timeunit 1ns / 10ps;
+  parameter INSTR_INIT_FILE = ""  /*default test case if not specified*/;
+  parameter DATA_INIT_FILE = ""  /*default data if not specified*/;
+  parameter TIMEOUT_CYCLES = 10000;
 
   logic clk;
   logic reset;

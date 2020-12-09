@@ -6,7 +6,7 @@ module data_mem (
     output logic [31:0] data_readdata
 );
 
-  parameter str DATA_INIT_FILE = "";
+  parameter DATA_INIT_FILE = "";
 
   reg [31:0] dmem[4294967296];
 
@@ -17,17 +17,10 @@ module data_mem (
       dmem[i] = 0;
     end
 
-<<<<<<< HEAD
-		if(DATA_INIT_FILE != "") begin
-			$readmemh(DATA_INIT_FILE, dmem);
-		end
-	end
-=======
     if (DATA_INIT_FILE != "") begin
-      $readmemh(DATA_INIT_FILE, imem);
+      $readmemh(DATA_INIT_FILE, dmem);
     end
   end
->>>>>>> 56aa099aaf767ccca6ccd805cd1f0cfb3ea874e9
 
   //clockedge read and write with write control signal
   always @(posedge clk) begin

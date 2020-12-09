@@ -3,7 +3,7 @@ module instruction_mem (
     output logic [31:0] instr
 );
 
-  parameter str INSTR_INIT_FILE = "";
+  parameter INSTR_INIT_FILE = "";
 
   reg [31:0] imem[4294967296];
 
