@@ -8,12 +8,13 @@ module data_mem (
 
   parameter DATA_INIT_FILE = "";
 
-  reg [31:0] dmem[4294967296];
+  reg [31:0] dmem[16777216];
 
   //data initialization
   initial begin
     integer i;
-    for (i = 0; i < 4294967296; i++) begin
+    for (i = 0; i < 16777216; i++) begin
+      $display("%d", i);
       dmem[i] = 0;
     end
 

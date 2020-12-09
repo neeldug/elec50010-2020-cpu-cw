@@ -5,12 +5,13 @@ module instruction_mem (
 
   parameter INSTR_INIT_FILE = "";
 
-  reg [31:0] imem[4294967296];
+  reg [31:0] imem[16777216];
 
   //initialization
   initial begin
     integer i;
-    for (i = 0; i < 4294967296; i++) begin
+    for (i = 0; i < 16777216; i++) begin
+      $display("%d", i);
       imem[i] = 0;
     end
 
