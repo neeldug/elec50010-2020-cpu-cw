@@ -28,5 +28,4 @@ fi
 for i in ${TESTCASES} ; do
   TESTNAME=$(basename "$i" | cut -f 1 -d '.')
   #Dispatch to single scripts here
-  echo "$SOURCE" "$TESTNAME"
 done

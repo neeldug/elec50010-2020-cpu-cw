@@ -61,8 +61,7 @@ module tb_harvard;
 	    @(posedge clk);
 	end
 
-	$display("Testbench: Finished. Active = 0");
-	$display("Final value of register v0 = %d", register_v0);
+	$display("%d", register_v0);
 
 	$finish;
 

@@ -18,7 +18,7 @@ module data_mem(
 		end
 
 		if(DATA_INIT_FILE != "") begin
-			$readmemh(DATA_INIT_FILE, imem);
+			$readmemh(DATA_INIT_FILE, dmem);
 		end
 	end
 
