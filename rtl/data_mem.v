@@ -8,12 +8,12 @@ module instr_mem(
 
 	parameter DATA_INIT_FILE = "";
 	
-	reg [31:0] dmem [4294967295:0];
+	reg [31:0] dmem [16777215:0];
 	
 	//data initialization
 	initial begin 
 		integer i;
-		for (i=0; i<4294967296; i++) begin
+		for (i=0; i<16777216; i++) begin
 			dmem[i] = 0;
 		end
 		
