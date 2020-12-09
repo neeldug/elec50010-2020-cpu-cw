@@ -21,6 +21,6 @@ module instruction_mem (
 
   //making the async read
   always_comb begin
-    instr = imem[pc];
+    instr = imem[instr_address];
   end
 endmodule
