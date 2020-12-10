@@ -7,14 +7,14 @@ module data_mem (
 );
 
   parameter DATA_INIT_FILE = "";
+  localparam  START = 32'h10000000;
 
-  reg [31:0] dmem[16777216];
+  reg [31:0] dmem[START:START+127];
 
   //data initialization
   initial begin
     integer i;
-    for (i = 0; i < 16777216; i++) begin
-      $display("%d", i);
+    for (i = START; i < START+128; i++) begin
       dmem[i] = 0;
     end
 

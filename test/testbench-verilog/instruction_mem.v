@@ -4,14 +4,13 @@ module instruction_mem (
 );
 
   parameter INSTR_INIT_FILE = "";
-
-  reg [31:0] imem[16777216];
+  localparam START = 32'hBFC00000;
+  reg [31:0] imem[START:START+127];
 
   //initialization
   initial begin
     integer i;
-    for (i = 0; i < 16777216; i++) begin
-      $display("%d", i);
+    for (i = START; i < START + 128; i++) begin
       imem[i] = 0;
     end
 
