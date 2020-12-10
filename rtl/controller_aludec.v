@@ -5,10 +5,10 @@ module aludec(
 	output logic [4:0] alucontrol);
 
 always @(*)
-	case(aluop)							//edge what if we have a 2'b11 eventhough it is illegal
+	case(aluop)							//edge what if we have a 2'b11 eventhough it is illegal.
 	
-		2'b00: alucontrol = 5'b00011; //ADD -- USED FOR LOAD AND STORE INSTRUCTIONS
-		2'b01: alucontrol = 5'b00100; //SUB 
+		2'b00: alucontrol = 5'b00011; //ADDI -- USED FOR LOAD AND STORE INSTRUCTIONS
+		2'b01: alucontrol = 5'b10111; //Jump instruction use the alu operation needed for Jump Register else don't need alu.
 		2'b10: case(op)
 /*			6'b100000: alucontrol = 5'b; //Load byte				
 			6'b100100: alucontrol = 5'b; //Load byte unsigned
@@ -24,18 +24,20 @@ always @(*)
 */			
 			6'b000100: alucontrol = 5'b00100; //Branch on = 0 use SUBU
 			6'b000001: case(dest)
-						5'b00001: alucontrol = 5'b00110; //Branch on >= 0 use SLT
-						5'b10001: alucontrol = 5'b00110; //Branch on >= 0 /link (regwrite active) use SLT mod in control sign
+						5'b00001: alucontrol = 5'b00110; //Branch on >= 0 use SLT signed
+						5'b10001: alucontrol = 5'b00110; //Branch on >= 0 & link (regwrite active) use SLT mod in control sign
 						5'b00000: alucontrol = 5'b10011; //Branch on < 0 
-						5'b10000: alucontrol = 5'b10011; //Branch on < 0 /link
+						5'b10000: alucontrol = 5'b10011; //Branch on < 0 & link
 						default: alucontrol = 5'bxxxxx;
 					endcase
 			6'b000111: alucontrol = 5'b10100; //Branch on > 0
 			6'b000110: alucontrol = 5'b10101; //Branch on = 0
 			6'b000101: alucontrol = 5'b10110; //Branch on != 0
 			6'b001001: alucontrol = 5'b00011; //ADD unsigned immediate
+/*
 			6'b000010: alucontrol = 5'b; //Jump
 			6'b000011: alucontrol = 5'b; //Jump and link
+*/
 			6'b001100: alucontrol = 5'b00000; //ANDI
 			6'b001101: alucontrol = 5'b00001; //ORI
 			6'b001110: alucontrol = 5'b00010; //XORI
@@ -62,8 +64,10 @@ always @(*)
 							6'b011011: alucontrol = 5'b10000; //Divide unsigned DIVU
 							6'b010001: alucontrol = 5'b10001; //MTHI
 							6'b010100: alucontrol = 5'b10010; //MTLO
+/*
 							6'b001000: alucontrol = 5'b10111; //Jump register JR
-							6'b001001: alucontrol = 5'b00000; //Jump and link register
+							6'b001001: alucontrol = 5'b10111; //Jump and link register
+*/
 							default:   alucontrol = 5'bxxxxx; //???
 						endcase
 			default: alucontrol = 5'bxxxxx; //???		
@@ -76,5 +80,7 @@ endmodule
 // In this module we are setting the control signals for the ALU. Refer to the table 7.2 page 376. (for team)
 // Note: The aluop can't be 2'b11. 
 // The default: case(funct) replaces an iterative: 2'b10 & 5'bxxxxx (funct).
+
+//For all jump Instruction we set the alu to Jump register option, so the result bit will take the value of srcA but will have an effect on register/pc only when the control signals are right.
 
 

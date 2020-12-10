@@ -15,12 +15,12 @@ module CPU_MIPS_harvard(
 	input logic [31:0] data_readdata);
 	
 logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc;
-logic [31:0] pc;
+
 logic [4:0] alucontrol;
 logic [2:0] loadcontrol;
 
 controller control(instr_readdata[31:26], instr_readdata[5:0], instr_readdata[20:16], zero, memtoreg2, memtoreg1, data_write, pcsrc, alusrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol, loadcontrol);
 
-datapath datap(clk, reset, clk_enable, memtoreg2, memtoreg1, alusrc, pcsrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol, loadcontrol, zero, pc, instr_readdata, data_readdata, data_address, data_writedata, instr_address[25:0], register_v0);
+datapath datap(clk, reset, clk_enable, memtoreg2, memtoreg1, alusrc, pcsrc, regdst2, regdst1, regwrite, jump1, jump, alucontrol, loadcontrol, zero, instr_address, instr_readdata, data_readdata, data_address, data_writedata, register_v0);
 
 endmodule

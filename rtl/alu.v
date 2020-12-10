@@ -180,7 +180,7 @@ always @(*)begin
 					end else y = {31'b0, 1'b1};
 				end
 
-		5'b10111: y = a;									//Jump register JR
+		5'b10111: y = a;									//Jump register JR/JALR
 	default: y = 32'bxxxxx;	//???	 
 	endcase
 end
