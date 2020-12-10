@@ -33,13 +33,19 @@ module maindec (
   always @(*)
     case (op)
       6'b000000:
-      case (funct)  //link in reg $31
-        6'b001001: begin  //Jump register and link JALR
+      case (funct)
+      	6'b010001: begin  //Move to High MTHI
+          controls = 11'b00000000010;
+        end
+        6'b010100: begin  //Move to Low MTLO
+          controls = 11'b00000000010;
+        end
+        6'b001001: begin  //Jump register and link JALR & link in reg $31
           controls = 11'b11000010101;
           jump1 = 1;					//We set both as J-type to extract value in reg$a aluop: [01]
         end
         6'b001000: begin  //Jump register
-          controls = 11'b00100000001;
+          controls = 11'b00000000101;
           jump1 = 1;
         end
         6'b010001: controls = 11'b10000000010;  //Move to high       No need to write enable register?
@@ -83,21 +89,21 @@ module maindec (
       6'b101000: controls = 11'b00010100000;  //Store byte
       6'b101001: controls = 11'b00010100000;  //Store halfword
       6'b101011: controls = 11'b00010100000;  //Store word
-      6'b000100: controls = 11'b00001001010;  //Branch on = 0
+      6'b000100: controls = 11'b00001010010;  //Branch on = 0
       6'b000001:
       case (dest)
-        5'b00001: controls = 11'b00001001010;  //Branch on >= 0
-        5'b10001: controls = 11'b11001011010;  //Branch on >= 0 /link (regwrite active)
-        5'b00000: controls = 11'b00001001010;  //Branch on < 0
-        5'b10000: controls = 11'b11001011010;  //Branch on < 0 /link
+        5'b00001: controls = 11'b00001010010;  //Branch on >= 0
+        5'b10001: controls = 11'b11001010010;  //Branch on >= 0 /link (regwrite active)
+        5'b00000: controls = 11'b00001010010;  //Branch on < 0
+        5'b10000: controls = 11'b11001010010;  //Branch on < 0 /link
         default:  controls = 11'bxxxxxxxxxxx;
       endcase
-      6'b000111: controls = 11'b00001001010;  //Branch on > 0
-      6'b000110: controls = 11'b00001001010;  //Branch on = 0
-      6'b000101: controls = 11'b00001001010;  //Branch on != 0
+      6'b000111: controls = 11'b00001010010;  //Branch on > 0
+      6'b000110: controls = 11'b00001010010;  //Branch on = 0
+      6'b000101: controls = 11'b00001010010;  //Branch on != 0
       6'b001001: controls = 11'b10010000010;  //ADD unsigned immediate
       6'b000010: controls = 11'b00000000101;  //Jump
-      6'b000011: controls = 11'b11000011101;  //Jump and link
+      6'b000011: controls = 11'b11000010101;  //Jump and link
       6'b001100: controls = 11'b10010000010;  //ANDI
       6'b001101: controls = 11'b10010000010;  //ORI
       6'b001110: controls = 11'b10010000010;  //XORI
