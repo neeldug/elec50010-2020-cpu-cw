@@ -44,7 +44,7 @@ mux2 #(32) pcmux(pcnextbr1, pcnextbr2, jump, pcnextbr);						//jump is high when
 
 	
 // Register file
-ss
+
 //we added an output: register_v0 so that this value is accessible from the outside of the Mips_cpu at all time.
 regfile register(clk, regwrite, instr_readdata[25:21], instr_readdata[20:16], writereg, result, srca, data_writedata, register_v0);
 
@@ -57,8 +57,8 @@ adder pcbrlink(pcplus4, 32'b100, pclink);
 loadselector loadsel(data_readdata, loadcontrol, result1);
 
 //Result--value written in register (Load/Branches/Jump)
-mux2 #(32) resmux(data_address, result1, memtoreg1, result2);		//result1 is high for load instructions (value in RAM) else take result from ALU.
-mux2 #(32) resmux2(result2, pclink, memtoreg2, result);				//result2 is high for Branch with condition met and Jump with link instructions.
+mux2 #(32) resmux(data_address, result1, memtoreg1, result2);		//memtoreg1 is high for load instructions (value in RAM) else take result from ALU.
+mux2 #(32) resmux2(result2, pclink, memtoreg2, result);				//memtoreg2 is high for Branch with condition met and Jump with link instructions.
 
 //ALU file
 mux2 #(32) srcbmux(data_writedata, signimm, alusrc, srcb);			//alusrc is high for instructions using Immediate variable else for srcB instr.

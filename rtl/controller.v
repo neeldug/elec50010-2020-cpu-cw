@@ -24,7 +24,6 @@ module controller (
       op,
       funct,
       dest,
-      memtoreg2,
       memtoreg1,
       data_write,
       branch,
@@ -47,5 +46,6 @@ module controller (
   );
   always @(*) begin
     assign pcsrc = branch & zero;
+    assign memtoreg2 =jump | pcsrc;
   end
 endmodule

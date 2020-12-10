@@ -160,26 +160,40 @@ module alumodule (
           y = 32'b0;
         end else y = {31'b0, 1'b1};
       end
-
+	  
       5'b10100: begin	//Branch on > 0  
         if (a[31] == 0 & a != 32'b0) begin
           y = 32'b0;
         end else y = {31'b0, 1'b1};
       end
+	  
+	  5'b10101: begin	//Branch on >= 0 (link or not)  
+        if (a[31] == 0) begin
+          y = 32'b0;
+        end else y = {31'b0, 1'b1};
+      end
 
+/*      
       5'b10101: begin	//Branch on = 0  
         if (a == 32'b0) begin
           y = 32'b0;
         end else y = {31'b0, 1'b1};
       end
+*/
 
-      5'b10110: begin	//Branch on != 0  
-        if (a != 32'b0) begin
+      5'b10110: begin	//Branch on a != b   
+        if (a != b) begin
+          y = 32'b0;
+        end else y = {31'b0, 1'b1};
+      end
+      
+      5'b10111: begin	//Branch on <=0
+        if (a[31] == 1 | a = 32'b0) begin
           y = 32'b0;
         end else y = {31'b0, 1'b1};
       end
 
-      5'b10111: y = a;	//Jump register JR/JALR
+      5'b11000: y = a;	//Jump register JR/JALR
       default:  y = 32'bxxxxx;  //???	 
     endcase
   end

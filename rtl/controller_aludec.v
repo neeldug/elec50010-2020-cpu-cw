@@ -9,7 +9,7 @@ module aludec (
     case (aluop)  //edge what if we have a 2'b11 eventhough it is illegal.
 
       2'b00: alucontrol = 5'b00011;	//ADDI -- USED FOR LOAD AND STORE INSTRUCTIONS
-      2'b01: alucontrol = 5'b10111;	//Jump instruction use the alu operation needed for Jump Register else don't need alu.
+      2'b01: alucontrol = 5'b11000;	//Jump instruction use the alu operation needed for Jump Register else don't need alu.
       2'b10:
       case (op)
 /*			6'b100000: alucontrol = 5'b; //Load byte				
@@ -24,17 +24,17 @@ module aludec (
 			6'b101001: alucontrol = 5'b; //Store halfword
 			6'b101011: alucontrol = 5'b; //Store word
 */
-        6'b000100: alucontrol = 5'b00100;  //Branch on = 0 use SUBU
+        6'b000100: alucontrol = 5'b00100;  //Branch on equal use SUBU
         6'b000001:
         case (dest)
-          5'b00001: alucontrol = 5'b00110;  //Branch on >= 0 use SLT signed
-          5'b10001: alucontrol = 5'b00110; //Branch on >= 0 & link (regwrite active) use SLT mod in control sign
+          5'b00001: alucontrol = 5'b10101;  //Branch on >= 0
+          5'b10001: alucontrol = 5'b10101; //Branch on >= 0 & link (regwrite active) use SLT mod in control sign
           5'b00000: alucontrol = 5'b10011;  //Branch on < 0 
           5'b10000: alucontrol = 5'b10011;  //Branch on < 0 & link
           default: alucontrol = 5'bxxxxx;
         endcase
+        6'b000110: alucontrol = 5'b10111;  //Branch on <= 0
         6'b000111: alucontrol = 5'b10100;  //Branch on > 0
-        6'b000110: alucontrol = 5'b10101;  //Branch on = 0
         6'b000101: alucontrol = 5'b10110;  //Branch on != 0
         6'b001001: alucontrol = 5'b00011;  //ADD unsigned immediate
 /*
