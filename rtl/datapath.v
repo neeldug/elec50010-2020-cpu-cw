@@ -17,7 +17,7 @@ module datapath(
 
 logic [4:0] writereg1, writereg;
 logic [31:0] pcnext, pcnextbr, pcplus4, pcbranch, pclink;
-logic [31:0] signimm, signimmsh, pcnextbr1, pcnextbr2;
+logic [31:0] signimm, signimmsh, pcnextbr1, pcnextbr2, jumpsh;
 logic [31:0] srca, srcb;
 logic [31:0] result2, result1, result;
 
@@ -38,7 +38,9 @@ mux2 #(32) pcmux1(pcplus4, pcbranch, pcsrc, pcnextbr1);						//pcsrc is high whe
 
 mux2 #(32) pcmux2({6'b0,instr_readdata[25:0]}, result, jump1, pcnextbr2);	//jump1 is high when we jump to value in register.
 
-mux2 #(32) pcmux(pcnextbr1, pcnextbr2, jump, pcnextbr);						//jump is high when we are in a jump instruction.
+shiftleft2 jsh(pcnextbr2, jumpsh);											//Instruction in PC are every 4 so we need to multiply by 4.
+
+mux2 #(32) pcmux(pcnextbr1, jumpsh, jump, pcnextbr);						//jump is high when we are in a jump instruction.
 
 
 
