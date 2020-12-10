@@ -2,6 +2,7 @@ module alumodule(
 	input logic [4:0] control,
 	input logic [31:0] a,
 	input logic [31:0] b,
+	input logic [4:0] shamt
 	output logic zero,
 	output logic [31:0] y);
 
@@ -76,14 +77,14 @@ always @(*)begin
 				end
 			end
 				  			  
-		5'b01001: y = a << (b[10:6]);							//shift left logical: we take the shift variable from instr[10:6] included in the Immediate field
+		5'b01001: y = b << shamt;								//shift left logical: we take the shift variable from instr_readdata[10:6] which is the shamt
 		
-		5'b01010: y = a << b;									//shift left logical variable
+		5'b01010: y = b << a;									//shift left logical variable
 		
 		5'b01011: begin											//shift right arithmetic
-				x = a;
-				for(i = b[10:6]; i>0; i = i-1)begin
-						if(a[31] == 1)
+				x = b;
+				for(i = shamt; i>0; i = i-1)begin
+						if(b[31] == 1)
 								x = {1'b1,x[31:1]};
 						else
 								x = {1'b0,x[31:1]};
@@ -92,19 +93,19 @@ always @(*)begin
 			 end
 			 
 		5'b01100: begin											//shift right logical
-				x = a;
-				for(i = b[10:6]; i>0; i = i-1)begin
+				x = b;
+				for(i = shamt; i>0; i = i-1)begin
 					x = {1'b0,x[31:1]};					
 				end
 				y = x;
 			 end
 			 
-//		5'b: y = a >> (b[10:6]);							//shift right logical
+//		5'b: y = b >> shamt;									//shift right logical
 
 		5'b01101: begin											//shift right arithmetic variable
-				x = a;
-				for(j = b[31:0]; j>0; j = j-1)begin
-						if(a[31] == 1)
+				x = b;
+				for(j = a[31:0]; j>0; j = j-1)begin
+						if(b[31] == 1)
 								x = {1'b1,x[31:1]};
 						else
 								x = {1'b0,x[31:1]};
@@ -113,14 +114,14 @@ always @(*)begin
 			 end	
 			 	
 		5'b01110: begin											//shift right logical variable
-				x = a;
-				for(j = b[31:0]; j>0; j = j-1)begin
+				x = b;
+				for(j = a[31:0]; j>0; j = j-1)begin
 					x = {1'b0,x[31:1]};
 				end
 				y = x;
 			 end	 	
 			 				
-//		5'b: y = a >> b;									//shift right logical variable
+//		5'b: y = b >> a;										//shift right logical variable
 		
 	
 
