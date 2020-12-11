@@ -56,7 +56,7 @@ mux2 #(5) wrmux2(writereg1, 5'b11111, regdst2, writereg);								//regdst2 is hi
 adder pcbrlink(pcplus4, 32'b100, pclink);
 
 //Load selector bit (word/byte/LSB...)
-shiftleft16 immsh16(instr_readdata[15:0], immsh16);
+shiftleft16 immshift16(instr_readdata[15:0], immsh16);
 
 loadselector loadsel(data_readdata, immsh16, loadcontrol, result1);
 
