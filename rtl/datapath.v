@@ -56,7 +56,7 @@ mux2 #(5) wrmux2(.a(writereg1), .b(5'b11111), .s(regdst2), .y(writereg));							
 adder pcbrlink(.a(pcplus4), .b(32'b100), .y(pclink));
 
 //Load selector bit (word/byte/LSB...)
-shiftleft16 immshift16(.a({16'b0, instr_readdata[15:0]}), .y(immsh16));
+shiftleft16 immshift16(.a({16'b0, instr_readdata[15:0]}), .y(immsh16)); //extended the instr_readdata to fit declaration of shiftleft16
 
 loadselector loadsel(.a(data_readdata), .b(immsh16), .controls(loadcontrol), .y(result1));
 
