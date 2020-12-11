@@ -39,8 +39,8 @@ module alu(
       end
 
       5'b00111: begin	//MULTU Multiplication unsigned
-        r1 = {32'b0, a[31:0]};
-        r2 = {32'b0, b[31:0]};
+        r1 = {32'b0, a};
+        r2 = {32'b0, b};
         z  = r1 * r2;
         HI = z[63:32];
         LO = z[31:0];
@@ -66,7 +66,7 @@ module alu(
         end else begin
           if ((a[31] == 0) & (b[31] == 1)) begin
           	x2 = ~b + 1;
-            r1 = {32'b0, a[31:0]};
+            r1 = {32'b0, a};
             r2 = {32'b0, x2};
             z  = ~(r1 * r2) + 1;
             HI = z[63:32];
@@ -74,7 +74,7 @@ module alu(
           end else begin
           	x = ~a + 1;
             r1 = {32'b0, x};
-            r2 = {32'b0, b[31:0]};
+            r2 = {32'b0, b};
             z  = ~(r1 * r2) + 1;
             HI = z[63:32];
             LO = z[31:0];
