@@ -1,6 +1,6 @@
 // Implementation of the register file
 module regfile (
-    input logic clk,
+    input logic clk, reset,
     input logic we3,
     input logic [4:0] ra1, ra2, wa3,
     input logic [31:0] wd3,
@@ -12,12 +12,23 @@ module regfile (
   //read two ports combinationally
   //write third port on rising edge of clock
   //register 0 hardwir3d to 0
-
-  always @(posedge clk) if (we3) rf[wa3] <= wd3;
+  
+  integer i;
+  
+  always @(posedge clk) begin
+  	if (reset) begin						//sets all the regs in the regfile to 0 is reset signal is high
+  		for (i=0 ; i<32 ; i=i+1) begin
+  			rf[i] <= 32'b0;
+  		end
+  	end
+  	else begin 
+  		if (we3) rf[wa3] <= wd3;
+  	end
+  end
 
   assign rd1 = (ra1 != 0) ? rf[ra1] : 0;
   assign rd2 = (ra2 != 0) ? rf[ra2] : 0;
-  assign reg_v0 = rf[2];
+  assign reg_v0 = (~reset) ? rf[2] : reg_v0;		//NOT SURE ABOUT THIS, MIGHT HAVE TO USE AN ALWAYS BLOCK
 endmodule
 
 

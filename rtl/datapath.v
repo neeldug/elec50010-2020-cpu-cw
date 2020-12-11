@@ -48,7 +48,7 @@ mux2 #(32) pcmux(.a(pcnextbr1), .b(jumpsh), .s(jump), .y(pcnextbr));						//jump
 // Register file
 
 //we added an output: register_v0 so that this value is accessible from the outside of the Mips_cpu at all time.
-regfile register(.clk(clk), .we3(regwrite), .ra1(instr_readdata[25:21]), .ra2(instr_readdata[20:16]), .wa3(writereg), .wd3(result), .rd1(srca), .rd2(data_writedata), .reg_v0(register_v0));
+regfile register(.clk(clk), .reset(reset), .we3(regwrite), .ra1(instr_readdata[25:21]), .ra2(instr_readdata[20:16]), .wa3(writereg), .wd3(result), .rd1(srca), .rd2(data_writedata), .reg_v0(register_v0));
 
 mux2 #(5) wrmux(.a(instr_readdata[20:16]), .b(instr_readdata[15:11]), .s(regdst1), .y(writereg1));		//regdst1 is high for R-type instructions else select I-type.
 mux2 #(5) wrmux2(.a(writereg1), .b(5'b11111), .s(regdst2), .y(writereg));								//regdst2 is high for link instructions (store value in $31).
