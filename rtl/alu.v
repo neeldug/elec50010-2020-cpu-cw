@@ -1,4 +1,4 @@
-module alumodule (
+module alu(
     input logic [4:0] control,
     input logic [31:0] a,
     input logic [31:0] b,
@@ -13,7 +13,7 @@ module alumodule (
   logic [31:0] j;
   reg [31:0] HI, LO;
 
-  always @(*) begin
+  always_comb begin
     case (control)
       5'b00000: y = a & b;	//AND
       5'b00001: y = a | b;	//OR
@@ -78,7 +78,8 @@ module alumodule (
         end
       end
 
-      5'b01001: y = b << shamt;	//shift left logical: we take the shift variable from instr[10:6] included in the Immediate field
+      5'b01001: y = b << shamt;	//shift left logical
+// we take the shift variable from instr[10:6] included in the Immediate field
 
       5'b01010: y = b << a;	//shift left logical variable
 
@@ -194,7 +195,7 @@ module alumodule (
       end
 
       5'b11000: y = a;	//Jump register JR/JALR
-      default:  y = 32'bxxxxx;  //???	 
+      default:  y = 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;  //???	 
     endcase
   end
 
