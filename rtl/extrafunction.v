@@ -76,9 +76,15 @@ module flipflopr #(parameter WIDTH = 8) (
     output logic [WIDTH-1:0] q
 );
 
-  always @(posedge clk, posedge reset)
+  always @(negedge reset) begin
+  	d <= 8'hBFC00000;
+  end
+  
+  always @(posedge clk, posedge reset) begin
     if (reset) q <= 0;
     else if (clk_enable) q <= d;
+  end 
+		
 endmodule
 
 module signext (
