@@ -67,6 +67,7 @@ module tb_harvard;
   initial begin
     //Resetting the CPU
     reset <= 0;
+    clk_enable <= 0;
 
     @(posedge clk);
     reset <= 1;
@@ -79,7 +80,10 @@ module tb_harvard;
     assert (active == 1)
     else $display("Testbench: CPU didn't set active high after reset");
 
-    //Looping until the CPU finished (sets active low) - add clk_enable logic here
+    //Setting clk_enable high (may need to happen earlier - we shall see)
+    clk_enable <= 1;
+
+    //Looping until the CPU finished (sets active low)
     while (active) begin
       @(posedge clk);
     end
