@@ -33,6 +33,8 @@ module maindec (
     case (op)
       6'b000000:
       case (funct)
+//No need to write enable register as HI and LO are reg in ALU module.
+
       	6'b010001: begin  //Move to High MTHI
           controls = 10'b0000000010;
         end
@@ -46,9 +48,7 @@ module maindec (
         6'b001000: begin  //Jump register
           controls = 10'b0000000101;
           jump1 = 1;
-        end
-        6'b010001: controls = 10'b1000000010;  //Move to high       No need to write enable register?
-        6'b010100: controls = 10'b1000000010;  //Move to low		  As HI and LO are reg in ALU module
+        end	  
         default:   controls = 10'b1010000010;  //R-type instruction
       endcase
 
