@@ -10,8 +10,8 @@ module alu(
 
   logic [31:0] x, x2;
   logic [63:0] r1, r2, z;
-  logic [ 4:0] i;
-  logic [31:0] j;
+  logic [31:0] i;
+  //logic [31:0] j;
   reg [31:0] HI, LO;
 
   always_comb begin
@@ -110,7 +110,7 @@ module alu(
 
       5'b01101: begin	//shift right arithmetic variable
         x = b;
-        for (j = a[31:0]; j > 0; j = j - 1) begin
+        for (i = a[31:0]; i > 0; i = i - 1) begin
           if (b[31] == 1) x = {1'b1, x[31:1]};
           else x = {1'b0, x[31:1]};
         end
@@ -119,7 +119,7 @@ module alu(
 
       5'b01110: begin	//shift right logical variable
         x = b;
-        for (j = a[31:0]; j > 0; j = j - 1) begin
+        for (i = a[31:0]; i > 0; i = i - 1) begin
           x = {1'b0, x[31:1]};
         end
         y = x;
