@@ -1,6 +1,6 @@
 unsigned x = 512;
 
-int main() {
+int main(void) {
     return x+7;
 }
 

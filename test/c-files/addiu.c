@@ -1,6 +1,6 @@
 unsigned x = 8;
 
-int main() {
+int main(void) {
     return x+1;
 }
 
