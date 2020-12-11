@@ -67,6 +67,6 @@ mux2 #(32) resmux2(result2, pclink, memtoreg2, result);				//memtoreg2 is high f
 //ALU file
 mux2 #(32) srcbmux(data_writedata, signimm, alusrc, srcb);			//alusrc is high for instructions using Immediate variable else for srcB instr.
 
-alu alumodule(.control(alucontrol), .a(srca), .b(srcb), .shamt(instr_readdata[10:6]), .zero(zero), .y(data_address)); 
+alu alumodule(.reset(reset), .control(alucontrol), .a(srca), .b(srcb), .shamt(instr_readdata[10:6]), .zero(zero), .y(data_address)); 
 
 endmodule

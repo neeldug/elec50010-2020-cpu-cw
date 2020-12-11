@@ -1,4 +1,5 @@
 module alu(
+    input logic reset,
     input logic [4:0] control,
     input logic [31:0] a,
     input logic [31:0] b,
@@ -14,6 +15,7 @@ module alu(
   reg [31:0] HI, LO;
 
   always_comb begin
+   if (~reset) begin
     case (control)
       5'b00000: y = a & b;	//AND
       5'b00001: y = a | b;	//OR
@@ -90,8 +92,8 @@ module alu(
       5'b01011: begin	//shift right arithmetic
         x = b;
         for (i = shamt; i > 0; i = i - 1) begin
-          if (b[31] == 1) x = {1'b1, x[31:1]};
-          else x = {1'b0, x[31:1]};
+          if (b[31] == 1) x = {1'b1, b[31:1]};
+          else x = {1'b0, b[31:1]};						// CHANGED x={--, x[--]} to x={--,b[--]} for stability
         end
         y = x;
       end
@@ -99,7 +101,7 @@ module alu(
       5'b01100: begin	//shift right logical
         x = b;
         for (i = shamt; i > 0; i = i - 1) begin
-          x = {1'b0, x[31:1]};
+          x = {1'b0, b[31:1]};
         end
         y = x;
       end
@@ -109,8 +111,8 @@ module alu(
       5'b01101: begin	//shift right arithmetic variable
         x = b;
         for (j = a[31:0]; j > 0; j = j - 1) begin
-          if (b[31] == 1) x = {1'b1, x[31:1]};
-          else x = {1'b0, x[31:1]};
+          if (b[31] == 1) x = {1'b1, b[31:1]};
+          else x = {1'b0, b[31:1]};
         end
         y = x;
       end
@@ -118,7 +120,7 @@ module alu(
       5'b01110: begin	//shift right logical variable
         x = b;
         for (j = a[31:0]; j > 0; j = j - 1) begin
-          x = {1'b0, x[31:1]};
+          x = {1'b0, b[31:1]};
         end
         y = x;
       end
@@ -201,6 +203,12 @@ module alu(
       5'b11000: y = a;	//Jump register JR/JALR
       default:  y = 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;  //???	 
     endcase
+    
+   end
+   else begin //If reset signal is asserted, then sets both registers HI and LO to zero
+   	HI = 0;
+   	LO = 0;
+   end
   end
 
 
