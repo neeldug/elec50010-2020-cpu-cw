@@ -38,12 +38,18 @@ MIPS_LDFLAGS = -nostdlib -Wl,-melf32btsmip -march=mips1 -nostartfiles -mno-check
 %.mips.bin: %.mips.elf
 	$(MIPS_OBJCOPY) -O binary --only-section=.text $< $@
 
+%.mips.data.bin: %.mips.elf
+	$(MIPS_OBJCOPY) -O binary --only-section=.data $< $@
+
 # Disassemble linked object file (.elf), pulling out instructions as MIPS assembly file (.s)
 %.mips.s : %.mips.elf
 	$(MIPS_OBJDUMP) -j .text -D $< > $@
 
 %.hex.txt : %.mips.bin
-	 od -An -w4 -t x4 $< > ../binary/$@; sed -i '1 s/^/@BFC00000\n/' ../binary/$@
+	od -An -w4 -t x4 $< > ../binary/$@; sed -i '1 s/^/@BFC00000\n/' ../binary/$@
+
+%.hex.data.txt : %.mips.data.bin
+	od -An -w4 -t x4 $< > ../data/$@; sed -i '1 s/^/@10000000\n/' ../data/$@
 
 %.bin: %.c
 	$(MIPS_CC) $(MIPS_CPPFLAGS) $< -o $@

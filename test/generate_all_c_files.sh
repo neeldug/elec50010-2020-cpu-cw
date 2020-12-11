@@ -8,4 +8,12 @@ for file in *.c; do
   make "$TESTNAME".asm.txt
   make "$TESTNAME".hex.txt
   make "$TESTNAME".ref.txt
+  make "$TESTNAME".hex.data.txt
+done
+
+cd .. || return 1
+
+# Trim final line
+for file in data/*.txt; do
+  sed -i '$d' "$file"
 done
