@@ -1,4 +1,4 @@
-module loadstore(
+module loadselector(
 	input logic [31:0] a,
 	input logic [2:0] controls,
 	output logic [31:0] y
