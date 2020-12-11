@@ -65,5 +65,9 @@ module CPU_MIPS_harvard (
   );
   
   assign active = (instr_address==32'b0) ? 0 : 1; //If PC counter points to address 0, then the CPU is halted
+  
+  always @(negedge reset) begin
+  	instr_address = 8'hBFC00000;
+  end
 
 endmodule
