@@ -133,18 +133,18 @@ always @(*)begin
 						end else begin
 							r1 = ~a[31:0] +1;
 							r2 = ~b[31:0] +1;
-							HI = -(r1 % r2) + r2;
-							LO = r1 / r2 + 1;
+							HI = -(r1[31:0] % r2[31:0]) + r2[31:0];
+							LO = r1[31:0] / r2[31:0] + 1;
 						end
 					end else begin
 						if((a[31] == 0) & (b[31] == 1))begin
 							r2 = ~b[31:0] +1;
-							HI = a % r2;
-							LO = -(a / r2);
+							HI = a % r2[31:0];
+							LO = -(a / r2[31:0]);
 						end else begin
 							r1 = ~a[31:0] +1;
-							HI = -(r1 % b) + b;
-							LO = -(r1 / b + 1);
+							HI = -(r1[31:0] % b) + b;
+							LO = -(r1[31:0] / b + 1);
 						end
 					end
 				end
