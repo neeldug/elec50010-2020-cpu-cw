@@ -11,10 +11,9 @@ module alu(
   logic [31:0] x, x2;
   logic [63:0] r1, r2, z;
   logic [31:0] i;
-  //logic [31:0] j;
   reg [31:0] HI, LO;
 
-  always_comb begin
+  always @(*) begin
    if (~reset) begin
     case (control)
       5'b00000: y = a & b;	//AND
