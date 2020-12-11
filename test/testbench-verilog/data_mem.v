@@ -26,8 +26,8 @@ module data_mem (
   //clockedge read and write with write control signal
   always @(posedge clk) begin
     if (data_write) begin
-      dmem[instr_address:instr_address+3] <= data_writedata;
+      dmem[data_address:data_address+3] <= data_writedata;
     end
-    data_readdata <= dmem[instr_address:instr_address+3];
+    data_readdata <= dmem[data_address:data_address+3];
   end
 endmodule
