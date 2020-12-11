@@ -44,7 +44,7 @@ module controller (
       aluop,
       alucontrol
   );
-  always @(*) begin
+  always_comb begin
     assign pcsrc = branch & zero;
     assign memtoreg2 =jump | pcsrc;
   end
