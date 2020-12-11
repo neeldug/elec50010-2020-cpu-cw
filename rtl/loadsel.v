@@ -52,7 +52,7 @@ always @(*)begin
 					end else if((a%4) == 2)begin
 						y = {8'b0, a[23:0]};
 					end else begin
-						y = a[31:0]
+						y = a[31:0];
 					end
 				 end
 		
