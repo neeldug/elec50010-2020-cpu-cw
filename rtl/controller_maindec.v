@@ -23,7 +23,6 @@ module maindec (
 
   assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg1, jump, aluop} = controls;
   assign loadcontrol = 3'b101;	//3'b101 is a basic Load Word (Lw) set as default to avoid random signal if not accessed.
-  assign memtoreg2 = jump | pcsrc;
 
 
   // Assign 11 elements names as aluop consist of 2 bits so rightfully fills the reg controls.

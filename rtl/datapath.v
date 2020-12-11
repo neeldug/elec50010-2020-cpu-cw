@@ -17,7 +17,7 @@ module datapath(
 
 logic [4:0] writereg1, writereg;
 logic [31:0] pcnext, pcnextbr, pcplus4, pcbranch, pclink;
-logic [31:0] signimm, signimmsh, pcnextbr1, pcnextbr2, jumpsh;
+logic [31:0] signimm, signimmsh, immsh16, pcnextbr1, pcnextbr2, jumpsh;
 logic [31:0] srca, srcb;
 logic [31:0] result2, result1, result;
 
@@ -56,7 +56,9 @@ mux2 #(5) wrmux2(writereg1, 5'b11111, regdst2, writereg);								//regdst2 is hi
 adder pcbrlink(pcplus4, 32'b100, pclink);
 
 //Load selector bit (word/byte/LSB...)
-loadselector loadsel(data_readdata, loadcontrol, result1);
+shiftleft16 (instr_readdata[15:0], immsh16);
+
+loadselector loadsel(data_readdata, immsh16, loadcontrol, result1);
 
 //Result--value written in register (Load/Branches/Jump)
 mux2 #(32) resmux(data_address, result1, memtoreg1, result2);		//memtoreg1 is high for load instructions (value in RAM) else take result from ALU.

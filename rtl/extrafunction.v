@@ -51,6 +51,14 @@ module shiftleft2 (
   assign y = {{a[29:0]}, 2'b00};
 endmodule
 
+module shiftleft16 (
+    input  logic [31:0] a,
+    output logic [31:0] y
+);
+
+  assign y = {{a[15:0]}, 16'b0};
+endmodule
+
 module flipflopr #(parameter WIDTH = 8) (
     input logic clk, reset, clk_enable,
     input logic [WIDTH-1:0] d,

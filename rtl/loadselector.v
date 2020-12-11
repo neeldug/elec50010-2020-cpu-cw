@@ -1,5 +1,5 @@
 module loadselector(
-	input logic [31:0] a,
+	input logic [31:0] a, b,
 	input logic [2:0] controls,
 	output logic [31:0] y
 	);
@@ -28,7 +28,7 @@ always @(*)begin
 				
 		3'b011: y = {16'b0, a[15:0]};	//Load halfword unsigned
 		
-		3'b100: y = (b << 16);			//Load upper Immediate
+		3'b100: y = b;					//Load upper Immediate
 		
 		3'b101: y = a;					//Load word
 		

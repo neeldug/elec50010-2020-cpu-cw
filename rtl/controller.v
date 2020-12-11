@@ -46,6 +46,6 @@ module controller (
   );
   always_comb begin
     assign pcsrc = branch & zero;
-    assign memtoreg2 =jump | pcsrc;
+    assign memtoreg2 = jump | pcsrc;
   end
 endmodule
