@@ -2,7 +2,7 @@ module alumodule (
     input logic [4:0] control,
     input logic [31:0] a,
     input logic [31:0] b,
-    input logic [4:0] shamt
+    input logic [4:0] shamt,
     output logic zero,
     output logic [31:0] y
 );
