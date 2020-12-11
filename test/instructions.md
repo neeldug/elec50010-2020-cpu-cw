@@ -1,49 +1,50 @@
-Code
--[] ADDIU
--[] ADDU
--[] AND
--[] ANDI
--[] BEQ
--[] BGEZ
--[] BGEZAL
--[] BGTZ
--[] BLEZ
--[] BLTZ
--[] BLTZAL
--[] BNE
--[] DIV
--[] DIVU
--[] J
--[] JALR
--[] JAL
--[] JR
--[] LB
--[] LBU
--[] LH
--[] LHU
--[] LUI
--[] LW
--[] LWL
--[] LWR
--[] MTHI
--[] MTLO
--[] MULT
--[] MULTU
--[] OR
--[] ORI
--[] SB
--[] SH
--[] SLL
--[] SLLV
--[] SLT
--[] SLTI
--[] SLTIU
--[] SLTU
--[] SRA
--[] SRAV
--[] SRL
--[] SRLV
--[] SUBU
--[] SW
--[] XOR
--[] XORI
+### Code
+
+- [ ] ADDIU
+- [ ] ADDU
+- [ ] AND
+- [ ] ANDI
+- [ ] BEQ
+- [ ] BGEZ
+- [ ] BGEZAL
+- [ ] BGTZ
+- [ ] BLEZ
+- [ ] BLTZ
+- [ ] BLTZAL
+- [ ] BNE
+- [ ] DIV
+- [ ] DIVU
+- [ ] J
+- [ ] JALR
+- [ ] JAL
+- [ ] JR
+- [ ] LB
+- [ ] LBU
+- [ ] LH
+- [ ] LHU
+- [ ] LUI
+- [ ] LW
+- [ ] LWL
+- [ ] LWR
+- [ ] MTHI
+- [ ] MTLO
+- [ ] MULT
+- [ ] MULTU
+- [ ] OR
+- [ ] ORI
+- [ ] SB
+- [ ] SH
+- [ ] SLL
+- [ ] SLLV
+- [ ] SLT
+- [ ] SLTI
+- [ ] SLTIU
+- [ ] SLTU
+- [ ] SRA
+- [ ] SRAV
+- [ ] SRL
+- [ ] SRLV
+- [ ] SUBU
+- [ ] SW
+- [ ] XOR
+- [ ] XORI
