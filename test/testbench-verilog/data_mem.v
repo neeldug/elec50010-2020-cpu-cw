@@ -9,12 +9,12 @@ module data_mem (
   parameter DATA_INIT_FILE = "";
   localparam  START = 32'h10000000;
 
-  reg [31:0] dmem[START:START+127];
+  reg [7:0] dmem[START:START+511];
 
   //data initialization
   initial begin
     integer i;
-    for (i = START; i < START+128; i++) begin
+    for (i = START; i < START+511; i++) begin
       dmem[i] = 0;
     end
 
@@ -26,8 +26,8 @@ module data_mem (
   //clockedge read and write with write control signal
   always @(posedge clk) begin
     if (data_write) begin
-      dmem[data_address] <= data_writedata;
+      dmem[instr_address:instr_address+3] <= data_writedata;
     end
-    data_readdata <= dmem[data_address];
+    data_readdata <= dmem[instr_address:instr_address+3];
   end
 endmodule

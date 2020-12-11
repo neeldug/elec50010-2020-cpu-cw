@@ -1,7 +1,1 @@
 .idea
-test/assembly/
-
-!test/assembly/*.sh
-test/binary/
-test/reference/
-test/simulator/

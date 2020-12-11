@@ -13,19 +13,6 @@ on:
 name: Continuous Integration
 
 jobs:
-  lint:
-    name: Veriloglint
-    runs-on: ubuntu-18.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          # Download complete repository + tags
-          fetch-depth: 0
-      - name: Install Verilator
-        run: sudo apt-get install -y verilator
-      - name: Run Linter
-        run: verilator --lint-only test/testbench-verilog/*.v
   test:
     name: Run Testbench
     runs-on: ubuntu-18.04

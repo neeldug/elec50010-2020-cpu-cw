@@ -5,12 +5,12 @@ module instruction_mem (
 
   parameter INSTR_INIT_FILE = "";
   localparam START = 32'hBFC00000;
-  reg [31:0] imem[START:START+127];
+  reg [7:0] imem[START:START+511];
 
   //initialization
   initial begin
     integer i;
-    for (i = START; i < START + 128; i++) begin
+    for (i = START; i < START + 511; i++) begin
       imem[i] = 0;
     end
 
@@ -21,6 +21,6 @@ module instruction_mem (
 
   //making the async read
   always_comb begin
-    instr = imem[instr_address];
+    instr = imem[instr_address:instr_address+3];
   end
 endmodule
