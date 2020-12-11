@@ -44,8 +44,10 @@ module controller (
       .aluop(aluop),
       .alucontrol(alucontrol)
   );
+  
   always_comb begin
-    assign pcsrc = branch & zero;
-    assign memtoreg2 = jump | pcsrc;
+    pcsrc = branch & zero;
+    memtoreg2 = jump | pcsrc;
   end
+  
 endmodule

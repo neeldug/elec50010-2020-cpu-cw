@@ -92,8 +92,8 @@ module alu(
       5'b01011: begin	//shift right arithmetic
         x = b;
         for (i = shamt; i > 0; i = i - 1) begin
-          if (b[31] == 1) x = {1'b1, b[31:1]};
-          else x = {1'b0, b[31:1]};						// CHANGED x={--, x[--]} to x={--,b[--]} for stability
+          if (b[31] == 1) x = {1'b1, x[31:1]};
+          else x = {1'b0, x[31:1]};
         end
         y = x;
       end
@@ -101,7 +101,7 @@ module alu(
       5'b01100: begin	//shift right logical
         x = b;
         for (i = shamt; i > 0; i = i - 1) begin
-          x = {1'b0, b[31:1]};
+          x = {1'b0, x[31:1]};
         end
         y = x;
       end
@@ -111,8 +111,8 @@ module alu(
       5'b01101: begin	//shift right arithmetic variable
         x = b;
         for (j = a[31:0]; j > 0; j = j - 1) begin
-          if (b[31] == 1) x = {1'b1, b[31:1]};
-          else x = {1'b0, b[31:1]};
+          if (b[31] == 1) x = {1'b1, x[31:1]};
+          else x = {1'b0, x[31:1]};
         end
         y = x;
       end
@@ -120,7 +120,7 @@ module alu(
       5'b01110: begin	//shift right logical variable
         x = b;
         for (j = a[31:0]; j > 0; j = j - 1) begin
-          x = {1'b0, b[31:1]};
+          x = {1'b0, x[31:1]};
         end
         y = x;
       end
