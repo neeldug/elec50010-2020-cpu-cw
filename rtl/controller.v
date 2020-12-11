@@ -21,28 +21,28 @@ module controller (
   logic branch;
 
   maindec md (
-      op,
-      funct,
-      dest,
-      memtoreg1,
-      data_write,
-      branch,
-      alusrc,
-      regdst2,
-      regdst1,
-      regwrite,
-      jump1,
-      jump,
-      aluop,
-      loadcontrol
+      .op(op),
+      .funct(funct),
+      .dest(dest),
+      .memtoreg1(memtoreg1),
+      .data_write(data_write),
+      .branch(branch),
+      .alusrc( alusrc),
+      .regdst2(regdst2),
+      .regdst1(regdst1),
+      .regwrite(regwrite),
+      .jump1(jump1),
+      .jump(jump),
+      .aluop(aluop),
+      .loadcontrol(loadcontrol)
   );
 
   aludec ad (
-      funct,
-      op,
-      dest,
-      aluop,
-      alucontrol
+      .funct(funct),
+      .op(op),
+      .dest(dest),
+      .aluop(aluop),
+      .alucontrol(alucontrol)
   );
   always_comb begin
     assign pcsrc = branch & zero;

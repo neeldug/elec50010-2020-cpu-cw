@@ -24,23 +24,23 @@ logic [31:0] result2, result1, result;
 
 
 // Program counter regfile
-flipflopr #(32) pcreg(clk, reset, clk_enable, pcnextbr, instr_address);
+flipflopr #(32) pcreg(.clk(clk), .reset(reset), .clk_enable(clk_enable), .d(pcnextbr), .q(instr_address));
 
-adder pcpl4(instr_address, 32'b100, pcplus4);
+adder pcpl4(.a(instr_address), .b(32'b100), .y(pcplus4));
 
-signext se(instr_readdata[15:0], signimm); 
+signext se(.a(instr_readdata[15:0]), .y(signimm)); 
 
-shiftleft2 immshift(signimm, signimmsh);
+shiftleft2 immshift(.a(signimm), .y(signimmsh));
 
-adder pcbr(signimmsh, pcplus4, pcbranch);
+adder pcbr(.a(signimmsh), .b(pcplus4), .y(pcbranch));
 
-mux2 #(32) pcmux1(pcplus4, pcbranch, pcsrc, pcnextbr1);						//pcsrc is high when we are in a branch instruction and the condition. (zero flag) are met.
+mux2 #(32) pcmux1(.a(pcplus4), .b(pcbranch), .s(pcsrc), .y(pcnextbr1));						//pcsrc is high when we are in a branch instruction and the condition. (zero flag) are met.
 
-mux2 #(32) pcmux2({6'b0,instr_readdata[25:0]}, result, jump1, pcnextbr2);	//jump1 is high when we jump to value in register.
+mux2 #(32) pcmux2(.a({6'b0,instr_readdata[25:0]}), .b(result), .s(jump1), .y(pcnextbr2));	//jump1 is high when we jump to value in register.
 
-shiftleft2 jsh(pcnextbr2, jumpsh);											//Instruction in PC are every 4 so we need to multiply by 4.
+shiftleft2 jsh(.a(pcnextbr2), .y(jumpsh));											//Instruction in PC are every 4 so we need to multiply by 4.
 
-mux2 #(32) pcmux(pcnextbr1, jumpsh, jump, pcnextbr);						//jump is high when we are in a jump instruction.
+mux2 #(32) pcmux(.a(pcnextbr1), .b(jumpsh), .s(jump), .y(pcnextbr));						//jump is high when we are in a jump instruction.
 
 
 
@@ -48,17 +48,17 @@ mux2 #(32) pcmux(pcnextbr1, jumpsh, jump, pcnextbr);						//jump is high when we
 // Register file
 
 //we added an output: register_v0 so that this value is accessible from the outside of the Mips_cpu at all time.
-regfile register(clk, regwrite, instr_readdata[25:21], instr_readdata[20:16], writereg, result, srca, data_writedata, register_v0);
+regfile register(.clk(clk), .we3(regwrite), .ra1(instr_readdata[25:21]), .ra2(instr_readdata[20:16]), .wa3(writereg), .wd3(result), .rd1(srca), .rd2(data_writedata), .reg_v0(register_v0));
 
-mux2 #(5) wrmux(instr_readdata[20:16], instr_readdata[15:11], regdst1, writereg1);		//regdst1 is high for R-type instructions else select I-type.
-mux2 #(5) wrmux2(writereg1, 5'b11111, regdst2, writereg);								//regdst2 is high for link instructions (store value in $31).
+mux2 #(5) wrmux(.a(instr_readdata[20:16]), .b(instr_readdata[15:11]), .s(regdst1), .y(writereg1));		//regdst1 is high for R-type instructions else select I-type.
+mux2 #(5) wrmux2(.a(writereg1), .b(5'b11111), .s(regdst2), .y(writereg));								//regdst2 is high for link instructions (store value in $31).
 
-adder pcbrlink(pcplus4, 32'b100, pclink);
+adder pcbrlink(.a(pcplus4), .b(32'b100), .y(pclink));
 
 //Load selector bit (word/byte/LSB...)
-shiftleft16 immshift16(instr_readdata[15:0], immsh16);
+shiftleft16 immshift16(.a(instr_readdata[15:0]), .y(immsh16));
 
-loadselector loadsel(data_readdata, immsh16, loadcontrol, result1);
+loadselector loadsel(.a(data_readdata), .b(immsh16), .controls(loadcontrol), .y(result1));
 
 //Result--value written in register (Load/Branches/Jump)
 mux2 #(32) resmux(data_address, result1, memtoreg1, result2);		//memtoreg1 is high for load instructions (value in RAM) else take result from ALU.
@@ -67,6 +67,6 @@ mux2 #(32) resmux2(result2, pclink, memtoreg2, result);				//memtoreg2 is high f
 //ALU file
 mux2 #(32) srcbmux(data_writedata, signimm, alusrc, srcb);			//alusrc is high for instructions using Immediate variable else for srcB instr.
 
-alu alumodule(alucontrol, srca, srcb, instr_readdata[10:6], zero, data_address); 
+alu alumodule(.control(alucontrol), .a(srca), .b(srcb), .shamt(instr_readdata[10:6]), .zero(zero), .y(data_address)); 
 
 endmodule

@@ -71,9 +71,9 @@ module flipflopr #(parameter WIDTH = 8) (
 endmodule
 
 module signext (
-    input  logic [15:0] instr_readdata,
-    output logic [31:0] signimm
+    input  logic [15:0] a,
+    output logic [31:0] y
 );
 
-  assign signimm = {{16{instr_readdata[15]}}, instr_readdata};
+  assign y = {{16{a[15]}}, a};
 endmodule
