@@ -27,6 +27,7 @@ fi
 
 for i in ${TESTCASES} ; do
   TESTNAME=$(basename "$i" | cut -f 1 -d '.')
+  INSTR=$(basename "$i" | cut -f 1 -d '_')
   #Dispatch to single scripts here
   echo "$1" "$TESTNAME" "$INSTR"
 done
