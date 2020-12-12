@@ -4,15 +4,16 @@ SOURCE="$1"
 TESTCASE="$2"
 INSTR="$3"
 
-VERILOGDIR="test/testbench-verilog/"
+list=$(find "$SOURCE" -type f -name '*.v')
 
+VERILOGDIR="test/testbench-verilog/"
 # Compilation
 iverilog -Wall -g 2012 \
     -s tb_harvard \
     -o test/simulator/mips_cpu_harvard_tb_"$TESTCASE" \
     -P tb_harvard.INSTR_INIT_FILE=\"test/binary/"$TESTCASE".hex.txt\" \
     -P tb_harvard.DATA_INIT_FILE=\"test/data/"$TESTCASE".hex.data.txt\" \
-    $VERILOGDIR"tb_harvard.v" $VERILOGDIR"data_mem.v" $VERILOGDIR"instruction_mem.v" "$SOURCE/*.v"
+    $VERILOGDIR"tb_harvard.v" $VERILOGDIR"data_mem.v" $VERILOGDIR"instruction_mem.v" "$list"
 
 # Execution
 

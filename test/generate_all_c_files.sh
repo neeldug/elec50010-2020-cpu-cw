@@ -15,7 +15,6 @@ for file in *.c; do
     make "$TESTNAME".ref.txt
   fi
   if [ ! -f ../data/"$TESTNAME".hex.data.txt ]; then
-    make "$TESTNAME".hex.data.txt && sed -i '$d' ../data/"$TESTNAME".hex.data.txt
-    # Trim final line
+    make "$TESTNAME".hex.data.txt
   fi
 done
