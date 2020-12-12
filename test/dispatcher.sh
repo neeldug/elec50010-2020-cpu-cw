@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Declare args as vars
-SOURCE=$1
+export SOURCE=$1
 ALL=false
 
 # Verify first arg passed
@@ -22,11 +22,14 @@ if [ "$ALL" = true ]
 then
   TESTCASES="test/assembly/*.asm.txt"
 else
-  TESTCASES="test/assembly/$INSTR*.asm.txt"
+  TESTCASES="test/assembly/${INSTR}_*.asm.txt"
 fi
 
 for i in ${TESTCASES} ; do
   TESTNAME=$(basename "$i" | cut -f 1 -d '.')
+  INSTR=$(basename "$i" | cut -f 1 -d '_')
   #Dispatch to single scripts here
-  echo "$1" "$TESTNAME" "$INSTR"
+
+  ./test/run_single_testcase.sh "$1" "$TESTNAME" "$INSTR" &
 done
+wait
