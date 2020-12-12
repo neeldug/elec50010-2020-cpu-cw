@@ -2,6 +2,7 @@
 
 SOURCE="$1"
 TESTCASE="$2"
+INSTR="$3"
 
 VERILOGDIR="test/testbench-verilog/"
 
@@ -16,5 +17,27 @@ iverilog -Wall -g 2012 \
 # Execution
 
 set +e
-./test/simulator/mips_cpu_harvard_tb_"$TESTCASE" >test/output/mips_cpu_harvard_tb_$"TESTCASE".stdout
+./test/simulator/mips_cpu_harvard_tb_"$TESTCASE" >test/output/mips_cpu_harvard_tb_"$TESTCASE".stdout
 # Capture exit code
+
+RESULT=$?
+set -e
+
+#Checks if simulation returned an error code (e.g. cpu failed to hault)
+if [[ "${RESULT}" -ne 0 ]] ; then
+   echo "${TESTCASE}, ${INSTR}, Fail"
+   exit
+fi
+
+#Compare output to reference
+set +e
+diff -w test/reference/${TESTCASE}.ref.txt test/output/mips_cpu_harvard_tb_"$TESTCASE".stdout
+RESULT=$?
+set -e
+
+#Determine outcome based on result of comparison
+if [[ "${RESULT}" -ne 0 ]] ; then
+   echo "${TESTCASE}, ${INSTR}, Fail"
+else
+   echo "${TESTCASE}, ${INSTR}, Pass"
+fi
