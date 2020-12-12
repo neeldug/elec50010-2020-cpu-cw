@@ -1,19 +1,16 @@
-module CPU_MIPS_harvard (
+module CPU_MIPS_bus (
     input logic clk,
     reset,
     output logic active,
     output logic [31:0] register_v0,
 
-    input logic clk_enable,
-
-    output logic [31:0] instr_address,  //PC Next
-    input  logic [31:0] instr_readdata,  //Data stored at address determined by PCnext
-
-    output logic [31:0] data_address,  //ALU_result
-    output logic data_write,  //control signal Data memory write enable for data
-    output logic data_read,
-    output logic [31:0] data_writedata,
-    input logic [31:0] data_readdata
+    output logic [31:0] address,  //Memory addressing
+    output logic write,
+    output logic read,
+    input logic waitrequest,
+    output logic [31:0] writedata,
+    output logic byte enable,
+    input logic readdata,
 );
 
   logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc;

@@ -45,6 +45,15 @@ module mux2 #(parameter WIDTH = 8) (
   assign y = s ? a : b;
 endmodule
 
+module mux4 #(parameter WIDTH = 8) (
+    input logic [WIDTH - 1:0] a, b, c, d,
+    input logic [1:0] s,
+    output logic [WIDTH - 1:0] y
+);
+
+  assign y = s[1] ? (s[0] ? a : b) : (s[0] ? c : d);
+endmodule
+
 
 module adder (
     input  logic [31:0] a, b,
