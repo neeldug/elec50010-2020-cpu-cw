@@ -9,8 +9,8 @@ module CPU_MIPS_bus (
     output logic read,
     input logic waitrequest,
     output logic [31:0] writedata,
-    output logic byte enable,
-    input logic readdata,
+    output logic [3:0] byteenable,
+    input logic [31:0] readdata,
 );
 
   logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc;
@@ -40,9 +40,6 @@ module CPU_MIPS_bus (
   datapath datap (
       .clk(clk),
       .reset(reset),
-      .clk_enable(clk_enable),
-      .memtoreg2(memtoreg2),
-      .memtoreg1(memtoreg1),
       .alusrc(alusrc),
       .pcsrc(pcsrc),
       .regdst2(regdst2),
@@ -53,11 +50,9 @@ module CPU_MIPS_bus (
       .alucontrol(alucontrol),
       .loadcontrol(loadcontrol),
       .zero(zero),
-      .instr_address(instr_address),
-      .instr_readdata(instr_readdata),
-      .data_readdata(data_readdata),
-      .data_address(data_address),
-      .data_writedata(data_writedata),
+      .address(address),
+      .readdata(readdata),
+      .writedata(writedata),
       .register_v0(register_v0)
   );
   
