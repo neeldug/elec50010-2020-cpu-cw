@@ -23,8 +23,13 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Install IcarusVerilog
-        run: sudo apt-get install -y iverilog
+      - name: Install Dependencies
+        run: sudo apt-get install -y iverilog qemu-user gcc-mipsel-linux-gnu
+      - name: Generate Temp Files
+        run: |
+          cd test/c-files
+          ./generate_all_c_files.sh
+          cd ../..
       - name: Run Testbench (Bus)
         run: ./test/test_mips_cpu_bus.sh
       - name: Run Testbench (Harvard)
