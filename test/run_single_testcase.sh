@@ -7,6 +7,7 @@ INSTR="$3"
 list=$(find "$SOURCE" -type f -name '*.v')
 
 VERILOGDIR="test/testbench-verilog/"
+
 # Compilation
 iverilog -Wall -g 2012 \
     -s tb_harvard \

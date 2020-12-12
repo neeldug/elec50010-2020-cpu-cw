@@ -10,6 +10,8 @@ module tb_harvard;
   logic reset;
   logic active;
   logic [31:0] register_v0;
+  integer cycle_count = 0;
+  integer STDERR = 32'h8000_0002;
 
   logic clk_enable;  //Needs investigating further - logic to drive signal?
 
@@ -86,6 +88,8 @@ module tb_harvard;
     //Looping until the CPU finished (sets active low)
     while (active) begin
       @(posedge clk);
+      cycle_count++;
+      $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d", cycle_count, register_v0);
     end
 
     $display("%d", register_v0);
