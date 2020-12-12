@@ -31,7 +31,7 @@ fi
 
 #Compare output to reference
 set +e
-diff -w test/reference/${TESTCASE}.ref.txt test/output/mips_cpu_harvard_tb_"$TESTCASE".stdout
+diff -w test/reference/"${TESTCASE}".ref.txt test/output/mips_cpu_harvard_tb_"$TESTCASE".stdout
 RESULT=$?
 set -e
 
