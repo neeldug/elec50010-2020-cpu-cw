@@ -46,10 +46,10 @@ MIPS_LDFLAGS = -nostdlib -Wl,-melf32btsmip -march=mips1 -nostartfiles -mno-check
 	$(MIPS_OBJDUMP) -j .text -D $< > $@
 
 %.hex.txt : %.mips.bin
-	od -An -w1 --endian=little -v -t x1 $< > ../binary/$@; sed -i '1 s/^/@BFC00000\n/' ../binary/$@
+	od -An -w1 -v -t x1 $< > ../binary/$@; sed -i '1 s/^/@BFC00000\n/' ../binary/$@
 
 %.hex.data.txt : %.mips.data.bin
-	od -An -w1 --endian=little -v -t x1 $< > ../data/$@; sed -i '1 s/^/@10000000\n/' ../data/$@
+	od -An -w1 -v -t x1 $< > ../data/$@; sed -i '1 s/^/@10000000\n/' ../data/$@
 
 %.bin: %.c
 	$(MIPS_CC) $(MIPS_CPPFLAGS) $< -o $@

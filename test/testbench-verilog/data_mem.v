@@ -31,6 +31,6 @@ module data_mem (
       dmem[data_address+2] <= data_writedata[23:16];
       dmem[data_address+3] <= data_writedata[31:24];
     end
-    data_readdata <= {dmem[data_address], dmem[data_address+1], dmem[data_address+2], dmem[data_address+3]};
+    data_readdata <= {dmem[data_address+3], dmem[data_address+2], dmem[data_address+1], dmem[data_address]};
   end
 endmodule
