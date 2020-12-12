@@ -80,7 +80,7 @@ module shiftleft16 (
 endmodule
 
 module flipflopr #(parameter WIDTH = 8) (
-    input logic clk, reset, clk_enable,
+    input logic clk, reset, enable,
     input logic [WIDTH-1:0] d,
     output logic [WIDTH-1:0] q
 );
@@ -93,8 +93,8 @@ module flipflopr #(parameter WIDTH = 8) (
   
   always @(posedge clk, posedge reset) begin
     if (reset) q <= 0;
-    else if (flag & clk_enable) q <= 32'hBFC00000;
-    else if (~flag & clk_enable) q <= d;
+    else if (flag & enable) q <= 32'hBFC00000;
+    else if (~flag & enable) q <= d;
     flag <= 0;
   end 
 		

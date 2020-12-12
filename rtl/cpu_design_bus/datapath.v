@@ -24,7 +24,7 @@ logic [31:0] result2, result1, result;
 
 
 // Program counter regfile
-flipflopr #(32) pcreg(.clk(clk), .reset(reset), .clk_enable(clk_enable), .d(pcnextbr), .q(instr_address));
+flipflopr #(32) pcreg(.clk(clk), .reset(reset), .enable(pcen), .d(pcnextbr), .q(instr_address));
 
 adder pcpl4(.a(instr_address), .b(32'b100), .y(pcplus4));
 
