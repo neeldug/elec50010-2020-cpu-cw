@@ -15,23 +15,21 @@ always @(*)begin
 						y = {24'b0, a[7:0]};
 					end
 				end
-				
+
 		3'b001: y = {24'b0, a[7:0]};	//Load byte unsigned
-		
+
 		3'b010: begin					//Load halfword signed
 					if(a[15] == 1)begin
 						y = {16'b1, a[15:0]};
 					end else begin
 						y = {16'b0, a[15:0]};
 					end
-				end 
-				
+				end
+
 		3'b011: y = {16'b0, a[15:0]};	//Load halfword unsigned
-		
-		3'b100: y = b;					//Load upper Immediate
-		
+				
 		3'b101: y = a;					//Load word
-		
+
 		3'b110: begin					//Load word left
 					if((4-(a%4)) == 0)begin
 						y = {a[7:0], 24'b0};
@@ -43,7 +41,7 @@ always @(*)begin
 						y = a[31:0];
 					end
 				 end
-				 
+
 		3'b111: begin					//Load word right
 					if((a%4) == 0)begin
 						y = {24'b0, a[7:0]};
@@ -55,14 +53,13 @@ always @(*)begin
 						y = a[31:0];
 					end
 				 end
-		
-		default: y = a[31:0];	
+
+		default: y = a[31:0];
 	endcase
 	end
 
 always @(y)begin
 	z = y;
 	end
-	
+
 endmodule
-	

@@ -152,7 +152,7 @@ module alu(
           end
         end
       end
-      
+
       5'b10000: begin	//Divid unsigned: DIVU
         HI = a % b;
         LO = a / b;
@@ -166,33 +166,33 @@ module alu(
           y = 32'b0;
         end else y = {31'b0, 1'b1};
       end
-	  
-      5'b10100: begin	//Branch on > 0  
+
+      5'b10100: begin	//Branch on > 0
         if (a[31] == 0 & a != 32'b0) begin
           y = 32'b0;
         end else y = {31'b0, 1'b1};
       end
-	  
-	  5'b10101: begin	//Branch on >= 0 (link or not)  
+
+	  5'b10101: begin	//Branch on >= 0 (link or not)
         if (a[31] == 0) begin
           y = 32'b0;
         end else y = {31'b0, 1'b1};
       end
 
-/*      
-      5'b10101: begin	//Branch on = 0  
+/*
+      5'b10101: begin	//Branch on = 0
         if (a == 32'b0) begin
           y = 32'b0;
         end else y = {31'b0, 1'b1};
       end
 */
 
-      5'b10110: begin	//Branch on a != b   
+      5'b10110: begin	//Branch on a != b
         if (a != b) begin
           y = 32'b0;
         end else y = {31'b0, 1'b1};
       end
-      
+
       5'b10111: begin	//Branch on <=0
         if (a[31] == 1 | a == 32'b0) begin
           y = 32'b0;
@@ -200,9 +200,10 @@ module alu(
       end
 
       5'b11000: y = a;	//Jump register JR/JALR
-      default:  y = 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;  //???	 
+      5'b11001: y = {b[15:0], 16'b0}; //Load Upper Immediate LUI
+      default:  y = 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;  //???
     endcase
-    
+
    end
    else begin //If reset signal is asserted, then sets both registers HI and LO to zero
    	HI = 0;
@@ -232,8 +233,8 @@ endmodule
 
 function [63:0] sra32 (input [63:0] a);
 reg [31:0] x;
-		
-	begin											
+
+	begin
 		x = a;
 		for(i = 32; i>0; i = i-1)begin
 			if(a[63] == 1)

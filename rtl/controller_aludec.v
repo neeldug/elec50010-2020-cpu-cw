@@ -12,13 +12,13 @@ module aludec (
       2'b01: alucontrol = 5'b11000;	//Jump instruction use the alu operation needed for Jump Register else don't need alu.
       2'b10:
       case (op)
-/*			6'b100000: alucontrol = 5'b; //Load byte				
+/*			6'b100000: alucontrol = 5'b; //Load byte
 			6'b100100: alucontrol = 5'b; //Load byte unsigned
-			6'b100001: alucontrol = 5'b; //Load halfword			
+			6'b100001: alucontrol = 5'b; //Load halfword
 			6'b100101: alucontrol = 5'b; //Load halfword unsigned
 			6'b001111: alucontrol = 5'b; //Load upper immidiate
 			6'b100011: alucontrol = 5'b; //Load word
-			6'b100010: alucontrol = 5'b; //Load word left         
+			6'b100010: alucontrol = 5'b; //Load word left
 			6'b100110: alucontrol = 5'b; //Load word right
 			6'b101000: alucontrol = 5'b; //Store byte
 			6'b101001: alucontrol = 5'b; //Store halfword
@@ -29,7 +29,7 @@ module aludec (
         case (dest)
           5'b00001: alucontrol = 5'b10101;  //Branch on >= 0
           5'b10001: alucontrol = 5'b10101; //Branch on >= 0 & link (regwrite active) use SLT mod in control sign
-          5'b00000: alucontrol = 5'b10011;  //Branch on < 0 
+          5'b00000: alucontrol = 5'b10011;  //Branch on < 0
           5'b10000: alucontrol = 5'b10011;  //Branch on < 0 & link
           default: alucontrol = 5'bxxxxx;
         endcase
@@ -46,7 +46,7 @@ module aludec (
         6'b001110: alucontrol = 5'b00010;  //XORI
         6'b001010: alucontrol = 5'b00110;  //Set on less than immediate (signed)
         6'b001011: alucontrol = 5'b00101;  //Set on less than immediate unsigned
-
+        6'b001111: alucontrol = 5'b11001; //Load upper immidiate
         6'b000000:
         case (funct)
           6'b100001: alucontrol = 5'b00011;  //ADD -> ADDU
@@ -74,7 +74,7 @@ module aludec (
 */
           default:   alucontrol = 5'bxxxxx;  //???
         endcase
-        default: alucontrol = 5'bxxxxx;  //???		
+        default: alucontrol = 5'bxxxxx;  //???
       endcase
       default: alucontrol = 5'bxxxxx;  //case aluop= 11 ???
     endcase
@@ -82,9 +82,7 @@ endmodule
 
 
 // In this module we are setting the control signals for the ALU. Refer to the table 7.2 page 376. (for team)
-// Note: The aluop can't be 2'b11. 
+// Note: The aluop can't be 2'b11.
 // The default: case(funct) replaces an iterative: 2'b10 & 5'bxxxxx (funct).
 
 //For all jump Instruction we set the alu to Jump register option, so the result bit will take the value of srcA but will have an effect on register/pc only when the control signals are right.
-
-
