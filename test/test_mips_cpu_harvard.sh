@@ -6,9 +6,9 @@ set -eo pipefail
 
 if [ -z "$2" ]
 then
-  ./test/dispatcher.sh "$1" | xargs -L1 -P4 ./test/run_single_testcase.sh
+  ./test/dispatcher.sh "$1"
 else
-  ./test/dispatcher.sh "$1" "$2" | xargs -L1 -P4 ./test/run_single_testcase.sh
+  ./test/dispatcher.sh "$1" "$2"
 fi
 #Run against dispatcher for parallelisation
 
