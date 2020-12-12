@@ -83,12 +83,22 @@ module alu(
         end
       end
 
+
       5'b01001: y = b << shamt;	//shift left logical
 // we take the shift variable from instr[10:6] included in the Immediate field
 
       5'b01010: y = b << a;	//shift left logical variable
 
-      5'b01011: begin	//shift right arithmetic
+
+      5'b01011: y = b >>> shamt; //shift right arithmetic
+      
+      5'b01100: y = b >> shamt; //shift right logical
+      
+      5'b01101: y = b >>> a; //shift right arithmetic variable
+      
+      5'b01110: y = b >> a; //shift right logical variable
+
+/*      5'b01011: begin	//shift right arithmetic
         x = b;
         for (i = shamt; i > 0; i = i - 1) begin
           if (b[31] == 1) x = {1'b1, x[31:1]};
@@ -123,10 +133,8 @@ module alu(
         end
         y = x;
       end
-
+*/
 //	  5'b: y = a >> b;	//shift right logical variable
-
-
 
 
       5'b01111: begin	//Divid: DIV
@@ -158,8 +166,11 @@ module alu(
         LO = a / b;
       end
 
+
       5'b10001: y = HI[31:0];	//MTHI: move to High
+      
       5'b10010: y = LO[31:0];	//MTLO: move to Low
+
 
       5'b10011: begin	//Branch on < 0 and Branch on < 0 / link
         if (a[31] == 1) begin
@@ -204,10 +215,13 @@ module alu(
     endcase
     
    end
+   
+   
    else begin //If reset signal is asserted, then sets both registers HI and LO to zero
    	HI = 0;
    	LO = 0;
    end
+   
   end
 
 
@@ -220,7 +234,6 @@ module alu(
   end
 
 endmodule
-
 
 
 
