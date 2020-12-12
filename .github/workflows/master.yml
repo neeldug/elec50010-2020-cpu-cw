@@ -4,30 +4,17 @@ on:
       - master
       - cpu-design
       - testbench
+      - harvard-impl
   push:
     branches:
       - master
       - cpu-design
       - testbench
+      - harvard-impl
 
 name: Continuous Integration
 
 jobs:
-  lint:
-    name: Veriloglint
-    runs-on: ubuntu-18.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          # Download complete repository + tags
-          fetch-depth: 0
-      - name: Install Verilator
-        run: sudo apt-get install -y verilator
-      - name: Run Linter
-        run: |
-          shopt -s extglob #Enables exclusion for wildcard
-          verilator --lint-only rtl/mips_cpu.v rtl/!(mips_cpu).v
   test:
     name: Run Testbench
     runs-on: ubuntu-18.04
@@ -41,4 +28,4 @@ jobs:
       - name: Run Testbench (Bus)
         run: ./test/test_mips_cpu_bus.sh
       - name: Run Testbench (Harvard)
-        run: ./test/test_mips_cpu_harvard.sh
+        run: ./test/test_mips_cpu_harvard.sh rtl
