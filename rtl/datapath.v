@@ -16,7 +16,7 @@ module datapath(
 
 
 logic [4:0] writereg1, writereg;
-logic [31:0] pcnext, pcnextbr, pcplus4, pcbranch, pclink;
+logic [31:0] pcnext, pcnextbr, pcrst, pcplus4, pcbranch, pclink;
 logic [31:0] signimm, signimmsh, immsh16, pcnextbr1, pcnextbr2, jumpsh;
 logic [31:0] srca, srcb;
 logic [31:0] result2, result1, result;
@@ -24,7 +24,10 @@ logic [31:0] result2, result1, result;
 
 
 // Program counter regfile
-flipflopr #(32) pcreg(.clk(clk), .reset(reset), .clk_enable(clk_enable), .d(pcnextbr), .q(instr_address));
+
+resetcpu rstcpu(.reset(reset), .a(pcnextbr), .y(pcrst));
+
+flipflopr #(32) pcreg(.clk(clk), .reset(reset), .clk_enable(clk_enable), .d(pcrst), .q(instr_address));
 
 adder pcpl4(.a(instr_address), .b(32'b100), .y(pcplus4));
 
