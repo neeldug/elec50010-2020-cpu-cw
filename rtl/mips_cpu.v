@@ -1,4 +1,4 @@
-module CPU_MIPS_harvard (
+module mips_cpu_harvard (
     input logic clk,
     reset,
     output logic active,
