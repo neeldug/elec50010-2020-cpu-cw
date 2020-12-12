@@ -87,8 +87,16 @@ module alu(
 // we take the shift variable from instr[10:6] included in the Immediate field
 
       5'b01010: y = b << a;	//shift left logical variable
+      
+      5'b01011: y = b >>> shamt; //shift right arithmetic
+      
+      5'b01100: y = b >> shamt; //shift right logical
+      
+      5'b01101: y = b >>> a; //shift right arithmetic variable
+      
+      5'b01110: y = b >> a; //shift right logical variable
 
-      5'b01011: begin	//shift right arithmetic
+/*      5'b01011: begin	//shift right arithmetic
         x = b;
         for (i = shamt; i > 0; i = i - 1) begin
           if (b[31] == 1) x = {1'b1, x[31:1]};
@@ -123,7 +131,7 @@ module alu(
         end
         y = x;
       end
-
+*/
 //	  5'b: y = a >> b;	//shift right logical variable
 
 
