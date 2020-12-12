@@ -90,7 +90,7 @@ module alu(
 
       5'b01011: begin	//shift right arithmetic
         x = b;
-        for (i[4:0] = shamt; i > 0; i = i - 1) begin
+        for (i = shamt; i > 0; i = i - 1) begin
           if (b[31] == 1) x = {1'b1, x[31:1]};
           else x = {1'b0, x[31:1]};
         end
