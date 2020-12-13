@@ -31,3 +31,15 @@ jobs:
         run: ./test/test_mips_cpu_bus.sh
       - name: Run Testbench (Harvard)
         run: ./test/test_mips_cpu_harvard.sh rtl
+  lint:
+    runs-on: ubuntu-latest
+    container: neeld/mips
+    name: Run Verible Linter
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Run Linter
+        working-directory: ./rtl
+        run: verible-verilog-lint *.v
