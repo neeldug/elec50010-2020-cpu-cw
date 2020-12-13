@@ -42,4 +42,4 @@ jobs:
           fetch-depth: 0
       - name: Run Linter
         working-directory: ./rtl
-        run: verible-verilog-lint *.v
+        run: verible-verilog-lint --lint_fatal=false *.v

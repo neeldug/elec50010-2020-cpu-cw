@@ -40,7 +40,7 @@ module mips_cpu_harvard (
       .loadcontrol(loadcontrol)
   );
 
-  datapath datap(
+  datapath datap (
       .clk(clk),
       .reset(reset),
       .clk_enable(clk_enable),
@@ -63,7 +63,7 @@ module mips_cpu_harvard (
       .data_writedata(data_writedata),
       .register_v0(register_v0)
   );
-  
+
   assign active = (instr_address==32'b0) ? 1 : 0; //If PC counter points to address 0, then the CPU is halted
 
 endmodule

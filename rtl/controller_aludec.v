@@ -1,5 +1,6 @@
 module aludec (
-    input  logic [5:0] funct,op,
+    input  logic [5:0] funct,
+    op,
     input  logic [4:0] dest,
     input  logic [1:0] aluop,
     output logic [4:0] alucontrol
@@ -8,11 +9,12 @@ module aludec (
   always @(*)
     case (aluop)  //edge what if we have a 2'b11 eventhough it is illegal.
 
-      2'b00: alucontrol = 5'b00011;	//ADDI -- USED FOR LOAD AND STORE INSTRUCTIONS
-      2'b01: alucontrol = 5'b11000;	//Jump instruction use the alu operation needed for Jump Register else don't need alu.
+      2'b00: alucontrol = 5'b00011;  //ADDI -- USED FOR LOAD AND STORE INSTRUCTIONS
+      2'b01:
+      alucontrol = 5'b11000;	//Jump instruction use the alu operation needed for Jump Register else don't need alu.
       2'b10:
       case (op)
-/*			6'b100000: alucontrol = 5'b; //Load byte
+        /*			6'b100000: alucontrol = 5'b; //Load byte
 			6'b100100: alucontrol = 5'b; //Load byte unsigned
 			6'b100001: alucontrol = 5'b; //Load halfword
 			6'b100101: alucontrol = 5'b; //Load halfword unsigned
@@ -28,7 +30,8 @@ module aludec (
         6'b000001:
         case (dest)
           5'b00001: alucontrol = 5'b10101;  //Branch on >= 0
-          5'b10001: alucontrol = 5'b10101; //Branch on >= 0 & link (regwrite active) use SLT mod in control sign
+          5'b10001:
+          alucontrol = 5'b10101; //Branch on >= 0 & link (regwrite active) use SLT mod in control sign
           5'b00000: alucontrol = 5'b10011;  //Branch on < 0
           5'b10000: alucontrol = 5'b10011;  //Branch on < 0 & link
           default: alucontrol = 5'bxxxxx;
@@ -37,7 +40,7 @@ module aludec (
         6'b000111: alucontrol = 5'b10100;  //Branch on > 0
         6'b000101: alucontrol = 5'b10110;  //Branch on != 0
         6'b001001: alucontrol = 5'b00011;  //ADD unsigned immediate
-/*
+        /*
 			6'b000010: alucontrol = 5'b; //Jump
 			6'b000011: alucontrol = 5'b; //Jump and link
 */
@@ -46,7 +49,7 @@ module aludec (
         6'b001110: alucontrol = 5'b00010;  //XORI
         6'b001010: alucontrol = 5'b00110;  //Set on less than immediate (signed)
         6'b001011: alucontrol = 5'b00101;  //Set on less than immediate unsigned
-        6'b001111: alucontrol = 5'b11001; //Load upper immidiate
+        6'b001111: alucontrol = 5'b11001;  //Load upper immidiate
         6'b000000:
         case (funct)
           6'b100001: alucontrol = 5'b00011;  //ADD -> ADDU
@@ -68,7 +71,7 @@ module aludec (
           6'b011011: alucontrol = 5'b10000;  //Divide unsigned DIVU
           6'b010001: alucontrol = 5'b10001;  //MTHI
           6'b010100: alucontrol = 5'b10010;  //MTLO
-/*
+          /*
 		  6'b001000: alucontrol = 5'b10111; //Jump register JR
 		  6'b001001: alucontrol = 5'b10111; //Jump and link register
 */
