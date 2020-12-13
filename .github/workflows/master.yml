@@ -4,13 +4,11 @@ on:
       - master
       - cpu-design
       - testbench
-      - harvard-impl
   push:
     branches:
       - master
       - cpu-design
       - testbench
-      - harvard-impl
 
 name: Continuous Integration
 
@@ -30,7 +28,7 @@ jobs:
       - name: Run Testbench (Bus)
         run: ./test/test_mips_cpu_bus.sh
       - name: Run Testbench (Harvard)
-        run: ./test/test_mips_cpu_harvard.sh rtl
+        run: ./test/test_mips_cpu_harvard.sh rtl/cpu_design_harvard
   lint:
     runs-on: ubuntu-latest
     container: neeld/mips
@@ -40,6 +38,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Run Linter
-        working-directory: ./rtl
+      - name: Run Linter (Harvard)
+        working-directory: ./rtl/cpu_design_harvard
+        run: verible-verilog-lint --lint_fatal=false *.v
+      - name: Run Linter (Bus)
+        working-directory: ./rtl/cpu_design_bus
         run: verible-verilog-lint --lint_fatal=false *.v
