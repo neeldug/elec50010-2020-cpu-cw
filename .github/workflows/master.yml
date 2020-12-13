@@ -24,12 +24,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install Dependencies
+        working-directory: ./.github/workflows
         run: |
           sudo apt-get update
-          sudo apt-get install -y qemu-user gcc-mipsel-linux-gnu
-          curl -k -O -L http://ftp.br.debian.org/debian/pool/main/i/iverilog/iverilog_11.0-1_amd64.deb
-          sudo apt-get install -y ./iverilog_11.0-1_amd64.deb
-          rm -rf ./iverilog_11.0-1_amd64.deb
+          sudo apt-get install -y qemu-user gcc-mipsel-linux-gnu flex bison gcc g++ autoconf gperf
+          ./install_iverilog.sh
       - name: Generate Temp Files
         working-directory: ./test
         run: ./generate_all_c_files.sh
