@@ -16,19 +16,14 @@ name: Continuous Integration
 
 jobs:
   test:
+    runs-on: ubuntu-latest
+    container: neeld/mips
     name: Run Testbench
-    runs-on: ubuntu-18.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Install Dependencies
-        working-directory: ./.github/workflows
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y qemu-user gcc-mipsel-linux-gnu flex bison gcc g++ autoconf gperf
-          ./install_iverilog.sh
       - name: Generate Temp Files
         working-directory: ./test
         run: ./generate_all_c_files.sh
