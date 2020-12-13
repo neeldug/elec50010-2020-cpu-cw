@@ -1,10 +1,15 @@
 // Implementation of the register file
 module regfile (
-    input logic clk, reset,
+    input logic clk,
+    reset,
     input logic we3,
-    input logic [4:0] ra1, ra2, wa3,
+    input logic [4:0] ra1,
+    ra2,
+    wa3,
     input logic [31:0] wd3,
-    output logic [31:0] rd1, rd2, reg_v0
+    output logic [31:0] rd1,
+    rd2,
+    reg_v0
 );
 
   reg [31:0] rf[31:0];
@@ -12,18 +17,17 @@ module regfile (
   //read two ports combinationally
   //write third port on rising edge of clock
   //register 0 hardwir3d to 0
-  
+
   integer i;
-  
+
   always @(posedge clk) begin
-  	if (reset) begin						//sets all the regs in the regfile to 0 is reset signal is high
-  		for (i=0 ; i<32 ; i=i+1) begin
-  			rf[i] <= 32'b0;
-  		end
-  	end
-  	else begin 
-  		if (we3) rf[wa3] <= wd3;
-  	end
+    if (reset) begin  //sets all the regs in the regfile to 0 is reset signal is high
+      for (i = 0; i < 32; i = i + 1) begin
+        rf[i] <= 32'b0;
+      end
+    end else begin
+      if (we3) rf[wa3] <= wd3;
+    end
   end
 
   assign rd1 = (ra1 != 0) ? rf[ra1] : 0;
@@ -36,8 +40,11 @@ endmodule
 
 // Implementation of reusable functions used in datapath
 
-module mux2 #(parameter WIDTH = 8) (
-    input logic [WIDTH - 1:0] a, b,
+module mux2 #(
+    parameter WIDTH = 8
+) (
+    input logic [WIDTH - 1:0] a,
+    b,
     input logic s,
     output logic [WIDTH - 1:0] y
 );
@@ -47,7 +54,8 @@ endmodule
 
 
 module adder (
-    input  logic [31:0] a, b,
+    input  logic [31:0] a,
+    b,
     output logic [31:0] y
 );
 
@@ -70,25 +78,38 @@ module shiftleft16 (
   assign y = {{a[15:0]}, 16'b0};
 endmodule
 
-module flipflopr #(parameter WIDTH = 8) (
-    input logic clk, reset, clk_enable,
+module resetcpu (
+    input logic reset,
+    input logic [31:0] a,
+    output logic [31:0] y
+);
+  reg x = 1'b0;
+
+  always @(negedge reset) begin
+    x = 1'b1;
+  end
+  always_comb begin
+    if (x == 1'b0) y = a;
+    else if (x == 1'b1) y = 32'hBFC00000;
+  end
+endmodule
+
+
+module flipflopr #(
+    parameter WIDTH = 32
+) (
+    input logic clk,
+    reset,
+    clk_enable,
     input logic [WIDTH-1:0] d,
     output logic [WIDTH-1:0] q
 );
 
-  logic flag;
-  
-  always @(negedge reset) begin
-  	flag <= 1;
-  end
-  
   always @(posedge clk, posedge reset) begin
     if (reset) q <= 0;
-    else if (flag & clk_enable) q <= 32'hBFC00000;
-    else if (~flag & clk_enable) q <= d;
-    flag <= 0;
-  end 
-		
+    else if (clk_enable) q <= d;
+  end
+
 endmodule
 
 module signext (

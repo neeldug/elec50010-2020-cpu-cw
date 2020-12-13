@@ -31,24 +31,24 @@ module maindec (
   always @(*)
     case (op)
       6'b000000:
-      	case (funct)
-//No need to write enable register as HI and LO are reg in ALU module.
-      		6'b010001: begin  //Move to High MTHI
-        	  controls = 10'b0000000010;
-        	end
-        	6'b010100: begin  //Move to Low MTLO
-        	  controls = 10'b0000000010;
-        	end
-        	6'b001001: begin  //Jump register and link JALR & link in reg $31
-        	  controls = 10'b1100000101;
-        	  jump1 = 1;					//We set both as J-type to extract value in reg$a aluop: [01]
-        	end
-        	6'b001000: begin  //Jump register
-        	  controls = 10'b0000000101;
-        	  jump1 = 1;
-        	end	  
-        	default:   controls = 10'b1010000010;  //R-type instruction
-      	endcase
+      case (funct)
+        //No need to write enable register as HI and LO are reg in ALU module.
+        6'b010001: begin  //Move to High MTHI
+          controls = 10'b0000000010;
+        end
+        6'b010100: begin  //Move to Low MTLO
+          controls = 10'b0000000010;
+        end
+        6'b001001: begin  //Jump register and link JALR & link in reg $31
+          controls = 10'b1100000101;
+          jump1 = 1;					//We set both as J-type to extract value in reg$a aluop: [01]
+        end
+        6'b001000: begin  //Jump register
+          controls = 10'b0000000101;
+          jump1 = 1;
+        end
+        default: controls = 10'b1010000010;  //R-type instruction
+      endcase
 
       6'b100000: begin
         controls = 10'b1001001000;  //Load byte
@@ -68,7 +68,6 @@ module maindec (
       end
       6'b001111: begin
         controls = 10'b1001001000;  //Load upper immidiate
-        loadcontrol = 3'b100;
       end
       6'b100011: begin
         controls = 10'b1001001000;  //Load word
@@ -114,4 +113,3 @@ endmodule
 // We are currently setting all the control signals by looking at the opcode of the instrunctions.
 // We created an reg (=array) of control signals so that it is easier to implement.
 // In order to understand this section please refer to page 376 of the book (table 7.3) for team.
-
