@@ -1,4 +1,4 @@
-### Code
+s### Code
 
 - [x] ADDIU
 - [x] ADDU
@@ -17,12 +17,12 @@
 - [ ] J
 - [ ] JALR
 - [ ] JAL
-- [ ] JR
+- [x] JR
 - [ ] LB
 - [ ] LBU
 - [ ] LH
 - [ ] LHU
-- [ ] LUI
+- [x] LUI
 - [ ] LW
 - [ ] LWL
 - [ ] LWR
