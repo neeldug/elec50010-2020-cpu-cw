@@ -121,6 +121,7 @@ module flipflopr #(
   always @(posedge clk) begin
     if (reset) q <= 32'b0;
     else if (clk_enable) begin q <= d;
+  	end
   end
 
 endmodule
