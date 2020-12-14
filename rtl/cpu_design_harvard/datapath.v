@@ -35,7 +35,7 @@ module datapath (
 
   resetcpu rstcpu (
       .reset(reset),
-      .a(pcnextbr),
+      .a(32'hBFC0004), //pcnextbr
       .y(pcrst)
   );
 
@@ -49,8 +49,7 @@ module datapath (
 
   adder pcpl4 (
       .a(instr_address),
-      .b(32'b0000000000000000000000000000100
-),
+      .b(32'b0000000000000000000000000000100),
       .y(pcplus4)
   );
 
