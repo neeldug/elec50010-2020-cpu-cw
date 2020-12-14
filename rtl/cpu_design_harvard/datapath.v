@@ -34,18 +34,18 @@ module datapath (
 
   // Program counter regfile
 
-  resetcpu rstcpu (
+/*  resetcpu rstcpu (
       .reset(reset),
       .clk(clk),
       .a(pcnextbr), //pcnextbr
       .y(pcrst)
   );
-
+*/
   flipflopr #(32) pcreg (
       .clk(clk),
       .reset(reset),
       .clk_enable(clk_enable),
-      .d(pcrst),
+      .d(pcnextbr),
       .q(instr_address)
   );
 
@@ -80,7 +80,7 @@ module datapath (
 
   mux2 #(32) pcmux2 (
       .a({6'b0, instr_readdata[25:0]}),
-      .b(result),
+      .b(result2),
       .s(jump1),
       .y(pcnextbr2)
   );  //jump1 is high when we jump to value in register.

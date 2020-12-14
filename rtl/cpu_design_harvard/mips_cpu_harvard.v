@@ -16,7 +16,7 @@ module mips_cpu_harvard (
     input logic [31:0] data_readdata
 );
 
-  logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc;
+  logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc, actimpl;
 
   logic [4:0] alucontrol;
   logic [2:0] loadcontrol;
@@ -64,9 +64,24 @@ module mips_cpu_harvard (
       .register_v0(register_v0)
   );
 
+/*
+ assign active = (instr_address==0) ? 0 : 1; //If PC counter points to address 0, then the active flag is set to 0.
+*/
+/*initial begin
+	active = 1;
+	end
 
-//  assign active = (instr_address==0) ? 0 : 1; //If PC counter points to address 0, then the active flag is set to 0.
 
-  assign active = 1;
+always @(posedge clk & clk_enable) begin
+	if(instr_address == 0) active = 0;
+	else active = 1;
+end
+*/	
+
+always @(posedge clk) begin
+	if(clk_enable == 1) active = (instr_address == 32'h00000000) ? 1'b0 : 1'b1; //If PC counter points to address 0, then the CPU is halted
+	else active = 1;
+  end
+
 
 endmodule

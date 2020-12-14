@@ -77,6 +77,8 @@ module tb_harvard;
     @(posedge clk);
     reset <= 0;
     clk_enable <= 1;
+    
+    
 
     @(posedge clk);
     //Checking reset was successful
@@ -89,7 +91,7 @@ module tb_harvard;
     while (active) begin
       @(posedge clk);
       cycle_count++;
-      $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d", cycle_count, register_v0);
+      $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, active: %d", cycle_count, register_v0, active);
       $fdisplay(STDERR, "Instruction address: %h, Instruction: %b", instr_address, instr_readdata);
       //$fdisplay(STDERR, "Data address: %h, Data: %b", data_address, data_readdata);
     end
