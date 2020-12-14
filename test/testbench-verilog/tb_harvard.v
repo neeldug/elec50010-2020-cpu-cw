@@ -4,7 +4,7 @@ module tb_harvard;
 
   parameter INSTR_INIT_FILE = ""  /*default test case if not specified*/;
   parameter DATA_INIT_FILE = ""  /*default data if not specified*/;
-  parameter TIMEOUT_CYCLES = 100;
+  parameter TIMEOUT_CYCLES = 15;
 
   logic clk;
   logic reset;
