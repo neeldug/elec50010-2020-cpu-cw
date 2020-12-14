@@ -46,8 +46,8 @@ module controller (
   );
   
   always_comb begin
-    pcsrc = branch & zero;
-    memtoreg2 = jump | pcsrc;
+    pcsrc = (branch & zero);
+    memtoreg2 = (jump | pcsrc);
   end
   
 endmodule

@@ -49,7 +49,8 @@ module datapath (
 
   adder pcpl4 (
       .a(instr_address),
-      .b(32'b100),
+      .b(32'b0000000000000000000000000000100
+),
       .y(pcplus4)
   );
 

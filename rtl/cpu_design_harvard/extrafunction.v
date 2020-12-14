@@ -84,14 +84,27 @@ module resetcpu (
     output logic [31:0] y
 );
   reg x = 1'b0;
-
-  always @(negedge reset) begin
-    x = 1'b1;
-  end
+	
+	always @(negedge reset) begin
+    	x = 1'b1;
+    end
+/*  
+	if(x == 1) begin
+		y <= 32'hBFC00000;
+		x <= 1'b0;
+	end else begin
+		y <= a;
+	end
+*/	
+  
   always_comb begin
     if (x == 1'b0) y = a;
-    else if (x == 1'b1) y = 32'hBFC00000;
+    else if (x == 1'b1) begin
+    	y = 32'hBFC00000;
+    	x = 1'b0;
+    end
   end
+ 
 endmodule
 
 
@@ -105,9 +118,10 @@ module flipflopr #(
     output logic [WIDTH-1:0] q
 );
 
-  always @(posedge clk, posedge reset) begin
-    if (reset) q <= 0;
-    else if (clk_enable) q <= d;
+  always @(posedge clk) begin
+    if (reset) q <= 32'b0;
+    else if (clk_enable) begin q <= d;
+  	end
   end
 
 endmodule

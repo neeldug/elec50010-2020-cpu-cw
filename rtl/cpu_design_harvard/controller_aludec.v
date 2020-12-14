@@ -16,7 +16,6 @@ module aludec (
 			6'b100100: alucontrol = 5'b; //Load byte unsigned
 			6'b100001: alucontrol = 5'b; //Load halfword			
 			6'b100101: alucontrol = 5'b; //Load halfword unsigned
-			6'b001111: alucontrol = 5'b; //Load upper immidiate
 			6'b100011: alucontrol = 5'b; //Load word
 			6'b100010: alucontrol = 5'b; //Load word left         
 			6'b100110: alucontrol = 5'b; //Load word right
@@ -24,6 +23,7 @@ module aludec (
 			6'b101001: alucontrol = 5'b; //Store halfword
 			6'b101011: alucontrol = 5'b; //Store word
 */
+        6'b001111: alucontrol = 5'b11001; //Load upper immidiate
         6'b000100: alucontrol = 5'b00100;  //Branch on equal use SUBU
         6'b000001:
         case (dest)
