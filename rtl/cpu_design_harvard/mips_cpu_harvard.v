@@ -2,7 +2,7 @@ module mips_cpu_harvard (
     input logic clk,
     reset,
     output logic active,
-    output logic [31:0] register_v0,
+    output logic [31:0] register_v0, register_v3,
 
     input logic clk_enable,
 
@@ -61,7 +61,8 @@ module mips_cpu_harvard (
       .data_readdata(data_readdata),
       .data_address(data_address),
       .data_writedata(data_writedata),
-      .register_v0(register_v0)
+      .register_v0(register_v0),
+      .register_v3(register_v3)
   );
 
 /*

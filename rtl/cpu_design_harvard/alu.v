@@ -211,7 +211,17 @@ module alu(
       end
 
       5'b11000: y = a;	//Jump register JR/JALR
+      
       5'b11001: y = {b[15:0], 16'b0}; //Load upper Immidiate
+      
+/*      5'b11010: y= a + b;
+      
+      5'b11010: y=
+      
+      5'b11100: y=
+      
+      5'b11101: y=
+*/      
       default:  y = 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;  //???	 
     endcase
     

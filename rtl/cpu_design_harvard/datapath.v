@@ -19,7 +19,7 @@ module datapath (
     input logic [31:0] data_readdata,
     output logic [31:0] data_address,
     data_writedata,
-    output logic [31:0] register_v0
+    output logic [31:0] register_v0, register_v3
 );
 
 
@@ -113,7 +113,8 @@ module datapath (
       .wd3(result),
       .rd1(srca),
       .rd2(data_writedata),
-      .reg_v0(register_v0)
+      .reg_v0(register_v0),
+      .reg_v3(register_v3)
   );
 
   mux2 #(5) wrmux (
@@ -142,7 +143,7 @@ module datapath (
   );  //extended the instr_readdata to fit declaration of shiftleft16
 
   loadselector loadsel (
-      .a(data_readdata),
+      .a(data_readdata), //data_readadta
       .b(instr_address[15:0]),
       .controls(loadcontrol),
       .y(result1)
