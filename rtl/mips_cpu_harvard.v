@@ -65,6 +65,7 @@ module mips_cpu_harvard (
   );
   
   assign active = 1;
+//  (instr_address==32'b0) ? 1 : 0; //If PC counter points to address 0, then the CPU is halted
 
 endmodule
 
