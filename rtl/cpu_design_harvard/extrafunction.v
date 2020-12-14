@@ -85,8 +85,11 @@ module resetcpu (
 );
   reg [31:0] x;
 	
+	initial
+		x = 1'b0;
+	
 	always @(negedge reset) begin
-    	x = 32'b0;
+    	x = 1'b1;
     end
 /*  
 	if(x == 1) begin
@@ -97,12 +100,12 @@ module resetcpu (
 	end
 */	
   
-  always_comb begin
-    if (x == 1'b0) begin
-    	y = 32'hBFC00000;
-    	x = x + 32'b0000000000000000000000000000001;
+  always_ff begin
+    if (x == 1'b1) begin
+    	y <= 32'hBFC00000;
+    	x <= 1'b0;
     end else begin
-    	y = a;
+    	y <= a;
     end
   end
  
