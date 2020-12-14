@@ -1,5 +1,6 @@
 module loadselector(
-	input logic [31:0] a, b,
+	input logic [31:0] a,
+	input logic [15:0] b,
 	input logic [2:0] controls,
 	output logic [31:0] y
 	);
@@ -16,8 +17,10 @@ always @(*)begin
 					end
 				end
 				
-		3'b001: y = {24'b0, a[7:0]};	//Load byte unsigned
-		
+		3'b001: begin
+			z = a + ({16'b0,b});
+			y = {24'b0, a[15:8]};	//Load byte unsigned
+			end
 		3'b010: begin					//Load halfword signed
 					if(a[15] == 1)begin
 						y = {16'b1, a[15:0]};

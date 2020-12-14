@@ -143,7 +143,7 @@ module datapath (
 
   loadselector loadsel (
       .a(data_readdata),
-      .b(immsh16),
+      .b(instr_address[15:0]),
       .controls(loadcontrol),
       .y(result1)
   );
