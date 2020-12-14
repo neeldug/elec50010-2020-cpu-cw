@@ -28,6 +28,7 @@ module datapath (
   logic [31:0] signimm, signimmsh, immsh16, pcnextbr1, pcnextbr2, jumpsh;
   logic [31:0] srca, srcb;
   logic [31:0] result2, result1, result;
+  logic [31:0] pcresult;
 
 
 
@@ -35,7 +36,8 @@ module datapath (
 
   resetcpu rstcpu (
       .reset(reset),
-      .a(32'hBFC0004), //pcnextbr
+      .clk(clk),
+      .a(pcnextbr), //pcnextbr
       .y(pcrst)
   );
 
@@ -49,7 +51,7 @@ module datapath (
 
   adder pcpl4 (
       .a(instr_address),
-      .b(32'b0000000000000000000000000000100),
+      .b(32'b100),
       .y(pcplus4)
   );
 
@@ -72,7 +74,7 @@ module datapath (
   mux2 #(32) pcmux1 (
       .a(pcplus4),
       .b(pcbranch),
-      .s(pcsrc),
+      .s(pcsrc), //pcsrc
       .y(pcnextbr1)
   );  //pcsrc is high when we are in a branch instruction and the condition. (zero flag) are met.
 
@@ -91,7 +93,7 @@ module datapath (
   mux2 #(32) pcmux (
       .a(pcnextbr1),
       .b(jumpsh),
-      .s(jump),
+      .s(jump), //jump
       .y(pcnextbr)
   );  //jump is high when we are in a jump instruction.
 

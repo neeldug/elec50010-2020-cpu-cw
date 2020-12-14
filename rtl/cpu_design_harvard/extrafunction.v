@@ -49,7 +49,7 @@ module mux2 #(
     output logic [WIDTH - 1:0] y
 );
 
-  assign y = s ? a : b;
+  assign y = s ? b : a;
 endmodule
 
 
@@ -79,7 +79,7 @@ module shiftleft16 (
 endmodule
 
 module resetcpu (
-    input logic reset,
+    input logic reset, clk,
     input logic [31:0] a,
     output logic [31:0] y
 );
@@ -100,7 +100,7 @@ module resetcpu (
 	end
 */	
   
-  always_ff begin
+  always_ff @(negedge clk) begin
     if (x == 1'b1) begin
     	y <= 32'hBFC00000;
     	x <= 1'b0;

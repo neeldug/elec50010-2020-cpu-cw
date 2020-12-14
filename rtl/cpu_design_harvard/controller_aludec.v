@@ -23,7 +23,7 @@ module aludec (
 			6'b101001: alucontrol = 5'b; //Store halfword
 			6'b101011: alucontrol = 5'b; //Store word
 */
-        6'b001111: alucontrol = 5'b11001; //Load upper immidiate
+        6'b001111: alucontrol = 5'b11001;  //Load upper immidiate
         6'b000100: alucontrol = 5'b00100;  //Branch on equal use SUBU
         6'b000001:
         case (dest)
