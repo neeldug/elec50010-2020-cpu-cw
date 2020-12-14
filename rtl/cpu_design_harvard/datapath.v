@@ -35,7 +35,7 @@ module datapath (
 
   resetcpu rstcpu (
       .reset(reset),
-      .a(32'hBFC0004),
+      .a(32'hBFC0004), //pcnextbr
       .y(pcrst)
   );
 

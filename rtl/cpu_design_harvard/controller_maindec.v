@@ -19,9 +19,17 @@ module maindec (
   reg [9:0] controls;
 
 
-  //Probably needs to use a always@(*)
+  //assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg1, jump, aluop} = controls;
+  assign regwrite = controls[9];
+  assign regdst2 = controls[8];
+  assign regdst1 = controls[7];
+  assign alusrc = controls[6];
+  assign branch = controls[5];
+  assign data_write = controls[4];
+  assign memtoreg1 = controls[3];
+  assign jump = controls[2];
+  assign aluop = controls[1:0];
 
-  assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg1, jump, aluop} = controls;
 
 
   // Assign 11 elements names as aluop consist of 2 bits so rightfully fills the reg controls.
@@ -67,8 +75,7 @@ module maindec (
         loadcontrol = 3'b011;
       end
       6'b001111: begin
-        controls = 10'b1001001000;  //Load upper immidiate
-        loadcontrol = 3'b100;
+        controls = 10'b1001000010;  //Load upper immidiate
       end
       6'b100011: begin
         controls = 10'b1001001000;  //Load word
@@ -111,7 +118,7 @@ module maindec (
 endmodule
 
 
-// We are currently setting all the control signals by looking at the opcode of the instrunctions.
+// We are currently setting all the control signals by looking at the opcode of the instructions.
 // We created an reg (=array) of control signals so that it is easier to implement.
 // In order to understand this section please refer to page 376 of the book (table 7.3) for team.
 

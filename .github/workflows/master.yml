@@ -13,32 +13,34 @@ on:
 name: Continuous Integration
 
 jobs:
-  lint:
-    name: Veriloglint
-    runs-on: ubuntu-18.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          # Download complete repository + tags
-          fetch-depth: 0
-      - name: Install Verilator
-        run: sudo apt-get install -y verilator
-      - name: Run Linter
-        run: |
-          shopt -s extglob #Enables exclusion for wildcard
-          verilator --lint-only rtl/mips_cpu.v rtl/!(mips_cpu).v
   test:
+    runs-on: ubuntu-latest
+    container: neeld/mips
     name: Run Testbench
-    runs-on: ubuntu-18.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Install IcarusVerilog
-        run: sudo apt-get install -y iverilog
+      - name: Generate Temp Files
+        working-directory: ./test
+        run: ./generate_all_c_files.sh
       - name: Run Testbench (Bus)
         run: ./test/test_mips_cpu_bus.sh
       - name: Run Testbench (Harvard)
-        run: ./test/test_mips_cpu_harvard.sh
+        run: ./test/test_mips_cpu_harvard.sh rtl/cpu_design_harvard
+  lint:
+    runs-on: ubuntu-latest
+    container: neeld/mips
+    name: Run Verible Linter
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Run Linter (Harvard)
+        working-directory: ./rtl/cpu_design_harvard
+        run: verible-verilog-lint --lint_fatal=false *.v
+      - name: Run Linter (Bus)
+        working-directory: ./rtl/cpu_design_bus
+        run: verible-verilog-lint --lint_fatal=false *.v
