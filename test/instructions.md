@@ -18,12 +18,12 @@
 - [ ] JALR
 - [ ] JAL
 - [x] JR
-- [ ] LB
-- [ ] LBU
-- [ ] LH
-- [ ] LHU
+- [x] LB
+- [x] LBU
+- [x] LH
+- [x] LHU
 - [x] LUI
-- [ ] LW
+- [x] LW
 - [ ] LWL
 - [ ] LWR
 - [ ] MTHI
