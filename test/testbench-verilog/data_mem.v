@@ -23,6 +23,10 @@ module data_mem (
     end
   end
 
+  always_comb begin
+    data_readdata = {dmem[data_address+3], dmem[data_address+2], dmem[data_address+1], dmem[data_address]};
+  end
+
   //clockedge read and write with write control signal
   always @(posedge clk) begin
     if (data_write) begin
@@ -31,6 +35,6 @@ module data_mem (
       dmem[data_address+2] <= data_writedata[23:16];
       dmem[data_address+3] <= data_writedata[31:24];
     end
-    data_readdata <= {dmem[data_address+3], dmem[data_address+2], dmem[data_address+1], dmem[data_address]};
   end
+
 endmodule
