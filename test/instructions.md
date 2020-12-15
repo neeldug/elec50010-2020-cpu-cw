@@ -1,4 +1,4 @@
-s### Code
+### Code
 
 - [x] ADDIU
 - [x] ADDU
