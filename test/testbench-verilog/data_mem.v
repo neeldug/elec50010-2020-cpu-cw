@@ -23,14 +23,18 @@ module data_mem (
     end
   end
 
-  //clockedge read and write with write control signal
-//  always_comb begin
-    if (data_write) begin 
-      dmem[data_address] = data_writedata[7:0];
-      dmem[data_address+1] = data_writedata[15:8];
-      dmem[data_address+2] = data_writedata[23:16];
-      dmem[data_address+3] = data_writedata[31:24];
-    end 
+  always_comb begin
     data_readdata = {dmem[data_address+3], dmem[data_address+2], dmem[data_address+1], dmem[data_address]};
+  end
+
+  //clockedge read and write with write control signal
+  always @(posedge clk) begin
+    if (data_write) begin
+      dmem[data_address] <= data_writedata[7:0];
+      dmem[data_address+1] <= data_writedata[15:8];
+      dmem[data_address+2] <= data_writedata[23:16];
+      dmem[data_address+3] <= data_writedata[31:24];
+    end
+  end
   
 endmodule
