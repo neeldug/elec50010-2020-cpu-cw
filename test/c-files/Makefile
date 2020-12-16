@@ -10,7 +10,7 @@ CPPFLAGS = -W -Wall
 MIPS_CC = mipsel-linux-gnu-gcc
 MIPS_OBJCOPY = mipsel-linux-gnu-objcopy
 MIPS_OBJDUMP = mipsel-linux-gnu-objdump
-MIPS_CPPFLAGS = -W -Wall -O3 -fno-builtin -fno-stack-protector -march=mips1 -mfp32
+MIPS_CPPFLAGS = -W -Wall -O3 -fno-builtin -fno-stack-protector -march=mips1 -mfp32 -EL
 MIPS_LDFLAGS = -nostdlib -Wl,-melf32btsmip -march=mips1 -nostartfiles -mno-check-zero-division -Wl,--gpsize=0 -static -Wl,-Bstatic -Wl,--build-id=none
 
 # Compile C file (.c) into MIPS object file (.o)
@@ -46,10 +46,10 @@ MIPS_LDFLAGS = -nostdlib -Wl,-melf32btsmip -march=mips1 -nostartfiles -mno-check
 	$(MIPS_OBJDUMP) -j .text -D $< > $@
 
 %.hex.txt : %.mips.bin
-	od -An -w1 -v -t x1 $< > ../binary/$@; sed -i '1 s/^/@BFC00000\n/' ../binary/$@
+	od -An --endian=big -w1 -v -t x1 $< > ../binary/$@; sed -i '1 s/^/@BFC00000\n/' ../binary/$@
 
 %.hex.data.txt : %.mips.data.bin
-	od -An -w1 -v -t x1 $< > ../data/$@; sed -i '1 s/^/@10000000\n/' ../data/$@; \
+	od -An --endian=little -w1 -v -t x1 $< > ../data/$@; sed -i '1 s/^/@10000000\n/' ../data/$@; \
 	if [ ! -s ../data/$@ ]; then\
   		printf "@10000000\n" > ../data/$@; \
 	fi
