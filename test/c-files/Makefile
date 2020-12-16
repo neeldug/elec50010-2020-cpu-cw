@@ -10,7 +10,7 @@ CPPFLAGS = -W -Wall
 MIPS_CC = mipsel-linux-gnu-gcc
 MIPS_OBJCOPY = mipsel-linux-gnu-objcopy
 MIPS_OBJDUMP = mipsel-linux-gnu-objdump
-MIPS_CPPFLAGS = -W -Wall -O3 -fno-builtin -fno-stack-protector -march=mips1 -mfp32
+MIPS_CPPFLAGS = -W -Wall -O3 -fno-builtin -fno-stack-protector -march=mips1 -mfp32 -EL
 MIPS_LDFLAGS = -nostdlib -Wl,-melf32btsmip -march=mips1 -nostartfiles -mno-check-zero-division -Wl,--gpsize=0 -static -Wl,-Bstatic -Wl,--build-id=none
 
 # Compile C file (.c) into MIPS object file (.o)
