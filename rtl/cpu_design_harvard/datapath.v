@@ -32,10 +32,7 @@ module datapath (
   logic [31:0] pcresult;
 //  logic pcsrclast;
   
-/*  logic jumpprime, pcsrcprime, jump1prime, a, b, c;
-  logic [25:0] instr_readdata_prime, d;
-  logic [31:0] result2prime, e;
-*/
+
 
   // Program counter regfile
 
@@ -69,6 +66,7 @@ module datapath (
       .d(pcnextbr),
       .q(instr_address)
   );
+
 
   adder pcpl4 (
       .a(instr_address),
@@ -144,6 +142,7 @@ module datapath (
       .s(regdst1),
       .y(writereg1)
   );  //regdst1 is high for R-type instructions else select I-type.
+  
   mux2 #(5) wrmux2 (
       .a(writereg1),
       .b(5'b11111),
@@ -165,7 +164,6 @@ module datapath (
 
   loadselector loadsel (
       .a(data_readdata), //data_readadta
-      .b(instr_address[15:0]),
       .controls(loadcontrol),
       .y(result1)
   );

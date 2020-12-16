@@ -59,6 +59,7 @@ reg i;
   end
 endmodule
 
+
 module regfile1 #(
     parameter WIDTH = 31)(
     input logic clk,
@@ -135,7 +136,7 @@ module flipflopr #(
     end
   
   always_ff @(posedge clk) begin
-    if (reset) q <= 32'b0;
+    if (reset) q <= x ? 32'hBFC00000 : 32'b0;
     else if (clk_enable) begin
     	q <= x ? 32'hBFC00000 : d;
     	x <= 0;
