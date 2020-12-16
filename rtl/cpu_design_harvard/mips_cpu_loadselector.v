@@ -10,7 +10,7 @@ always @(*)begin
 	case(controls)
 		3'b000: begin					//Load byte signed
 					if(a[7] == 1)begin
-						y = {24'b1, a[7:0]};
+						y = {24'hffffff, a[7:0]};
 					end else begin
 						y = {24'b0, a[7:0]};
 					end
@@ -21,7 +21,7 @@ always @(*)begin
 			end
 		3'b010: begin					//Load halfword signed
 					if(a[15] == 1)begin
-						y = {16'b1, a[15:0]};
+						y = {16'hffff, a[15:0]};
 					end else begin
 						y = {16'b0, a[15:0]};
 					end
