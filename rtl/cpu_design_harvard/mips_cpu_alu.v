@@ -214,10 +214,10 @@ module alu(
       
       5'b11001: y = {b[15:0], 16'b0}; //Load upper Immidiate
       
-/*      5'b11010: y= a + b;
+      5'b11010: y= HI;
       
-      5'b11010: y=
-      
+      5'b11010: y= LO;
+/*      
       5'b11100: y=
       
       5'b11101: y=

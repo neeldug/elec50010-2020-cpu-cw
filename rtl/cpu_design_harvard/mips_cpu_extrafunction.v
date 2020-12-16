@@ -36,8 +36,47 @@ module regfile (
   assign reg_v3 = (~reset) ? rf[3] : reg_v3;
 endmodule
 
+module regfile2 #(
+    parameter WIDTH = 31)(
+    input logic clk,
+    reset,
+    input logic we,
+    input logic [WIDTH:0] d,
+    output logic [WIDTH:0] q
+);
+reg i;
+
+  always_ff @(posedge clk) begin
+    if (reset) begin  //sets all the regs in the regfile to 0 is reset signal is high
+    	q <= 0;
+    	i <= 1;
+    end else begin
+      if (we) begin 
+      		q <= i ? 0 : d;
+      		i <= 0;
+      		end
+    end
+  end
+endmodule
 
 
+module regfile1 #(
+    parameter WIDTH = 31)(
+    input logic clk,
+    reset,
+    input logic we,
+    input logic [WIDTH:0] d,
+    output logic [WIDTH:0] q
+);
+
+  always_ff @(posedge clk) begin
+    if (reset) begin  //sets all the regs in the regfile to 0 is reset signal is high
+    	q <= 0;
+    end else begin
+      if (we) q <= d;
+    end
+  end
+endmodule
 
 // Implementation of reusable functions used in datapath
 
@@ -79,39 +118,6 @@ module shiftleft16 (
   assign y = {{a[15:0]}, 16'b0};
 endmodule
 
-module resetcpu (
-    input logic reset, clk,
-    input logic [31:0] a,
-    output logic [31:0] y
-);
-  reg [31:0] x;
-	
-	initial
-		x = 1'b0;
-	always @(negedge reset) begin
-    	x = 1'b1;
-    end
-/*  
-	if(x == 1) begin
-		y <= 32'hBFC00000;
-		x <= 1'b0;
-	end else begin
-		y <= a;
-	end
-*/	
-  
-  always_comb begin
-    if (x == 1'b1) begin
-    	y = 32'hBFC00000;
-    	x = 1'b0;
-    end else begin
-    	y = a;
-    end
-  end
- 
-endmodule
-
-
 module flipflopr #(
     parameter WIDTH = 32
 ) (
@@ -130,7 +136,7 @@ module flipflopr #(
     end
   
   always_ff @(posedge clk) begin
-    if (reset) q <= 32'b0;
+    if (reset) q <= x ? 32'hBFC00000 : 32'b0;
     else if (clk_enable) begin
     	q <= x ? 32'hBFC00000 : d;
     	x <= 0;
