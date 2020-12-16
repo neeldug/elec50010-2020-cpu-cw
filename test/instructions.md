@@ -35,15 +35,15 @@
 - [x] SB
 - [x] SH
 - [x] SLL
-- [ ] SLLV
+- [x] SLLV
 - [x] SLT
-- [ ] SLTI
-- [ ] SLTIU
+- [x] SLTI
+- [x] SLTIU
 - [x] SLTU
 - [x] SRA
-- [ ] SRAV
+- [x] SRAV
 - [x] SRL
-- [ ] SRLV
+- [x] SRLV
 - [x] SUBU
 - [x] SW
 - [x] XOR
