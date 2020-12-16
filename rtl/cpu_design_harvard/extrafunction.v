@@ -36,8 +36,46 @@ module regfile (
   assign reg_v3 = (~reset) ? rf[3] : reg_v3;
 endmodule
 
+module regfile2 #(
+    parameter WIDTH = 31)(
+    input logic clk,
+    reset,
+    input logic we,
+    input logic [WIDTH:0] d,
+    output logic [WIDTH:0] q
+);
+reg i;
 
+  always_ff @(posedge clk) begin
+    if (reset) begin  //sets all the regs in the regfile to 0 is reset signal is high
+    	q <= 0;
+    	i <= 1;
+    end else begin
+      if (we) begin 
+      		q <= i ? 0 : d;
+      		i <= 0;
+      		end
+    end
+  end
+endmodule
 
+module regfile1 #(
+    parameter WIDTH = 31)(
+    input logic clk,
+    reset,
+    input logic we,
+    input logic [WIDTH:0] d,
+    output logic [WIDTH:0] q
+);
+
+  always_ff @(posedge clk) begin
+    if (reset) begin  //sets all the regs in the regfile to 0 is reset signal is high
+    	q <= 0;
+    end else begin
+      if (we) q <= d;
+    end
+  end
+endmodule
 
 // Implementation of reusable functions used in datapath
 

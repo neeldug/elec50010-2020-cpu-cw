@@ -19,28 +19,49 @@ module datapath (
     input logic [31:0] data_readdata,
     output logic [31:0] data_address,
     data_writedata,
-    output logic [31:0] register_v0, register_v3
+    output logic [31:0] register_v0, register_v3,
+    output logic pcsrclast
 );
 
 
   logic [4:0] writereg1, writereg;
-  logic [31:0] pcnext, pcnextbr, pcrst, pcplus4, pcbranch, pclink;
+  logic [31:0] pcnext, pcnextbr, pcrst, pcplus4, pcbranch, pclink, pcnextbrin, pcnextbrout;
   logic [31:0] signimm, signimmsh, immsh16, pcnextbr1, pcnextbr2, jumpsh;
   logic [31:0] srca, srcb;
   logic [31:0] result2, result1, result;
   logic [31:0] pcresult;
-
-
+//  logic pcsrclast;
+  
+/*  logic jumpprime, pcsrcprime, jump1prime, a, b, c;
+  logic [25:0] instr_readdata_prime, d;
+  logic [31:0] result2prime, e;
+*/
 
   // Program counter regfile
 
-/*  resetcpu rstcpu (
-      .reset(reset),
-      .clk(clk),
-      .a(pcnextbr), //pcnextbr
-      .y(pcrst)
+  regfile1 #(31) jumpbrmem (
+	  .clk(clk),
+	  .reset(reset),
+	  .we(memtoreg2),
+	  .d(pcnextbrin),
+	  .q(pcnextbrout)
   );
-*/
+  
+  regfile2 #(0) pcsrcreg (
+  	  .clk(clk),
+  	  .reset(reset),
+  	  .we(1'b1),
+  	  .d(pcsrc),
+  	  .q(pcsrclast)
+  );
+  
+  mux2 #(32) pcmux (
+  	  .a(pcnextbr1),
+      .b(pcplus4),
+      .s(memtoreg2), 
+      .y(pcnextbr)
+  );
+  
   flipflopr #(32) pcreg (
       .clk(clk),
       .reset(reset),
@@ -71,14 +92,14 @@ module datapath (
       .y(pcbranch)
   );
 
-  mux2 #(32) pcmux1 (
+  mux2 #(32) pcmux3 (
       .a(pcplus4),
-      .b(pcbranch),
-      .s(pcsrc), //pcsrc
+      .b(pcnextbrout),
+      .s(pcsrclast), //pcsrc
       .y(pcnextbr1)
   );  //pcsrc is high when we are in a branch instruction and the condition. (zero flag) are met.
 
-  mux2 #(32) pcmux2 (
+  mux2 #(32) pcmux1 (
       .a({6'b0, instr_readdata[25:0]}),
       .b(result2),
       .s(jump1),
@@ -90,11 +111,11 @@ module datapath (
       .y(jumpsh)
   );  //Instruction in PC are every 4 so we need to multiply by 4.
 
-  mux2 #(32) pcmux (
-      .a(pcnextbr1),
+  mux2 #(32) pcmux2 (
+      .a(pcbranch),
       .b(jumpsh),
       .s(jump), //jump
-      .y(pcnextbr)
+      .y(pcnextbrin)
   );  //jump is high when we are in a jump instruction.
 
 

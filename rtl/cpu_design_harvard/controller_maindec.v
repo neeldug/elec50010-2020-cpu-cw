@@ -18,6 +18,11 @@ module maindec (
 
   reg [9:0] controls;
 
+initial begin
+	jump1 = 0;
+end
+
+
 
 //  assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg1, jump, aluop} = controls;
   assign regwrite = controls[9];
@@ -29,7 +34,6 @@ module maindec (
   assign memtoreg1 = controls[3];
   assign jump = controls[2];
   assign aluop = controls[1:0];
-//  assign jump1 = 1'b0;
 
   // Assign 11 elements names as aluop consist of 2 bits so rightfully fills the reg controls.
   // Correspond to the bits below from left to right in the same order (starting with regwrite and ending with aluop).
@@ -47,11 +51,11 @@ module maindec (
         	  controls = 10'b0000000010;
         	end
         	6'b001001: begin  //Jump register and link JALR & link in reg $31
-        	  controls = 10'b1100000101;
+        	  controls = 10'b1100100101;
         	  jump1 = 1;					//We set both as J-type to extract value in reg$a aluop: [01]
         	end
         	6'b001000: begin  //Jump register
-        	  controls = 10'b0000000101;
+        	  controls = 10'b0000100101;
         	  jump1 = 1;
         	end	  
         	default:   controls = 10'b1010000010;  //R-type instruction
@@ -105,8 +109,8 @@ module maindec (
       6'b000110: controls = 10'b0000100010;  //Branch on = 0
       6'b000101: controls = 10'b0000100010;  //Branch on != 0
       6'b001001: controls = 10'b1001000010;  //ADD unsigned immediate
-      6'b000010: controls = 10'b0000000101;  //Jump
-      6'b000011: controls = 10'b1100000101;  //Jump and link
+      6'b000010: controls = 10'b0000100101;  //Jump
+      6'b000011: controls = 10'b1100100101;  //Jump and link
       6'b001100: controls = 10'b1001000010;  //ANDI
       6'b001101: controls = 10'b1001000010;  //ORI
       6'b001110: controls = 10'b1001000010;  //XORI
