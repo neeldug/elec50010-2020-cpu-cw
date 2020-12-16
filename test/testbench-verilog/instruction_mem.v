@@ -1,6 +1,6 @@
 module instruction_mem (
     input  logic [31:0] instr_address,  // = OFFSET + PC*4
-    output logic [31:0] instr
+    output logic [31:0] instr_readdata
 );
 
   parameter INSTR_INIT_FILE = "";
@@ -21,6 +21,6 @@ module instruction_mem (
 
   //making the async read
   always_comb begin
-    instr = {imem[instr_address+3], imem[instr_address+2], imem[instr_address+1], imem[instr_address]};
+    instr_readdata = {imem[instr_address+3], imem[instr_address+2], imem[instr_address+1], imem[instr_address]};
   end
 endmodule
