@@ -145,8 +145,8 @@ module alu(
           end else begin
             x = ~a + 1;
             x2 = ~b + 1;
-            HI = -(x % x2) + x2;
-            LO = x / x2 + 1;
+            HI = -(x % x2);
+            LO = x / x2;
           end
         end else begin
           if ((a[31] == 0) & (b[31] == 1)) begin
@@ -155,8 +155,8 @@ module alu(
             LO = -(a / x2);
           end else begin
             x = ~a + 1;
-            HI = -(x % b) + b;
-            LO = -(x / b + 1);
+            HI = -(x % b);
+            LO = -(x / b);
           end
         end
       end
@@ -167,9 +167,9 @@ module alu(
       end
 
 
-      5'b10001: y = HI[31:0];	//MTHI: move to High
+      5'b10001: HI = a;	//MTHI: move to High 								?????????????
       
-      5'b10010: y = LO[31:0];	//MTLO: move to Low
+      5'b10010: LO = a;	//MTLO: move to Low
 
 
       5'b10011: begin	//Branch on < 0 and Branch on < 0 / link
@@ -214,10 +214,10 @@ module alu(
       
       5'b11001: y = {b[15:0], 16'b0}; //Load upper Immidiate
       
-/*      5'b11010: y= a + b;
+      5'b11010: y = HI; //MFHI
       
-      5'b11010: y=
-      
+      5'b11011: y = LO; //MFLO
+/*      
       5'b11100: y=
       
       5'b11101: y=

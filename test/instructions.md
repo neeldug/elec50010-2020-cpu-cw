@@ -18,12 +18,12 @@
 - [ ] JALR
 - [ ] JAL
 - [x] JR
-- [ ] LB
-- [ ] LBU
-- [ ] LH
-- [ ] LHU
+- [x] LB
+- [x] LBU
+- [x] LH
+- [x] LHU
 - [x] LUI
-- [ ] LW
+- [x] LW
 - [ ] LWL
 - [ ] LWR
 - [ ] MTHI
@@ -32,19 +32,19 @@
 - [x] MULTU
 - [x] OR
 - [x] ORI
-- [ ] SB
-- [ ] SH
+- [x] SB
+- [x] SH
 - [x] SLL
-- [ ] SLLV
+- [x] SLLV
 - [x] SLT
-- [ ] SLTI
-- [ ] SLTIU
+- [x] SLTI
+- [x] SLTIU
 - [x] SLTU
 - [x] SRA
-- [ ] SRAV
+- [x] SRAV
 - [x] SRL
-- [ ] SRLV
+- [x] SRLV
 - [x] SUBU
-- [ ] SW
+- [x] SW
 - [x] XOR
 - [x] XORI

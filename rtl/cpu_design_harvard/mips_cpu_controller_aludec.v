@@ -68,6 +68,8 @@ module aludec (
           6'b011011: alucontrol = 5'b10000;  //Divide unsigned DIVU
           6'b010001: alucontrol = 5'b10001;  //MTHI
           6'b010100: alucontrol = 5'b10010;  //MTLO
+          6'b010000: alucontrol = 5'b11010;  //MFHI
+          6'b010010: alucontrol = 5'b11011;  //MFLO
 /*
 		  6'b001000: alucontrol = 5'b10111; //Jump register JR
 		  6'b001001: alucontrol = 5'b10111; //Jump and link register

@@ -9,6 +9,7 @@ module tb_harvard;
   logic clk;
   logic reset;
   logic active;
+  logic pcsrc, pcsrclast;
   logic [31:0] register_v0;
   logic [31:0] register_v3;
   integer cycle_count = 0;
@@ -41,6 +42,8 @@ module tb_harvard;
       .clk(clk),
       .reset(reset),
       .active(active),
+      .pcsrc(pcsrc),
+      .pcsrclast(pcsrclast),
       .register_v0(register_v0),
       .register_v3(register_v3),
       .clk_enable(clk_enable),
@@ -94,9 +97,9 @@ module tb_harvard;
       @(posedge clk);
       cycle_count++;
 //      $fdisplay(STDERR, "  ");
-      $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, register_v3: %d, active: %d", cycle_count, register_v0, register_v3, active);
+/*      $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, register_v3: %d, active: %d", cycle_count, register_v0, register_v3, active);
       $fdisplay(STDERR, "Instruction address: %h, Instruction: %b, Data output: %h", instr_address, instr_readdata, data_readdata);
-      //$fdisplay(STDERR, "Data address: %h, Data: %b", data_address, data_readdata);
+      //$fdisplay(STDERR, "Data address: %h, Data: %b", data_address, data_readdata); */
     end
 
     $display("%d", register_v0);
