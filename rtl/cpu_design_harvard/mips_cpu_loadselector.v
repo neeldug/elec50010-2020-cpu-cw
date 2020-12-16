@@ -4,8 +4,6 @@ module loadselector(
 	output logic [31:0] y
 	);
 
-reg [31:0] z;
-
 always @(*)begin
 	case(controls)
 		3'b000: begin					//Load byte signed
@@ -60,10 +58,6 @@ always @(*)begin
 		
 		default: y = a[31:0];	
 	endcase
-	end
-
-always @(y)begin
-	z = y;
 	end
 	
 endmodule
