@@ -28,7 +28,7 @@ MIPS_LDFLAGS = -nostdlib -Wl,-melf32btsmip -march=mips1 -nostartfiles -mno-check
 %.s: %.c
 	$(MIPS_CC) $(MIPS_CPPFLAGS) -S $< -o $@
 
-%.asm.txt: %.s
+%.asm.txt: %.mips.s
 	mv $< ../assembly/$@
 # Link MIPS object file (.o), producing .elf, using memory locations specified in spec
 %.mips.elf: %.mips.o
