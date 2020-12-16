@@ -10,7 +10,7 @@ module CPU_MIPS_bus (
     input logic waitrequest,
     output logic [31:0] writedata,
     output logic [3:0] byteenable,
-    input logic [31:0] readdata,
+    input logic [31:0] readdata
 );
 
   logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc;
