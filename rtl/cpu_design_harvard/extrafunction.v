@@ -117,39 +117,6 @@ module shiftleft16 (
   assign y = {{a[15:0]}, 16'b0};
 endmodule
 
-module resetcpu (
-    input logic reset, clk,
-    input logic [31:0] a,
-    output logic [31:0] y
-);
-  reg [31:0] x;
-	
-	initial
-		x = 1'b0;
-	always @(negedge reset) begin
-    	x = 1'b1;
-    end
-/*  
-	if(x == 1) begin
-		y <= 32'hBFC00000;
-		x <= 1'b0;
-	end else begin
-		y <= a;
-	end
-*/	
-  
-  always_comb begin
-    if (x == 1'b1) begin
-    	y = 32'hBFC00000;
-    	x = 1'b0;
-    end else begin
-    	y = a;
-    end
-  end
- 
-endmodule
-
-
 module flipflopr #(
     parameter WIDTH = 32
 ) (
