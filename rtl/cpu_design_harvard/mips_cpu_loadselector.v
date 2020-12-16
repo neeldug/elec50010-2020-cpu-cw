@@ -17,8 +17,9 @@ always @(*)begin
 				end
 				
 		3'b001: begin
-			y = {24'b0, a[7:0]};	//Load byte unsigned
-			end
+					y = {24'b0, a[7:0]};	//Load byte unsigned
+				end
+				
 		3'b010: begin					//Load halfword signed
 					if(a[15] == 1)begin
 						y = {16'hffff, a[15:0]};

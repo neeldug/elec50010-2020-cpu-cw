@@ -45,7 +45,8 @@ module mips_cpu_harvard (
   );
 
 
-controller control (
+
+  controller control (
       .op(instr_readdata_be[31:26]),
       .funct(instr_readdata_be[5:0]),
       .dest(instr_readdata_be[20:16]),
@@ -90,6 +91,14 @@ controller control (
       .pcsrclast(pcsrclast)
   );
 
+
+  always @(posedge clk) begin
+	if(reset) active <= 1;
+	else begin						//If PC counter points to address 0, then the active flag is set to 0
+		if(clk_enable == 1) active <= (instr_address == 32'h00000000) ? 1'b0 : 1'b1;
+		else active <= 0;
+		end
+  end
 
 
 /* OLD VERSION WITHOUT ENDIAN SWITCH
@@ -140,19 +149,5 @@ controller control (
   );
   
 */
-
-  	
-/*
- assign active = (instr_address==0) ? 0 : 1; //If PC counter points to address 0, then the active flag is set to 0.
-*/
-
-always @(posedge clk) begin
-	if(reset) active <= 1;
-	else begin
-		if(clk_enable == 1) active <= (instr_address == 32'h00000000) ? 1'b0 : 1'b1; //If PC counter points to address 0, then the CPU is halted
-		else active <= 0;
-		end
-  end
-
 
 endmodule
