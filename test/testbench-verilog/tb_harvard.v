@@ -97,7 +97,7 @@ module tb_harvard;
       @(posedge clk);
       cycle_count++;
 //      $fdisplay(STDERR, "  ");
-      $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, register_v3: %d, active: %d", cycle_count, register_v0, register_v3, active);
+/*      $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, register_v3: %d, active: %d", cycle_count, register_v0, register_v3, active);
       $fdisplay(STDERR, "Instruction address: %h, Instruction: %b, Data output: %h", instr_address, instr_readdata, data_readdata);
       //$fdisplay(STDERR, "Data address: %h, Data: %b", data_address, data_readdata); */
     end
