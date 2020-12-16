@@ -32,8 +32,8 @@
 - [x] MULTU
 - [x] OR
 - [x] ORI
-- [ ] SB
-- [ ] SH
+- [x] SB
+- [x] SH
 - [x] SLL
 - [ ] SLLV
 - [x] SLT
@@ -45,6 +45,6 @@
 - [x] SRL
 - [ ] SRLV
 - [x] SUBU
-- [ ] SW
+- [x] SW
 - [x] XOR
 - [x] XORI
