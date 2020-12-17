@@ -2,4 +2,4 @@
 
 TESTCASE=$1
 
-rm -rf assembly/"$1"* binary/"$1"* data/"$1"* reference/"$1"*
+rm -rf assembly/"$1"_* binary/"$1"_* data/"$1"_* reference/"$1"_*
