@@ -30,17 +30,17 @@ module mips_cpu_harvard (
   				data_writedata_be;
   
   endian_switch switch_instr_readdata (
-  	  .in(instr_readdata),
+      .in (instr_readdata),
       .out(instr_readdata_be)
   );
-  
+
   endian_switch switch_data_readdata (
-  	  .in(data_readdata),
+      .in (data_readdata),
       .out(data_readdata_be)
   );
-  
+
   endian_switch switch_data_writedata (
-  	  .in(data_writedata_be),
+      .in (data_writedata_be),
       .out(data_writedata)
   );
 
@@ -65,7 +65,7 @@ module mips_cpu_harvard (
       .loadcontrol(loadcontrol)
   );
 
-  datapath datap(
+  datapath datap (
       .clk(clk),
       .reset(reset),
       .clk_enable(clk_enable),
@@ -97,16 +97,14 @@ module mips_cpu_harvard (
 
 
   always @(posedge clk) begin
-	if(reset) active <= 1;
-	else begin						//If PC counter points to address 0, then the active flag is set to 0
-		if(clk_enable == 1) active <= (instr_address == 32'h00000000) ? 1'b0 : 1'b1;
-		else active <= 0;
-		end
+    if (reset) active <= 1;
+    else begin  //If PC counter points to address 0, then the active flag is set to 0
+      if (clk_enable == 1) active <= (instr_address == 32'h00000000) ? 1'b0 : 1'b1;
+      else active <= 0;
+    end
   end
 
 endmodule
-
-
 
 
 

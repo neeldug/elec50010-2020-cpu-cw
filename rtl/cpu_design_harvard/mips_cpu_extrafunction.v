@@ -37,31 +37,33 @@ module regfile (
 endmodule
 
 module regfile2 #(
-    parameter WIDTH = 31)(
+    parameter WIDTH = 31
+) (
     input logic clk,
     reset,
     input logic we,
     input logic [WIDTH:0] d,
     output logic [WIDTH:0] q
 );
-reg i;
+  reg i;
 
   always_ff @(posedge clk) begin
     if (reset) begin  //sets all the regs in the regfile to 0 is reset signal is high
-    	q <= 0;
-    	i <= 1;
+      q <= 0;
+      i <= 1;
     end else begin
-      if (we) begin 
-      		q <= i ? 0 : d;
-      		i <= 0;
-      		end
+      if (we) begin
+        q <= i ? 0 : d;
+        i <= 0;
+      end
     end
   end
 endmodule
 
 
 module regfile1 #(
-    parameter WIDTH = 31)(
+    parameter WIDTH = 31
+) (
     input logic clk,
     reset,
     input logic we,
@@ -71,7 +73,7 @@ module regfile1 #(
 
   always_ff @(posedge clk) begin
     if (reset) begin  //sets all the regs in the regfile to 0 is reset signal is high
-    	q <= 0;
+      q <= 0;
     end else begin
       if (we) q <= d;
     end
@@ -127,20 +129,19 @@ module flipflopr #(
     input logic [WIDTH-1:0] d,
     output logic [WIDTH-1:0] q
 );
- reg x;
-	
-	initial
-		x = 1'b0;
-	always @(negedge reset) begin
-    	x = 1'b1;
-    end
-  
+  reg x;
+
+  initial x = 1'b0;
+  always @(negedge reset) begin
+    x = 1'b1;
+  end
+
   always_ff @(posedge clk) begin
     if (reset) q <= x ? 32'hBFC00000 : 32'b0;
     else if (clk_enable) begin
-    	q <= x ? 32'hBFC00000 : d;
-    	x <= 0;
-  	end
+      q <= x ? 32'hBFC00000 : d;
+      x <= 0;
+    end
   end
 
 endmodule
@@ -155,10 +156,10 @@ endmodule
 
 
 module endian_switch (
-	input logic [31:0] in,
-	output logic [31:0] out
+    input  logic [31:0] in,
+    output logic [31:0] out
 );
 
-	assign out = {in[7:0], in[15:8], in[23:16], in[31:24]};
-	
+  assign out = {in[7:0], in[15:8], in[23:16], in[31:24]};
+
 endmodule

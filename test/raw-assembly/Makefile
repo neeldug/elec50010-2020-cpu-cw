@@ -17,15 +17,13 @@ MIPS_LDFLAGS = -nostdlib -Wl,-melf32btsmip -march=mips1 -nostartfiles -mno-check
 %.mips.o: %.c
 	$(MIPS_CC) $(MIPS_CPPFLAGS) -c $< -o $@
 
+
 %.c:
 	@echo "Invalid output"
 
 # Assemble MIPS assembly file (.s) into MIPS object file (.o)
 %.mips.o: %.s
 	$(MIPS_CC) $(MIPS_CPPFLAGS) -c $< -o $@
-
-%.s: %.c
-	$(MIPS_CC) $(MIPS_CPPFLAGS) -S $< -o $@
 
 %.asm.txt: %.mips.s
 	mv $< ../assembly/$@
@@ -53,8 +51,8 @@ MIPS_LDFLAGS = -nostdlib -Wl,-melf32btsmip -march=mips1 -nostartfiles -mno-check
   		printf "@10000000\n" > ../data/$@; \
 	fi
 
-%.bin: %.c
-	$(MIPS_CC) $(MIPS_CPPFLAGS) $< -o $@
+%.bin : %.s
+	$(MIPS_CC) $(MIPS_CPPFLAGS) -o $@ $<
 
 %.ref.txt : %.bin
 	qemu-mipsel -L /usr/mipsel-linux-gnu $<; echo $$? > ../reference/$@
