@@ -19,20 +19,21 @@ module datapath (
     input logic [31:0] data_readdata,
     output logic [31:0] data_address,
     data_writedata,
-    output logic [31:0] register_v0, register_v3,
-    output logic pcsrclast,
+    output logic [31:0] register_v0 //, register_v3,		//DEBUGGING
     
-    output logic [31:0] srca, srcb      //DEBUGGING
+    
+    //output logic pcsrclast				//DEBUGGING
+ 	//output logic [31:0] srca, srcb		//DEBUGGING
 );
 
 
   logic [4:0] writereg1, writereg;
   logic [31:0] pcnext, pcnextbr, pcrst, pcplus4, pcbranch, pclink, pcnextbrin, pcnextbrout;
   logic [31:0] signimm, signimmsh, immsh16, pcnextbr1, pcnextbr2, jumpsh;
-  //logic [31:0] srca, srcb;
   logic [31:0] result2, result1, result;
   logic [31:0] pcresult;
-//  logic pcsrclast;
+  logic [31:0] srca, srcb;
+  logic pcsrclast;
   
 
 
@@ -162,8 +163,8 @@ module datapath (
       .wd3(result),
       .rd1(srca),
       .rd2(data_writedata),
-      .reg_v0(register_v0),
-      .reg_v3(register_v3)
+      .reg_v0(register_v0)
+      //.reg_v3(register_v3)		//DEBUGGING
   );
 
   mux2 #(5) wrmux (

@@ -9,7 +9,7 @@ module regfile (
     input logic [31:0] wd3,
     output logic [31:0] rd1,
     rd2,
-    reg_v0, reg_v3
+    reg_v0	//, reg_v3			//DEBUGGING
 );
 
   reg [31:0] rf[31:0];
@@ -32,8 +32,8 @@ module regfile (
 
   assign rd1 = (ra1 != 0) ? rf[ra1] : 0;
   assign rd2 = (ra2 != 0) ? rf[ra2] : 0;
-  assign reg_v0 = (~reset) ? rf[2] : reg_v0;		//NOT SURE ABOUT THIS, MIGHT HAVE TO USE AN ALWAYS BLOCK
-  assign reg_v3 = (~reset) ? rf[3] : reg_v3;
+  assign reg_v0 = (~reset) ? rf[2] : 0;
+  //assign reg_v3 = (~reset) ? rf[3] : reg_v3;		//DEBUGGING
 endmodule
 
 module regfile2 #(
