@@ -27,7 +27,7 @@ module controller (
       .memtoreg1(memtoreg1),
       .data_write(data_write),
       .branch(branch),
-      .alusrc( alusrc),
+      .alusrc(alusrc),
       .regdst2(regdst2),
       .regdst1(regdst1),
       .regwrite(regwrite),
@@ -44,10 +44,10 @@ module controller (
       .aluop(aluop),
       .alucontrol(alucontrol)
   );
-  
+
   always_comb begin
     pcsrc = (branch & zero);
     memtoreg2 = (jump | pcsrc);
   end
-  
+
 endmodule

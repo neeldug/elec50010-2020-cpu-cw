@@ -18,13 +18,13 @@ module maindec (
 
   reg [9:0] controls;
 
-initial begin
-	jump1 = 0;
-end
+  initial begin
+    jump1 = 0;
+  end
 
 
 
-//  assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg1, jump, aluop} = controls;
+  //  assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg1, jump, aluop} = controls;
   assign regwrite = controls[9];
   assign regdst2 = controls[8];
   assign regdst1 = controls[7];
@@ -42,24 +42,24 @@ end
   always @(*)
     case (op)
       6'b000000:
-      	case (funct)
-//No need to write enable register as HI and LO are reg in ALU module.
-      		6'b010001: begin  //Move to High MTHI
-        	  controls = 10'b0000000010;
-        	end
-        	6'b010100: begin  //Move to Low MTLO
-        	  controls = 10'b0000000010;
-        	end
-        	6'b001001: begin  //Jump register and link JALR & link in reg $31
-        	  controls = 10'b1100100101;
-        	  jump1 = 1;					//We set both as J-type to extract value in reg$a aluop: [01]
-        	end
-        	6'b001000: begin  //Jump register
-        	  controls = 10'b0000100101;
-        	  jump1 = 1;
-        	end	  
-        	default:   controls = 10'b1010000010;  //R-type instruction
-      	endcase
+      case (funct)
+        //No need to write enable register as HI and LO are reg in ALU module.
+        6'b010001: begin  //Move to High MTHI
+          controls = 10'b0000000010;
+        end
+        6'b010100: begin  //Move to Low MTLO
+          controls = 10'b0000000010;
+        end
+        6'b001001: begin  //Jump register and link JALR & link in reg $31
+          controls = 10'b1100100101;
+          jump1 = 1;					//We set both as J-type to extract value in reg$a aluop: [01]
+        end
+        6'b001000: begin  //Jump register
+          controls = 10'b0000100101;
+          jump1 = 1;
+        end
+        default: controls = 10'b1010000010;  //R-type instruction
+      endcase
 
       6'b100000: begin
         controls = 10'b1001001000;  //Load byte
@@ -109,14 +109,14 @@ end
       6'b000110: controls = 10'b0000100010;  //Branch on = 0
       6'b000101: controls = 10'b0000100010;  //Branch on != 0
       6'b001001: controls = 10'b1001000010;  //ADD unsigned immediate
-      6'b000010: begin 
-      			controls = 10'b0000100101;  //Jump
-      			jump1 = 0;
-      			end
-      6'b000011: begin 
-      			controls = 10'b1100100101;  //Jump and link
-      			jump1 = 0;
-      			end
+      6'b000010: begin
+        controls = 10'b0000100101;  //Jump
+        jump1 = 0;
+      end
+      6'b000011: begin
+        controls = 10'b1100100101;  //Jump and link
+        jump1 = 0;
+      end
       6'b001100: controls = 10'b1001000010;  //ANDI
       6'b001101: controls = 10'b1001000010;  //ORI
       6'b001110: controls = 10'b1001000010;  //XORI

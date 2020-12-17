@@ -19,10 +19,12 @@ module datapath (
     input logic [31:0] data_readdata,
     output logic [31:0] data_address,
     data_writedata,
-    output logic [31:0] register_v0, register_v3,
+    output logic [31:0] register_v0,
+    register_v3,
     output logic pcsrclast,
-    
-    output logic [31:0] srca, srcb      //DEBUGGING
+
+    output logic [31:0] srca,
+    srcb  //DEBUGGING
 );
 
 
@@ -32,35 +34,35 @@ module datapath (
   //logic [31:0] srca, srcb;
   logic [31:0] result2, result1, result;
   logic [31:0] pcresult;
-//  logic pcsrclast;
-  
+  //  logic pcsrclast;
+
 
 
   // Program counter regfile
 
   regfile1 #(31) jumpbrmem (
-	  .clk(clk),
-	  .reset(reset),
-	  .we(memtoreg2),
-	  .d(pcnextbrin),
-	  .q(pcnextbrout)
+      .clk(clk),
+      .reset(reset),
+      .we(memtoreg2),
+      .d(pcnextbrin),
+      .q(pcnextbrout)
   );
-  
+
   regfile2 #(0) pcsrcreg (
-  	  .clk(clk),
-  	  .reset(reset),
-  	  .we(1'b1),
-  	  .d(pcsrc),
-  	  .q(pcsrclast)
+      .clk(clk),
+      .reset(reset),
+      .we(1'b1),
+      .d(pcsrc),
+      .q(pcsrclast)
   );
-  
+
   mux2 #(32) pcmux (
-  	  .a(pcnextbr1),
+      .a(pcnextbr1),
       .b(pcplus4),
-      .s(memtoreg2), 
+      .s(memtoreg2),
       .y(pcnextbr)
   );
-  
+
   flipflopr #(32) pcreg (
       .clk(clk),
       .reset(reset),
@@ -95,7 +97,7 @@ module datapath (
   mux2 #(32) pcmux3 (
       .a(pcplus4),
       .b(pcnextbrout),
-      .s(pcsrclast), //pcsrc
+      .s(pcsrclast),  //pcsrc
       .y(pcnextbr1)
   );  //pcsrc is high when we are in a branch instruction and the condition. (zero flag) are met.
 
@@ -104,10 +106,10 @@ module datapath (
 
   // --------------  Jump  ------------
 
-	logic [31:0] jumpregsh;
+  logic [31:0] jumpregsh;
 
   mux2 #(32) pcmux1 (
-      .a({pcplus4[31:28],jumpsh[27:0]}),
+      .a({pcplus4[31:28], jumpsh[27:0]}),
       .b(jumpregsh),
       .s(jump1),
       .y(pcnextbr2)
@@ -117,12 +119,12 @@ module datapath (
       .a({6'b0, instr_readdata[25:0]}),
       .y(jumpsh)
   );  //Instruction in PC are every 4 so we need to multiply by 4.
-  
+
   shiftleft2 jsh2 (
       .a(result2),
       .y(jumpregsh)
   );  //Instruction in PC are every 4 so we need to multiply by 4.
-  
+
 
   /*			SAVE	
   mux2 #(32) pcmux1 (
@@ -137,12 +139,12 @@ module datapath (
       .y(jumpsh)
   );  //Instruction in PC are every 4 so we need to multiply by 4.
   */
-  
+
 
   mux2 #(32) pcmux2 (
       .a(pcbranch),
       .b(pcnextbr2),  //jumpsh
-      .s(jump), //jump
+      .s(jump),  //jump
       .y(pcnextbrin)
   );  //jump is high when we are in a jump instruction.
 
@@ -172,7 +174,7 @@ module datapath (
       .s(regdst1),
       .y(writereg1)
   );  //regdst1 is high for R-type instructions else select I-type.
-  
+
   mux2 #(5) wrmux2 (
       .a(writereg1),
       .b(5'b11111),
@@ -193,7 +195,7 @@ module datapath (
   );  //extended the instr_readdata to fit declaration of shiftleft16
 
   loadselector loadsel (
-      .a(data_readdata), //data_readadta
+      .a(data_readdata),  //data_readadta
       .controls(loadcontrol),
       .y(result1)
   );
