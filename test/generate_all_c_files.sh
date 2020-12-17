@@ -31,4 +31,7 @@ for file in *.s; do
   if [ ! -f ../data/"$TESTNAME".hex.data.txt ]; then
     make "$TESTNAME".hex.data.txt
   fi
+  if [ ! -f ../reference/"$TESTNAME".ref.txt ]; then
+    make "$TESTNAME".ref.txt
+  fi
 done
