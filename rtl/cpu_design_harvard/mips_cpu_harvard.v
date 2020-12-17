@@ -24,32 +24,11 @@ module mips_cpu_harvard (
   logic [4:0] alucontrol;
   logic [2:0] loadcontrol;
   
-  // Switch from little endian to big endian and vice-versa when reading/writing to memories
-  logic [31:0] 	instr_readdata_be, 
-  				data_readdata_be, 
-  				data_writedata_be;
   
-  endian_switch switch_instr_readdata (
-      .in (instr_readdata),
-      .out(instr_readdata_be)
-  );
-
-  endian_switch switch_data_readdata (
-      .in (data_readdata),
-      .out(data_readdata_be)
-  );
-
-  endian_switch switch_data_writedata (
-      .in (data_writedata_be),
-      .out(data_writedata)
-  );
-
-
-
   controller control (
-      .op(instr_readdata_be[31:26]),
-      .funct(instr_readdata_be[5:0]),
-      .dest(instr_readdata_be[20:16]),
+      .op(instr_readdata[31:26]),
+      .funct(instr_readdata[5:0]),
+      .dest(instr_readdata[20:16]),
       .zero(zero),
       .memtoreg2(memtoreg2),
       .memtoreg1(memtoreg1),
@@ -65,7 +44,7 @@ module mips_cpu_harvard (
       .loadcontrol(loadcontrol)
   );
 
-  datapath datap (
+  datapath datap(
       .clk(clk),
       .reset(reset),
       .clk_enable(clk_enable),
@@ -82,15 +61,13 @@ module mips_cpu_harvard (
       .loadcontrol(loadcontrol),
       .zero(zero),
       .instr_address(instr_address),
-      .instr_readdata(instr_readdata_be),
-      .data_readdata(data_readdata_be),
+      .instr_readdata(instr_readdata),
+      .data_readdata(data_readdata),
       .data_address(data_address),
-      .data_writedata(data_writedata_be),
+      .data_writedata(data_writedata),
       .register_v0(register_v0)
 //      .register_v3(register_v3),
-//      .pcsrclast(pcsrclast),
-//      .srca(alu1),
-//      .srcb(alu2)
+//      .pcsrclast(pcsrclast)
   );
   
 
