@@ -20,7 +20,10 @@ module alu(
       5'b00001: y = a | b;	//OR
       5'b00010: y = a ^ b;	//XOR
       5'b00011: y = a + b;	//ADDU
-      5'b00100: y = a + (~b + 1);	//SUBU
+      5'b00100: begin 		//SUBU
+      			x = (~b + 1);
+      			y = a + x;
+      			end
       5'b00101: y = {31'b0, (a < b)};	//SLT Unsigned
 
       5'b00110: begin	//SLT signed

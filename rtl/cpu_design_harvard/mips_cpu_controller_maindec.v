@@ -109,8 +109,14 @@ end
       6'b000110: controls = 10'b0000100010;  //Branch on = 0
       6'b000101: controls = 10'b0000100010;  //Branch on != 0
       6'b001001: controls = 10'b1001000010;  //ADD unsigned immediate
-      6'b000010: controls = 10'b0000100101;  //Jump
-      6'b000011: controls = 10'b1100100101;  //Jump and link
+      6'b000010: begin 
+      			controls = 10'b0000100101;  //Jump
+      			jump1 = 0;
+      			end
+      6'b000011: begin 
+      			controls = 10'b1100100101;  //Jump and link
+      			jump1 = 0;
+      			end
       6'b001100: controls = 10'b1001000010;  //ANDI
       6'b001101: controls = 10'b1001000010;  //ORI
       6'b001110: controls = 10'b1001000010;  //XORI

@@ -20,14 +20,16 @@ module datapath (
     output logic [31:0] data_address,
     data_writedata,
     output logic [31:0] register_v0, register_v3,
-    output logic pcsrclast
+    output logic pcsrclast,
+    
+    output logic [31:0] srca, srcb      //DEBUGGING
 );
 
 
   logic [4:0] writereg1, writereg;
   logic [31:0] pcnext, pcnextbr, pcrst, pcplus4, pcbranch, pclink, pcnextbrin, pcnextbrout;
   logic [31:0] signimm, signimmsh, immsh16, pcnextbr1, pcnextbr2, jumpsh;
-  logic [31:0] srca, srcb;
+  //logic [31:0] srca, srcb;
   logic [31:0] result2, result1, result;
   logic [31:0] pcresult;
 //  logic pcsrclast;
@@ -97,6 +99,32 @@ module datapath (
       .y(pcnextbr1)
   );  //pcsrc is high when we are in a branch instruction and the condition. (zero flag) are met.
 
+
+
+
+  // --------------  Jump  ------------
+
+	logic [31:0] jumpregsh;
+
+  mux2 #(32) pcmux1 (
+      .a({pcplus4[31:28],jumpsh[27:0]}),
+      .b(jumpregsh),
+      .s(jump1),
+      .y(pcnextbr2)
+  );  //jump1 is high when we jump to value in register.
+
+  shiftleft2 jsh (
+      .a({6'b0, instr_readdata[25:0]}),
+      .y(jumpsh)
+  );  //Instruction in PC are every 4 so we need to multiply by 4.
+  
+  shiftleft2 jsh2 (
+      .a(result2),
+      .y(jumpregsh)
+  );  //Instruction in PC are every 4 so we need to multiply by 4.
+  
+
+  /*			SAVE	
   mux2 #(32) pcmux1 (
       .a({6'b0, instr_readdata[25:0]}),
       .b(result2),
@@ -108,10 +136,12 @@ module datapath (
       .a(pcnextbr2),
       .y(jumpsh)
   );  //Instruction in PC are every 4 so we need to multiply by 4.
+  */
+  
 
   mux2 #(32) pcmux2 (
       .a(pcbranch),
-      .b(jumpsh),
+      .b(pcnextbr2),  //jumpsh
       .s(jump), //jump
       .y(pcnextbrin)
   );  //jump is high when we are in a jump instruction.
@@ -119,7 +149,7 @@ module datapath (
 
 
 
-  // Register file
+  // ------------------  Register file  ---------------------
 
   //we added an output: register_v0 so that this value is accessible from the outside of the Mips_cpu at all time.
   regfile register (
