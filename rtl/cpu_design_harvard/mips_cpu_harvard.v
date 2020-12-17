@@ -2,7 +2,8 @@ module mips_cpu_harvard (
     input logic clk,
     reset,
     output logic active,
-    output logic [31:0] register_v0, register_v3,
+    output logic [31:0] register_v0,
+    register_v3,
 
     input logic clk_enable,
 
@@ -14,35 +15,36 @@ module mips_cpu_harvard (
     output logic data_read,
     output logic [31:0] data_writedata,
     input logic [31:0] data_readdata,
-    output logic pcsrc, pcsrclast,
-    
-    output logic [31:0] alu1, alu2			//DEBUGGING
+    output logic pcsrc,
+    pcsrclast,
+
+    output logic [31:0] alu1,
+    alu2  //DEBUGGING
 );
 
-  logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero; //pcsrc
-  
+  logic
+      memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero;  //pcsrc
+
   logic [4:0] alucontrol;
   logic [2:0] loadcontrol;
-  
-  
-  
+
+
+
   // SWITCH FROM LITTLE ENDIAN TO BIG ENDIAN AND VICE-VERSA WHEN READING/WRITING TO MEMORIES
-  logic [31:0] 	instr_readdata_be, 
-  				data_readdata_be, 
-  				data_writedata_be;
-  
+  logic [31:0] instr_readdata_be, data_readdata_be, data_writedata_be;
+
   endian_switch switch_instr_readdata (
-  	  .in(instr_readdata),
+      .in (instr_readdata),
       .out(instr_readdata_be)
   );
-  
+
   endian_switch switch_data_readdata (
-  	  .in(data_readdata),
+      .in (data_readdata),
       .out(data_readdata_be)
   );
-  
+
   endian_switch switch_data_writedata (
-  	  .in(data_writedata_be),
+      .in (data_writedata_be),
       .out(data_writedata)
   );
 
@@ -67,7 +69,7 @@ module mips_cpu_harvard (
       .loadcontrol(loadcontrol)
   );
 
-  datapath datap(
+  datapath datap (
       .clk(clk),
       .reset(reset),
       .clk_enable(clk_enable),
@@ -97,15 +99,15 @@ module mips_cpu_harvard (
 
 
   always @(posedge clk) begin
-	if(reset) active <= 1;
-	else begin						//If PC counter points to address 0, then the active flag is set to 0
-		if(clk_enable == 1) active <= (instr_address == 32'h00000000) ? 1'b0 : 1'b1;
-		else active <= 0;
-		end
+    if (reset) active <= 1;
+    else begin  //If PC counter points to address 0, then the active flag is set to 0
+      if (clk_enable == 1) active <= (instr_address == 32'h00000000) ? 1'b0 : 1'b1;
+      else active <= 0;
+    end
   end
 
 
-/* OLD VERSION WITHOUT ENDIAN SWITCH
+  /* OLD VERSION WITHOUT ENDIAN SWITCH
 
   controller control (
       .op(instr_readdata[31:26]),

@@ -25,7 +25,7 @@ module tb_harvard;
   logic data_read;
   logic [31:0] data_writedata;
   logic [31:0] data_readdata;
-  
+
   logic [31:0] alu1, alu2;
 
   instruction_mem #(INSTR_INIT_FILE) instRAMInst (
@@ -56,7 +56,7 @@ module tb_harvard;
       .data_read(data_read),
       .data_writedata(data_writedata),
       .data_readdata(data_readdata),
-      
+
       .alu1(alu1),
       .alu2(alu2)
   );
@@ -102,9 +102,9 @@ module tb_harvard;
       @(posedge clk);
       cycle_count++;
 //      $fdisplay(STDERR, "  ");
-    $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, register_v3: %d, active: %d", cycle_count, register_v0, register_v3, active);
-      $fdisplay(STDERR, "Instruction address: %h, Instruction: %b", instr_address, instr_readdata);
-      $fdisplay(STDERR, "ALUa: %h, ALUb: %h, Data address: %h", alu1, alu2, data_address); //*/
+//    $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, register_v3: %d, active: %d", cycle_count, register_v0, register_v3, active);
+//      $fdisplay(STDERR, "Instruction address: %h, Instruction: %b", instr_address, instr_readdata);
+//      $fdisplay(STDERR, "ALUa: %h, ALUb: %h, Data address: %h", alu1, alu2, data_address); //*/
     end
 
     $display("%d", register_v0);
