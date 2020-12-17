@@ -1,6 +1,7 @@
 module controller (
 	input logic clk,
 	reset,
+	input logic waitrequest,
     input logic [5:0] op,
     funct,
     input logic [4:0] dest,

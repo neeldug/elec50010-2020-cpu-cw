@@ -1,6 +1,7 @@
 module maindec (
 	input logic clk,
 	reset,
+	input logic waitrequest,
     input logic [5:0] op,
     funct,
     input logic [4:0] dest,
@@ -21,7 +22,23 @@ module maindec (
     output logic [2:0] state,
     output logic [2:0] loadcontrol
 );
-
+initial begin
+	alusrca = 0;
+	alusrcb = 00;
+	memtoreg1 = 0;
+	memtoreg2 = 0;
+	memwrite = 0;
+	branch = 0;
+	regdst1 = 1;
+	regdst2 = 0;
+	regwrite = 0;
+	jump1 = 0;
+	jump = 0;
+	iord = 0;
+	irwrite = 0;
+	pcwrite = 0;
+	aluop = 00;
+end
 
 /*	State:
 	000 : Fetch
@@ -35,6 +52,10 @@ always @(posedge clk) begin
 	if (reset) begin
 		state <= 000;
 	end 
+	
+	else if (waitrequest == 1) begin	//implement waitrequest signal ??
+	end
+	
 	else if (state == 000) begin	//Fetch state: PC incrementation
 		iord <= 0;
 		alusrca <= 0;
