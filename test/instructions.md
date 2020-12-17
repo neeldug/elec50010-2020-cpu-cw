@@ -1,0 +1,50 @@
+### Code
+
+- [x] ADDIU
+- [x] ADDU
+- [x] AND
+- [x] ANDI
+- [x] BEQ
+- [x] BGEZ
+- [ ] BGEZAL
+- [x] BGTZ
+- [x] BLEZ
+- [x] BLTZ
+- [ ] BLTZAL
+- [x] BNE
+- [x] DIV
+- [x] DIVU
+- [ ] J
+- [ ] JALR
+- [ ] JAL
+- [x] JR
+- [x] LB
+- [x] LBU
+- [x] LH
+- [x] LHU
+- [x] LUI
+- [x] LW
+- [ ] LWL
+- [ ] LWR
+- [ ] MTHI
+- [ ] MTLO
+- [x] MULT
+- [x] MULTU
+- [x] OR
+- [x] ORI
+- [x] SB
+- [x] SH
+- [x] SLL
+- [x] SLLV
+- [x] SLT
+- [x] SLTI
+- [x] SLTIU
+- [x] SLTU
+- [x] SRA
+- [x] SRAV
+- [x] SRL
+- [x] SRLV
+- [x] SUBU
+- [x] SW
+- [x] XOR
+- [x] XORI
