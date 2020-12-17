@@ -34,6 +34,7 @@ module mips_cpu_harvard (
       .out(writedata)
   );
 
+/*
 module controller (
 	input logic clk,
 	reset,
@@ -59,7 +60,7 @@ module controller (
     output logic [4:0] alucontrol,
     output logic [2:0] loadcontrol
 );
-
+*/
 
   controller control (
       .op(readdata_be[31:26]),
