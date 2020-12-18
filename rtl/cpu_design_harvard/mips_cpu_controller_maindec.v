@@ -25,7 +25,7 @@ module maindec (
 
 
 
-//  assign {regwrite, regdst2, regdst1, alusrc, branch, data_write, memtoreg1, jump1, jump, aluop} = controls;
+//  assign {regwrite, regdst2, regdst1, alusrc, branch, data_read, data_write, memtoreg1, jump1, jump, aluop} = controls;
   assign regwrite = controls[11];
   assign regdst2 = controls[10];
   assign regdst1 = controls[9];
