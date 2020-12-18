@@ -13,7 +13,7 @@ module tb_harvard;
   integer cycle_count = 0;
   integer STDERR = 32'h8000_0002;
 
-  logic clk_enable;  //Needs investigating further - logic to drive signal?
+  logic clk_enable;
 
   logic [31:0] instr_address;
   logic [31:0] instr_readdata;
@@ -46,7 +46,10 @@ module tb_harvard;
       .clk(clk),
       .reset(reset),
       .active(active),
+//      .pcsrc(pcsrc),
+//      .pcsrclast(pcsrclast),
       .register_v0(register_v0),
+//      .register_v3(register_v3),
       .clk_enable(clk_enable),
       .instr_address(instr_address),
       .instr_readdata(instr_readdata),
@@ -55,9 +58,9 @@ module tb_harvard;
       .data_read(data_read),
       .data_writedata(data_writedata),
       .data_readdata(data_readdata),
-      
+
 //      .pcsrc(pcsrc),							//debug
-//      .pcsrclast(pcsrclast),					//debug     
+//      .pcsrclast(pcsrclast),					//debug
       .register_v3(register_v3),				//debug
       .alu1(alu1),								//debug
       .alu2(alu2)								//debug
@@ -76,6 +79,14 @@ module tb_harvard;
 
     $fatal(1, "Simulation didn't finish within %d cycles.", TIMEOUT_CYCLES);
 
+  end
+
+  initial begin
+    while (active) begin
+      assert(data_read != 1 && data_write != 1) else begin
+        $fatal(1, "Tried to read and write data simultaneously");
+      end
+    end
   end
 
   initial begin
@@ -103,13 +114,13 @@ module tb_harvard;
     while (active) begin
       @(posedge clk);
       cycle_count++;
-      
+
       //Debugging logs
       $fdisplay(STDERR, "  ");
       $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, active: %d", cycle_count, register_v0, active);
       $fdisplay(STDERR, "Instruction address: %h, Instruction: %b", instr_address, instr_readdata);
       $fdisplay(STDERR, "register_v3: %d, ALUa: %h, ALUb: %h, ALUresult: %h", register_v3, alu1, alu2, data_address); //*/
-      
+
     end
 
     $display("%d", register_v0);
