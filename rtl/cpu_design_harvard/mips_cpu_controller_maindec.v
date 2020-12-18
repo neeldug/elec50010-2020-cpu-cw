@@ -4,6 +4,7 @@ module maindec (
     input logic [4:0] dest,
     output logic memtoreg1,
     data_write,
+    data_read,
     output logic branch,
     alusrc,
     output logic regdst2,

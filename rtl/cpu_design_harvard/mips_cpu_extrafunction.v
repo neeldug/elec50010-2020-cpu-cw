@@ -128,7 +128,7 @@ module flipflopr #(
     clk_enable,
     input logic [WIDTH-1:0] d,
     output logic [WIDTH-1:0] q
-);ss
+);
   reg x;
 
   initial x = 1'b0;
