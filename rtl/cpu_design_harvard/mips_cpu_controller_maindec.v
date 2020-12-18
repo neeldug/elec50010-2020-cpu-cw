@@ -4,6 +4,7 @@ module maindec (
     input logic [4:0] dest,
     output logic memtoreg1,
     data_write,
+    output logic data_read,
     output logic branch,
     alusrc,
     output logic regdst2,
@@ -72,7 +73,7 @@ module maindec (
         loadcontrol = 3'b001;
       end
       6'b100001: begin
-        controls = 12'b10010110000;  //Load halfword
+        controls = 12'b100101110000;  //Load halfword
         loadcontrol = 3'b010;
       end
       6'b100101: begin
