@@ -128,9 +128,10 @@ module flipflopr #(
     output logic [WIDTH-1:0] q
 );
  reg x;
-	
-	initial
-		x = 1'b0;
+ reg [31:0] z;
+initial z = 32'b1;	
+initial x = 1'b0;
+
 	always @(negedge reset) begin
     	x = 1'b1;
     end
@@ -138,9 +139,13 @@ module flipflopr #(
   always_ff @(posedge clk) begin
     if (reset) q <= x ? 32'hBFC00000 : 32'b0;
     else if (clk_enable) begin
-    	q <= x ? 32'hBFC00000 : d;
-    	x <= 0;
-  	end
+    	if (z == 32'b0) q <= 32'b0;
+    	else begin
+			q <= x ? 32'hBFC00000 : d;
+			z <= q;
+			x <= 0;
+  		end
+  		end
   end
 
 endmodule
