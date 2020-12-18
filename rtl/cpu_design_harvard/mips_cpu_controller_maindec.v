@@ -73,7 +73,7 @@ module maindec (
         loadcontrol = 3'b001;
       end
       6'b100001: begin
-        controls = 12'b10010110000;  //Load halfword
+        controls = 12'b100101110000;  //Load halfword
         loadcontrol = 3'b010;
       end
       6'b100101: begin
