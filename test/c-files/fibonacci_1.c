@@ -1,17 +1,20 @@
-int Fibonacci(int n);
+unsigned t = 8;
 
-__attribute__((section(".text.main"))) int main(void)
-{
-   int n = 8;
-   return Fibonacci(n);
-}
+int main(void) {
+    unsigned f1 = 0;
+    unsigned f2 = 1;
+    unsigned fi;
 
-int Fibonacci(int n)
-{
-   if ( n == 0 )
-      return 0;
-   else if ( n == 1 )
-      return 1;
-   else
-      return ( Fibonacci(n-1) + Fibonacci(n-2) );
+    if(t == 0)
+        return 0;
+    if(t == 1)
+        return 1;
+
+    for(unsigned i = 2 ; i <= t ; i++ )
+    {
+        fi = f1 + f2;
+        f1 = f2;
+        f2 = fi;
+    }
+    return fi;
 }
