@@ -4,16 +4,11 @@
 	.set	nomicromips
 	.ent	main
 	.type	main, @function
-
 main:
-    MOVE $0,$2
-    J PASS
-    nop
+    ADDIU $3,$3,1
+    LI $4,8
+    ADDU $2,$3,$4
     JR $31
     .end main
     .set	noreorder
     .set	nomacro
-
-PASS:
-    JR $31
-    LI $2,3
