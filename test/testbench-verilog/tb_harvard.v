@@ -69,7 +69,7 @@ module tb_harvard;
 
   initial begin
     while (active) begin
-      assert(data_read != 1 && data_write != 1) else begin
+      assert(data_read != 1 || data_write != 1) else begin
         $fatal(1, "Tried to read and write data simultaneously");
       end
     end
