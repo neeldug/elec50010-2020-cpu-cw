@@ -14,11 +14,11 @@ main:
 	MOVE $31, $4
 	JR $31
 	.end main
-    	.set	noreorder
-    	.set	nomacro
+    .set	noreorder
+    .set	nomacro
 
 label:
 	ADDU $2,$2,3
 	JR $31
-	
+
 
