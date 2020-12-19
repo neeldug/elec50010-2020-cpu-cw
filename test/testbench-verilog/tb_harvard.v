@@ -4,7 +4,7 @@ module tb_harvard;
 
   parameter INSTR_INIT_FILE = ""  /*default test case if not specified*/;
   parameter DATA_INIT_FILE = ""  /*default data if not specified*/;
-  parameter TIMEOUT_CYCLES = 30;
+  parameter TIMEOUT_CYCLES = 20;
 
   logic clk;
   logic reset;
@@ -24,9 +24,8 @@ module tb_harvard;
   logic [31:0] data_writedata;
   logic [31:0] data_readdata;
 
-//	logic pcsrc, pcsrclast;						//debug
-	logic [31:0] register_v3;					//debug
-	logic [31:0] alu1, alu2;					//debug
+//	logic [31:0] register_debug;				//debug
+//	logic [31:0] alu1, alu2;					//debug
 
 
 
@@ -46,10 +45,7 @@ module tb_harvard;
       .clk(clk),
       .reset(reset),
       .active(active),
-//      .pcsrc(pcsrc),
-//      .pcsrclast(pcsrclast),
       .register_v0(register_v0),
-//      .register_v3(register_v3),
       .clk_enable(clk_enable),
       .instr_address(instr_address),
       .instr_readdata(instr_readdata),
@@ -57,13 +53,12 @@ module tb_harvard;
       .data_write(data_write),
       .data_read(data_read),
       .data_writedata(data_writedata),
-      .data_readdata(data_readdata),
+      .data_readdata(data_readdata)//
 
 //      .pcsrc(pcsrc),							//debug
-//      .pcsrclast(pcsrclast),					//debug
-      .register_v3(register_v3),				//debug
-      .alu1(alu1),								//debug
-      .alu2(alu2)								//debug
+//      .register_debug(register_debug),		//debug
+//      .alu1(alu1),							//debug
+//      .alu2(alu2)								//debug
   );
 
   //Setting up a clock
@@ -110,23 +105,25 @@ module tb_harvard;
 
     //Setting clk_enable high (may need to happen earlier - we shall see)
 
+
 //Debugging logs for cycle 0
 	  $fdisplay(STDERR, "  ");
       $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, active: %d", cycle_count, register_v0, active);
       $fdisplay(STDERR, "Instruction address: %h, Instruction: %b", instr_address, instr_readdata);
-      $fdisplay(STDERR, "register_v3: %d, ALUa: %h, ALUb: %h, ALUresult: %h", register_v3, alu1, alu2, data_address); //
-
+/*      $fdisplay(STDERR, "register_v3: %d, ALUa: %h, ALUb: %h, ALUresult: %h", register_v3, alu1, alu2, data_address); //
+*/
 
     //Looping until the CPU finished (sets active low)
     while (active) begin
       @(posedge clk);
       cycle_count++;
-      
+
       //Debugging logs for cycles 1+
 	  $fdisplay(STDERR, "  ");
       $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, active: %d", cycle_count, register_v0, active);
       $fdisplay(STDERR, "Instruction address: %h, Instruction: %b", instr_address, instr_readdata);
-      $fdisplay(STDERR, "register_v3: %d, ALUa: %h, ALUb: %h, ALUresult: %h", register_v3, alu1, alu2, data_address); //
+/*      $fdisplay(STDERR, "register_$31: %d, ALUa: %h, ALUb: %h, ALUresult: %h", register_debug, alu1, alu2, data_address); //*/
+
 
     end
 

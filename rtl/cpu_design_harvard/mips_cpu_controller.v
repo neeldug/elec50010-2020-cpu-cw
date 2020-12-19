@@ -4,8 +4,8 @@ module controller (
     funct,
     input logic [4:0] dest,
     input logic zero,
+    output logic stall,
     output logic storeloop,
-    storeloop1,
     output logic memtoreg2,
     memtoreg1,
     output logic data_write,
@@ -21,7 +21,7 @@ module controller (
     output logic [2:0] loadcontrol
 );
 
-  logic [1:0] aluop;
+  logic [1:0] aluop, state;
   logic branch;
 
   maindec md (
@@ -29,8 +29,8 @@ module controller (
       .op(op),
       .funct(funct),
       .dest(dest),
+      .stall(stall),
       .storeloop(storeloop),
-//      .storeloop1(storeloop1),
       .memtoreg1(memtoreg1),
       .data_write(data_write),
       .data_read(data_read),
@@ -48,7 +48,8 @@ module controller (
   aludec ad (
       .funct(funct),
       .op(op),
-      .storeloop1(storeloop1),
+      .storeloop(storeloop),
+      .state(state),
       .dest(dest),
       .aluop(aluop),
       .alucontrol(alucontrol)

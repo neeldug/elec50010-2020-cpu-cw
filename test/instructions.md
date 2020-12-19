@@ -6,15 +6,15 @@
 - [x] ANDI
 - [x] BEQ
 - [x] BGEZ
-- [ ] BGEZAL
+- [x] BGEZAL
 - [x] BGTZ
 - [x] BLEZ
 - [x] BLTZ
-- [ ] BLTZAL
+- [x] BLTZAL
 - [x] BNE
 - [x] DIV
 - [x] DIVU
-- [ ] J
+- [x] J
 - [ ] JALR
 - [ ] JAL
 - [x] JR
@@ -26,8 +26,8 @@
 - [x] LW
 - [ ] LWL
 - [ ] LWR
-- [ ] MTHI
-- [ ] MTLO
+- [x] MTHI
+- [x] MTLO
 - [x] MULT
 - [x] MULTU
 - [x] OR

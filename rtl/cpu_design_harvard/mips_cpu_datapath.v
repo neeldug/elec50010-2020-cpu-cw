@@ -2,6 +2,7 @@ module datapath (
     input logic clk,
     reset,
     clk_enable,
+    stall,
     output logic active,
     input logic storeloop,
     input logic memtoreg2,
@@ -21,14 +22,10 @@ module datapath (
     input logic [31:0] data_readdata,
     output logic [31:0] data_address,
     data_writedata,
-    output logic [31:0] register_v0,
-    
-    
-	//output logic pcsrclast						//debug
-	output logic [31:0] register_v3,				//debug (+ @regfile and in extrafunction.v)
-	output logic [31:0] srca, srcb,					//debug
-	
-	input logic storeloop1
+    output logic [31:0] register_v0
+
+	//output logic [31:0] register_debug,				//debug (+ @regfile and in extrafunction.v)
+	//output logic [31:0] srca, srcb					//debug
 );
 
 
@@ -38,11 +35,12 @@ module datapath (
   logic [31:0] signimm, signimmsh, immsh16, pcnextbr1, pcnextbr2, jumpsh;
   logic [31:0] result2, result1, result;
   logic [31:0] pcresult;
-  
-  //logic [31:0] srca, srcb;							//non-debug
-  logic pcsrclast;									//non-debug
+  assign stall = 0; //temp
+  								
   logic [31:0] rda, reg32;
   logic [31:0] resultregfile, resultstore;
+  logic [31:0] srca, srcb;							//non-debug
+
 
 
 
@@ -50,41 +48,36 @@ module datapath (
 
   // --------------  Delay Slot Implementation  ------------
 
-  // Flip-flop to save the state of the control signal of branch instr.
-  regfile2 #(0) pcsrcreg (
-      .clk(clk),
-      .reset(reset),
-      .we(1'b1),
-      .d(pcsrc),		// note: pcsrc = (branch & zero)
-      .q(pcsrclast)
-  );
-  
+  logic [31:0] pcnext_delay;
+
   // Flip-flop to save the adress to go to in the next cycle
   regfile1 #(32) jumpbrmem (
       .clk(clk),
       .reset(reset),
-      .we(memtoreg2),
-      .d(pcnextbrin),
-      .q(pcnextbrout)
+      .clk_enable(clk_enable),
+      .stall(stall),
+      .d(pcnext),
+      .q(pcnext_delay)
   );
 
-  // MUX to select either normal PC+4 or old address from branch or jump instr.
-  mux2 #(32) pcmux3 (
-      .a(pcplus4),
-      .b(pcnextbrout),
-      .s(pcsrclast),  //pcsrc
-      .y(pcnextbr1)
-  );  // note: pcsrclast is high when we were in a branch instruction and the condition (zero flag) were met.
+  logic [31:0] pcplus4delay;
 
-  // MUX to select either normal PC+4 or old address from branch or jump instr.
-  mux2 #(32) pcmux (
-      .a(pcnextbr1),
-      .b(pcplus4),
-      .s(memtoreg2),
-      .y(pcnextbr)		// note: this goes in the Program Counter
+  // PC_delay+4
+  adder pcpl4_delay (
+      .a(pcnext_delay),
+      .b(32'b100),
+      .y(pcplus4delay)
   );
   
-
+  logic [31:0] pcbranch_pcplus4delay;
+  
+  // MUX to select either normal PC+4 or address from branch instr.
+  mux2 #(32) pcmux3 (
+      .a(pcplus4delay),
+      .b(pcbranch),
+      .s(pcsrc),
+      .y(pcbranch_pcplus4delay)
+  );  // note: pcsrc is high when we are in a branch instruction and the condition (zero flag) are met.
 
 
   //  ---------------  Program Counter Datapath  --------------
@@ -94,8 +87,9 @@ module datapath (
       .clk(clk),
       .reset(reset),
       .clk_enable(clk_enable),
+      .stall(stall),
       .active(active),
-      .d(pcnextbr),
+      .d(pcnext_delay),
       .q(instr_address)
   );
 
@@ -133,34 +127,30 @@ module datapath (
   // --------------  Jump-to-PC Datapath ------------
 
   logic [31:0] jumpregsh;
-
+  logic [31:0] jump_address_sh, jumpreg_address, next_jump_address;
 
   // Double shift left of jump address from instr. (j/jal)
   shiftleft2 jsh (
       .a({6'b0, instr_readdata[25:0]}),
-      .y(jumpsh)
+      .y(jump_address_sh)
   );
-
-  // Double shift left of jump address from register (jr/jalr)
-  shiftleft2 jsh2 (
-      .a(result2),
-      .y(jumpregsh)
-  );
+  
+  assign jumpreg_address = result2;	// note: the result of the ALU is the address we need to jump to
   
   // MUX to select either address from data of regular jump instr. (j/jal) or address from register of jump register instr. (jr/jalr)
   mux2 #(32) pcmux1 (
-      .a({pcplus4[31:28], jumpsh[27:0]}),
-      .b(jumpregsh),
+      .a({pcplus4[31:28], jump_address_sh[27:0]}),
+      .b(jumpreg_address),
       .s(jump1),
-      .y(pcnextbr2)
+      .y(next_jump_address)
   );  //note: jump1 is high when we jump to value in register.
   
   // MUX to select either (PC+4 || PC from branch instr.) or (Address from data of j/jal || Address from register of jr/jalr)
   mux2 #(32) pcmux2 (
-      .a(pcbranch),
-      .b(pcnextbr2),
+      .a(pcbranch_pcplus4delay),
+      .b(next_jump_address),
       .s(jump),
-      .y(pcnextbrin)		//note: this goes inside the delay_slot block
+      .y(pcnext)		//note: this goes inside the delay_slot block
   );  // note: jump is high when we are in a jump instruction.
 
 
@@ -181,13 +171,13 @@ module datapath (
       .wd3(resultregfile),
       .rd1(rda),
       .rd2(data_writedata),
-      .reg_v0(register_v0),	//
-      .reg_v3(register_v3)							//debug (+ in extrafunction.v)
+      .reg_v0(register_v0)//
+      //.reg_debug(register_debug)							//debug (+ in extrafunction.v)
   );
   
   
   // Register file used for merging data in Registers and in Data memory in Store instructions (SB and SH).
-  regfile1 #(32) register32 (
+  regfile2 #(32) register32 (
   	  .clk(clk),
   	  .reset(reset),
   	  .we(storeloop),
@@ -221,9 +211,9 @@ module datapath (
       .y(writereg1)
   );  // note: regdst1 is high for R-type instructions else select I-type.
   
-
-  //  MUX to select either register address from instr. or register $31.
-  mux2 #(5) wrmux3 (
+  
+  //  MUX to select either register address from instr. or register $31 (for jr/jalr)
+  mux2 #(5) wrmux2 (
       .a(writereg1),
       .b(5'b11111),
       .s(regdst2),
@@ -234,12 +224,6 @@ module datapath (
 
   //  --------------- Out-of-Memory Datapath -------------------
 
-  // Load selector bit (word/byte/LSB...)							//??????????????
-  shiftleft16 immshift16 (
-      .a({16'b0, instr_readdata[15:0]}),
-      .y(immsh16)
-  );  // note: extended the instr_readdata to fit declaration of shiftleft16
-
   // Load Selector module
   loadselector loadsel (
       .a(data_readdata),
@@ -249,7 +233,7 @@ module datapath (
 
   // MUX to select either result from ALU or from Memory
   mux2 #(32) resmux (
-      data_address,
+      data_address, // note: this is the output of the ALU
       result1,
       memtoreg1,
       result2

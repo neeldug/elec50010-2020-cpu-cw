@@ -13,14 +13,14 @@ module mips_cpu_harvard (
     output logic data_write,  //control signal Data memory write enable for data
     output logic data_read,
     output logic [31:0] data_writedata,
-    input logic [31:0] data_readdata,
+    input logic [31:0] data_readdata//
     
-    //output logic pcsrc, pcsrclast					//debug
-    output logic [31:0] register_v3,				//debug (+ @datapath)
-    output logic [31:0] alu1, alu2					//debug (+ @datapath)
+    //output logic pcsrc, pcsrclast						//debug
+    //output logic [31:0] register_debug,				//debug (+ @datapath)
+    //output logic [31:0] alu1, alu2					//debug (+ @datapath)
 );
 
-  logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc, storeloop, storeloop1;
+  logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc, storeloop, stall;
   
   logic [4:0] alucontrol;
   logic [2:0] loadcontrol;
@@ -33,7 +33,6 @@ module mips_cpu_harvard (
       .dest(instr_readdata[20:16]),
       .zero(zero),
       .storeloop(storeloop),
-      .storeloop1(storeloop1),
       .memtoreg2(memtoreg2),
       .memtoreg1(memtoreg1),
       .data_write(data_write),
@@ -44,6 +43,7 @@ module mips_cpu_harvard (
       .regwrite(regwrite),
       .jump1(jump1),
       .jump(jump),
+      .stall(stall),
       .alucontrol(alucontrol),
       .loadcontrol(loadcontrol)
   );
@@ -52,8 +52,8 @@ module mips_cpu_harvard (
       .clk(clk),
       .reset(reset),
       .clk_enable(clk_enable),
+      .stall(stall),
       .storeloop(storeloop),
-      .storeloop1(storeloop1),
       .active(active),
       .memtoreg2(memtoreg2),
       .memtoreg1(memtoreg1),
@@ -72,12 +72,12 @@ module mips_cpu_harvard (
       .data_readdata(data_readdata),
       .data_address(data_address),
       .data_writedata(data_writedata),
-      .register_v0(register_v0), //
+      .register_v0(register_v0)//
       
-	  .register_v3(register_v3),						//debug (+ in datapath.v)
+	  //.register_debug(register_debug),				//debug (+ in datapath.v)
       //.pcsrclast(pcsrclast),							//debug (+ in datapath.v)
-      .srca(alu1),										//debug (+ in datapath.v)
-      .srcb(alu2)										//debug (+ in datapath.v)
+      //.srca(alu1),									//debug (+ in datapath.v)
+      //.srcb(alu2)										//debug (+ in datapath.v)
   );
   
 

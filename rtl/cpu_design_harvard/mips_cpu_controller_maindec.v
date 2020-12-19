@@ -9,6 +9,7 @@ module maindec (
     data_read,
     output logic branch,
     alusrc,
+    output logic stall,
     output logic regdst2,
     regdst1,
     output logic regwrite,
@@ -18,10 +19,11 @@ module maindec (
     output logic [2:0] loadcontrol
 );
 
-  reg [1:0] x;
+  reg [1:0] state;
   reg [11:0] controls;
 initial begin
-	x = 0;
+	stall = 0;
+	state = 2'b0;
 end
 
 
@@ -97,22 +99,24 @@ end
       end
 
       6'b101000: begin      	
-      	 if(x == 2'b00) begin
+      	 if(state == 2'b00) begin
+      	 	stall = 1;
         	storeloop = 1;
         	controls = 12'b000101010000;  //Load word into register "32"
         	loadcontrol = 3'b101;
-        	x = 2'b01;
+        	state = 2'b01;
         	end
-        if(x==2'b01) begin
+        if(state == 2'b01) begin
         	controls = 12'b000000000010;  // do in alu $32= {$32[31:8], $t[7:0]}
-        	x = 2'b10;
+        	state = 2'b10;
         	end
-        if(x==2'b10) begin
-        	controls <= 12'b000100100000;  //Store byte
-        	x <= 2'b11;
+        if(state == 2'b10) begin
+        	controls = 12'b000100100000;  //Store byte
+        	state = 2'b11;
         	end
-        if(x==2'b11) begin
-        	storeloop <= 0; 
+        if(state == 2'b11) begin
+        	storeloop = 0; 
+        	stall = 0;
         	end	
         end
       6'b101001: controls = 12'b000100100000;  //Store halfword
