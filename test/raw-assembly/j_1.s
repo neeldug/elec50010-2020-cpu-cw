@@ -6,7 +6,7 @@
 	.type	main, @function
 
 main:
-    MOVE $0,$2
+    MOVE $2,$0
     J PASS
     nop
     JR $31
