@@ -96,27 +96,24 @@ end
         loadcontrol = 3'b111;
       end
 
-      6'b101000: begin
-/*      	always @(posedge clk) begin
+      6'b101000: begin      	
       	 if(x == 2'b00) begin
-        	storeloop <= 1;
-        	controls <= 12'b111101010000;  //Load word into reg$30
-        	loadcontrol <= 3'b101;
-        	x <= 2'b01;
+        	storeloop = 1;
+        	controls = 12'b000101010000;  //Load word into register "32"
+        	loadcontrol = 3'b101;
+        	x = 2'b01;
         	end
         if(x==2'b01) begin
-        	storeloop1 <= 1;
-        	controls <= 12'b100000000010;  // do in alu $t= {$30[31:8], $t[7:0]}
-        	x <= 2'b10;
+        	controls = 12'b000000000010;  // do in alu $32= {$32[31:8], $t[7:0]}
+        	x = 2'b10;
         	end
         if(x==2'b10) begin
-        	storeloop1 <= 0;
         	controls <= 12'b000100100000;  //Store byte
         	x <= 2'b11;
         	end
         if(x==2'b11) begin
-        	storeloop <= 0;
-        	end		*/
+        	storeloop <= 0; 
+        	end	
         end
       6'b101001: controls = 12'b000100100000;  //Store halfword
       6'b101011: controls = 12'b000100100000;  //Store word
