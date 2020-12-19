@@ -9,8 +9,8 @@ module regfile (
     input logic [31:0] wd3,
     output logic [31:0] rd1,
     rd2,
-    reg_v0,
-	reg_debug											//debug (from datapath)
+    reg_v0//
+	//reg_debug											//debug (from datapath)
 );
 
   reg [31:0] rf[31:0];
@@ -34,7 +34,7 @@ module regfile (
   assign rd1 = (ra1 != 0) ? rf[ra1] : 0;
   assign rd2 = (ra2 != 0) ? rf[ra2] : 0;
   assign reg_v0 = (~reset) ? rf[2] : 0;
-  assign reg_debug = (~reset) ? rf[31] : reg_debug;		//debug (from datapath)
+  //assign reg_debug = (~reset) ? rf[31] : reg_debug;		//debug (from datapath)
 endmodule
 
 
@@ -167,35 +167,3 @@ module flipflopr #(
   end
 
 endmodule
-
-
-
-
-/*				OLD PC COUNTER
-
-module flipflopr #(
-    parameter WIDTH = 32
-) (
-    input logic clk,
-    reset,
-    clk_enable,
-    input logic [WIDTH-1:0] d,
-    output logic [WIDTH-1:0] q
-);
-  reg x;
-
-  initial x = 1'b0;
-  always @(negedge reset) begin
-    x = 1'b1;
-  end
-
-  always_ff @(posedge clk) begin
-    if (reset) q <= x ? 32'hBFC00000 : 32'b0;
-    else if (clk_enable) begin
-      q <= x ? 32'hBFC00000 : d;
-      x <= 0;
-    end
-  end
-
-endmodule
-*/

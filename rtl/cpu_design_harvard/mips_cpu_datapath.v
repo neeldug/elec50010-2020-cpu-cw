@@ -20,12 +20,10 @@ module datapath (
     input logic [31:0] data_readdata,
     output logic [31:0] data_address,
     data_writedata,
-    output logic [31:0] register_v0,
+    output logic [31:0] register_v0//
     
-    
-	//output logic pcsrclast							//debug
-	output logic [31:0] register_debug,				//debug (+ @regfile and in extrafunction.v)
-	output logic [31:0] srca, srcb					//debug
+	//output logic [31:0] register_debug,				//debug (+ @regfile and in extrafunction.v)
+	//output logic [31:0] srca, srcb					//debug
 );
 
 
@@ -38,25 +36,13 @@ module datapath (
   logic stall;
   assign stall = 0; //temp
   
-  //logic [31:0] srca, srcb;							//non-debug
-  logic pcsrclast;									//non-debug
+  logic [31:0] srca, srcb;							//non-debug
 
 
 
 
 
   // --------------  Delay Slot Implementation  ------------
-
-/*
-  // Flip-flop to save the state of the control signal of branch instr.
-  regfile2 #(0) pcsrcreg (
-      .clk(clk),
-      .reset(reset),
-      .we(1'b1),
-      .d(pcsrc),		// note: pcsrc = (branch & zero)
-      .q(pcsrclast)
-  );
-*/
 
   logic [31:0] pcnext_delay;
 
@@ -69,23 +55,6 @@ module datapath (
       .d(pcnext),
       .q(pcnext_delay)
   );
-/*
-  // MUX to select either normal PC+4 or old address from branch or jump instr.
-  mux2 #(32) pcmux3 (
-      .a(pcplus4),
-      .b(pcnextbrout),
-      .s(pcsrclast),  //pcsrc
-      .y(pcnextbr1)
-  );  // note: pcsrclast is high when we were in a branch instruction and the condition (zero flag) were met.
-
-  // MUX to select either normal PC+4 or old address from branch or jump instr.
-  mux2 #(32) pcmux (
-      .a(pcnextbr1),
-      .b(pcplus4),
-      .s(memtoreg2),
-      .y(pcnextbr)		// note: this goes in the Program Counter
-  );
-*/ 
 
   logic [31:0] pcplus4delay;
 
@@ -104,7 +73,7 @@ module datapath (
       .b(pcbranch),
       .s(pcsrc),
       .y(pcbranch_pcplus4delay)
-  );  // note: pcsrclast is high when we are in a branch instruction and the condition (zero flag) are met.
+  );  // note: pcsrc is high when we are in a branch instruction and the condition (zero flag) are met.
 
 
   //  ---------------  Program Counter Datapath  --------------
@@ -198,8 +167,8 @@ module datapath (
       .wd3(result),
       .rd1(srca),
       .rd2(data_writedata),
-      .reg_v0(register_v0),	//
-      .reg_debug(register_debug)							//debug (+ in extrafunction.v)
+      .reg_v0(register_v0)//
+      //.reg_debug(register_debug)							//debug (+ in extrafunction.v)
   );
 
   // MUX to select which part of the instr. is the destination register
