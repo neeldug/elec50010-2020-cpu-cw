@@ -22,10 +22,10 @@ module datapath (
     input logic [31:0] data_readdata,
     output logic [31:0] data_address,
     data_writedata,
-    output logic [31:0] register_v0
+    output logic [31:0] register_v0,
 
-	//output logic [31:0] register_debug,				//debug (+ @regfile and in extrafunction.v)
-	//output logic [31:0] srca, srcb					//debug
+	output logic [31:0] register_debug,				//debug (+ @regfile and in extrafunction.v)
+	output logic [31:0] srca, srcb					//debug
 );
 
 
@@ -39,7 +39,7 @@ module datapath (
   								
   logic [31:0] rda, reg32;
   logic [31:0] resultregfile, resultstore;
-  logic [31:0] srca, srcb;							//non-debug
+//  logic [31:0] srca, srcb;							//non-debug
 
 
 
@@ -171,8 +171,8 @@ module datapath (
       .wd3(resultregfile),
       .rd1(rda),
       .rd2(data_writedata),
-      .reg_v0(register_v0)//
-      //.reg_debug(register_debug)							//debug (+ in extrafunction.v)
+      .reg_v0(register_v0),
+      .reg_debug(register_debug)							//debug (+ in extrafunction.v)
   );
   
   

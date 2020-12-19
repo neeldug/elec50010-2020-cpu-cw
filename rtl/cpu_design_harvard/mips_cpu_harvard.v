@@ -13,11 +13,11 @@ module mips_cpu_harvard (
     output logic data_write,  //control signal Data memory write enable for data
     output logic data_read,
     output logic [31:0] data_writedata,
-    input logic [31:0] data_readdata//
+    input logic [31:0] data_readdata,
     
     //output logic pcsrc, pcsrclast						//debug
-    //output logic [31:0] register_debug,				//debug (+ @datapath)
-    //output logic [31:0] alu1, alu2					//debug (+ @datapath)
+    output logic [31:0] register_debug,				//debug (+ @datapath)
+    output logic [31:0] alu1, alu2					//debug (+ @datapath)
 );
 
   logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc, storeloop, stall;
@@ -72,12 +72,12 @@ module mips_cpu_harvard (
       .data_readdata(data_readdata),
       .data_address(data_address),
       .data_writedata(data_writedata),
-      .register_v0(register_v0)//
+      .register_v0(register_v0),
       
-	  //.register_debug(register_debug),				//debug (+ in datapath.v)
+	  .register_debug(register_debug),				//debug (+ in datapath.v)
       //.pcsrclast(pcsrclast),							//debug (+ in datapath.v)
-      //.srca(alu1),									//debug (+ in datapath.v)
-      //.srcb(alu2)										//debug (+ in datapath.v)
+      .srca(alu1),									//debug (+ in datapath.v)
+      .srcb(alu2)										//debug (+ in datapath.v)
   );
   
 
