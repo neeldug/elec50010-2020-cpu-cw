@@ -12,6 +12,6 @@ main:
 	MFHI $2
 	JR $31
 	.end main
-    	.set	noreorder
-    	.set	nomacro
-	
+    .set	noreorder
+    .set	nomacro
+

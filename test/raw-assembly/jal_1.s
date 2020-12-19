@@ -8,7 +8,7 @@
 main:
     MOVE $0,$2
     MOVE $4, $31
-    JAL PASS
+    JAL j1
     nop
     ADDU $2,$2,5
     MOVE $31, $4
@@ -17,6 +17,6 @@ main:
     .set noreorder
     .set nomacro
 
-PASS:
+j1:
     JR $31
     ADDU $2,$2,3
