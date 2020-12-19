@@ -13,7 +13,7 @@ module tb_harvard;
   integer cycle_count = 0;
   integer STDERR = 32'h8000_0002;
 
-  logic clk_enable;  //Needs investigating further - logic to drive signal?
+  logic clk_enable;
 
   logic [31:0] instr_address;
   logic [31:0] instr_readdata;
@@ -23,10 +23,6 @@ module tb_harvard;
   logic data_read;
   logic [31:0] data_writedata;
   logic [31:0] data_readdata;
-
-//	logic pcsrc, pcsrclast;			//DEBUGGING
-//	logic [31:0] register_v3;
-//  logic [31:0] alu1, alu2;
 
   instruction_mem #(INSTR_INIT_FILE) instRAMInst (
       .instr_address(instr_address),
@@ -44,10 +40,7 @@ module tb_harvard;
       .clk(clk),
       .reset(reset),
       .active(active),
-//      .pcsrc(pcsrc),
-//      .pcsrclast(pcsrclast),
       .register_v0(register_v0),
-//      .register_v3(register_v3),
       .clk_enable(clk_enable),
       .instr_address(instr_address),
       .instr_readdata(instr_readdata),
@@ -57,8 +50,6 @@ module tb_harvard;
       .data_writedata(data_writedata),
       .data_readdata(data_readdata)
       
-//      .alu1(alu1),
-//      .alu2(alu2)
   );
 
   //Setting up a clock
@@ -74,6 +65,14 @@ module tb_harvard;
 
     $fatal(1, "Simulation didn't finish within %d cycles.", TIMEOUT_CYCLES);
 
+  end
+
+  initial begin
+    while (active) begin
+      assert(data_read != 1 || data_write != 1) else begin
+        $fatal(1, "Tried to read and write data simultaneously");
+      end
+    end
   end
 
   initial begin
