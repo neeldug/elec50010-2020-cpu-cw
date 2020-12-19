@@ -71,7 +71,7 @@ module aludec (
           6'b011010: alucontrol = 5'b01111;  //Divide signed DIV
           6'b011011: alucontrol = 5'b10000;  //Divide unsigned DIVU
           6'b010001: alucontrol = 5'b10001;  //MTHI
-          6'b010100: alucontrol = 5'b10010;  //MTLO
+          6'b010011: alucontrol = 5'b10010;  //MTLO
           6'b010000: alucontrol = 5'b11010;  //MFHI
           6'b010010: alucontrol = 5'b11011;  //MFLO
 /*

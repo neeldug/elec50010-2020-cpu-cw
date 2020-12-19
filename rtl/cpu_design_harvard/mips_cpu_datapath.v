@@ -35,6 +35,8 @@ module datapath (
   logic [31:0] signimm, signimmsh, immsh16, pcnextbr1, pcnextbr2, jumpsh;
   logic [31:0] result2, result1, result;
   logic [31:0] pcresult;
+  logic stall;
+  assign stall = 0; //temp
   
   //logic [31:0] srca, srcb;							//non-debug
   logic pcsrclast;									//non-debug
@@ -62,7 +64,8 @@ module datapath (
   regfile1 #(32) jumpbrmem (
       .clk(clk),
       .reset(reset),
-      .enable(clk_enable),
+      .clk_enable(clk_enable),
+      .stall(stall),
       .d(pcnext),
       .q(pcnext_delay)
   );
@@ -111,6 +114,7 @@ module datapath (
       .clk(clk),
       .reset(reset),
       .clk_enable(clk_enable),
+      .stall(stall),
       .active(active),
       .d(pcnext_delay),
       .q(instr_address)

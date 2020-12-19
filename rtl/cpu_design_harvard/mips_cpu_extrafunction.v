@@ -68,7 +68,8 @@ module regfile1 #(
 ) (
     input logic clk,
     reset,
-    input logic enable,
+    clk_enable,
+    stall,
     input logic [WIDTH-1:0] d,
     output logic [WIDTH-1:0] q
 );
@@ -82,7 +83,7 @@ module regfile1 #(
     if (reset) begin  //sets all the regs in the regfile to 0 is reset signal is high
       q <= 0;
     end else begin
-      if (enable) q <= d;
+      if (clk_enable & (~stall)) q <= d;
     end
   end
 endmodule
@@ -144,6 +145,7 @@ module flipflopr #(
     input logic clk,
     reset,
     clk_enable,
+    stall,
     output logic active,
     input logic [WIDTH-1:0] d,
     output logic [WIDTH-1:0] q
@@ -158,7 +160,7 @@ module flipflopr #(
     if (reset) begin
       q <= 32'b0;
     end
-    else if (clk_enable) begin
+    else if (clk_enable & (~stall)) begin
       if (d==32'b0) active <= 0;
       q <= d;
     end
