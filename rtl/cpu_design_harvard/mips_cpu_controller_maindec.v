@@ -15,15 +15,15 @@ module maindec (
     output logic regwrite,
     output logic jump1,
     jump,
-    output logic [1:0] aluop,
+    output logic [1:0] aluop, state,
     output logic [2:0] loadcontrol
 );
 
-  reg [1:0] state;
   reg [11:0] controls;
 initial begin
 	stall = 0;
 	state = 2'b0;
+	storeloop = 0;
 end
 
 

@@ -35,7 +35,7 @@ module datapath (
   logic [31:0] signimm, signimmsh, immsh16, pcnextbr1, pcnextbr2, jumpsh;
   logic [31:0] result2, result1, result;
   logic [31:0] pcresult;
-  assign stall = 0; //temp
+//  assign stall = 0; //temp
   								
   logic [31:0] rda, reg32;
   logic [31:0] resultregfile, resultstore;

@@ -41,6 +41,7 @@ module controller (
       .regwrite(regwrite),
       .jump1(jump1),
       .jump(jump),
+      .state(state),
       .aluop(aluop),
       .loadcontrol(loadcontrol)
   );
