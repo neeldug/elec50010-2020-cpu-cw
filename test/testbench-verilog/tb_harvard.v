@@ -121,7 +121,7 @@ module tb_harvard;
     while (active) begin
       @(posedge clk);
       cycle_count++;
-      
+
       //Debugging logs for cycles 1+
 /*	  $fdisplay(STDERR, "  ");
       $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, active: %d", cycle_count, register_v0, active);
