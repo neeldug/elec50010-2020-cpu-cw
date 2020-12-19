@@ -6,16 +6,17 @@
 	.type	main, @function
 
 main:
-	MOVE $2, $0
-	MOVE $4, $31
-	JAL pass
-	ADDU $2,$2,5
-	MOVE $31, $4
-	JR $31
-	.end main
-    	.set	noreorder
-    	.set	nomacro
+    MOVE $0,$2
+    MOVE $4, $31
+    JAL PASS
+    nop
+    ADDU $2,$2,5
+    MOVE $31, $4
+    JR $31
+    .end main
+    .set noreorder
+    .set nomacro
 
-pass:
-	ADDU $2,$2,3
-	JR $31
+PASS:
+    JR $31
+    ADDU $2,$2,3
