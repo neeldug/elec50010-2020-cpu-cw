@@ -16,7 +16,7 @@
 - [x] DIVU
 - [x] J
 - [ ] JALR
-- [x] JAL
+- [ ] JAL
 - [x] JR
 - [x] LB
 - [x] LBU
@@ -26,8 +26,8 @@
 - [x] LW
 - [ ] LWL
 - [ ] LWR
-- [ ] MTHI
-- [ ] MTLO
+- [x] MTHI
+- [x] MTLO
 - [x] MULT
 - [x] MULTU
 - [x] OR
