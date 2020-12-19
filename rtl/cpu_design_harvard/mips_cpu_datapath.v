@@ -45,6 +45,7 @@ module datapath (
 
   // --------------  Delay Slot Implementation  ------------
 
+/*
   // Flip-flop to save the state of the control signal of branch instr.
   regfile2 #(0) pcsrcreg (
       .clk(clk),
@@ -53,16 +54,19 @@ module datapath (
       .d(pcsrc),		// note: pcsrc = (branch & zero)
       .q(pcsrclast)
   );
-  
+*/
+
+  logic [31:0] pcnext_delay;
+
   // Flip-flop to save the adress to go to in the next cycle
   regfile1 #(32) jumpbrmem (
       .clk(clk),
       .reset(reset),
-      .we(memtoreg2),
-      .d(pcnextbrin),
-      .q(pcnextbrout)
+      .enable(clk_enable),
+      .d(pcnext),
+      .q(pcnext_delay)
   );
-
+/*
   // MUX to select either normal PC+4 or old address from branch or jump instr.
   mux2 #(32) pcmux3 (
       .a(pcplus4),
@@ -78,8 +82,26 @@ module datapath (
       .s(memtoreg2),
       .y(pcnextbr)		// note: this goes in the Program Counter
   );
-  
+*/ 
 
+  logic [31:0] pcplus4delay;
+
+  // PC_delay+4
+  adder pcpl4_delay (
+      .a(pcnext_delay),
+      .b(32'b100),
+      .y(pcplus4delay)
+  );
+  
+  logic [31:0] pcbranch_pcplus4delay;
+  
+  // MUX to select either normal PC+4 or address from branch instr.
+  mux2 #(32) pcmux3 (
+      .a(pcplus4delay),
+      .b(pcbranch),
+      .s(pcsrc),
+      .y(pcbranch_pcplus4delay)
+  );  // note: pcsrclast is high when we are in a branch instruction and the condition (zero flag) are met.
 
 
   //  ---------------  Program Counter Datapath  --------------
@@ -90,7 +112,7 @@ module datapath (
       .reset(reset),
       .clk_enable(clk_enable),
       .active(active),
-      .d(pcnextbr),
+      .d(pcnext_delay),
       .q(instr_address)
   );
 
@@ -128,34 +150,34 @@ module datapath (
   // --------------  Jump-to-PC Datapath ------------
 
   logic [31:0] jumpregsh;
-
+  logic [31:0] jump_address_sh, jumpreg_address_sh, next_jump_address;
 
   // Double shift left of jump address from instr. (j/jal)
   shiftleft2 jsh (
       .a({6'b0, instr_readdata[25:0]}),
-      .y(jumpsh)
+      .y(jump_address_sh)
   );
 
   // Double shift left of jump address from register (jr/jalr)
   shiftleft2 jsh2 (
       .a(result2),
-      .y(jumpregsh)
+      .y(jumpreg_address_sh)
   );
   
   // MUX to select either address from data of regular jump instr. (j/jal) or address from register of jump register instr. (jr/jalr)
   mux2 #(32) pcmux1 (
-      .a({pcplus4[31:28], jumpsh[27:0]}),
-      .b(jumpregsh),
+      .a({pcplus4[31:28], jump_address_sh[27:0]}),
+      .b(jumpreg_address_sh),
       .s(jump1),
-      .y(pcnextbr2)
+      .y(next_jump_address)
   );  //note: jump1 is high when we jump to value in register.
   
   // MUX to select either (PC+4 || PC from branch instr.) or (Address from data of j/jal || Address from register of jr/jalr)
   mux2 #(32) pcmux2 (
-      .a(pcbranch),
-      .b(pcnextbr2),
+      .a(pcbranch_pcplus4delay),
+      .b(next_jump_address),
       .s(jump),
-      .y(pcnextbrin)		//note: this goes inside the delay_slot block
+      .y(pcnext)		//note: this goes inside the delay_slot block
   );  // note: jump is high when we are in a jump instruction.
 
 

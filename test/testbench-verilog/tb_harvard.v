@@ -110,7 +110,7 @@ module tb_harvard;
 
     //Setting clk_enable high (may need to happen earlier - we shall see)
 
-//Debugging logs for cycle 0
+	  //Debugging logs for cycle 0
 /*	  $fdisplay(STDERR, "  ");
       $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, active: %d", cycle_count, register_v0, active);
       $fdisplay(STDERR, "Instruction address: %h, Instruction: %b", instr_address, instr_readdata);

@@ -68,21 +68,21 @@ module regfile1 #(
 ) (
     input logic clk,
     reset,
-    input logic we,
+    input logic enable,
     input logic [WIDTH-1:0] d,
     output logic [WIDTH-1:0] q
 );
 
-/*
+
   always @(negedge reset)
-  	q <= 32'hBFC00004
-*/
+  	q <= 32'hBFC00004;
+
 
   always_ff @(posedge clk) begin
     if (reset) begin  //sets all the regs in the regfile to 0 is reset signal is high
       q <= 0;
     end else begin
-      if (we) q <= d;
+      if (enable) q <= d;
     end
   end
 endmodule

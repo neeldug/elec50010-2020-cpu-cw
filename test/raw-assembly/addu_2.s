@@ -5,9 +5,9 @@
 	.ent	main
 	.type	main, @function
 main:
-	MOVE $0,$2
-	MOVE $0,$3
-	MOVE $0,$4
+	LI $2,0
+	LI $3,0
+	LI $4,0
     ADDIU $3,$3,1
     LI $4,8
     ADDU $2,$3,$4
