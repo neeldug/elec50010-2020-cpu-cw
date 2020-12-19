@@ -6,7 +6,7 @@ module loadselector (
 
   always @(*) begin
     case (controls)
-      3'b000: begin  //Load byte signed
+      3'b000: begin  					//Load byte signed
         if (a[7] == 1) begin
           y = {24'hffffff, a[7:0]};
         end else begin
@@ -15,10 +15,10 @@ module loadselector (
       end
 
       3'b001: begin
-        y = {24'b0, a[7:0]};  //Load byte unsigned
+        y = {24'b0, a[7:0]};  			//Load byte unsigned
       end
 
-      3'b010: begin  //Load halfword signed
+      3'b010: begin  					//Load halfword signed
         if (a[15] == 1) begin
           y = {16'hffff, a[15:0]};
         end else begin
@@ -26,13 +26,13 @@ module loadselector (
         end
       end
 
-      3'b011: y = {16'b0, a[15:0]};  //Load halfword unsigned
+      3'b011: y = {16'b0, a[15:0]};  	//Load halfword unsigned
 
-      //		3'b100: y = b;					//Load upper Immediate
+//    3'b100: y = b;					//Load upper Immediate
 
-      3'b101: y = a;  //Load word
+      3'b101: y = a;  					//Load word
 
-      3'b110: begin  //Load word left
+      3'b110: begin  					//Load word left
         if ((4 - (a % 4)) == 0) begin
           y = {a[7:0], 24'b0};
         end else if ((4 - (a % 4)) == 1) begin
@@ -44,7 +44,7 @@ module loadselector (
         end
       end
 
-      3'b111: begin  //Load word right
+      3'b111: begin  					//Load word right
         if ((a % 4) == 0) begin
           y = {24'b0, a[7:0]};
         end else if ((a % 4) == 1) begin

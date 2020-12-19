@@ -17,7 +17,7 @@ module mips_cpu_harvard (
     
     //output logic pcsrc, pcsrclast					//debug
     output logic [31:0] register_v3,				//debug (+ @datapath)
-    output logic [31:0] alu1, alu2				//debug (+ @datapath)
+    output logic [31:0] alu1, alu2					//debug (+ @datapath)
 );
 
   logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc;
@@ -78,7 +78,9 @@ module mips_cpu_harvard (
 
 
 
-/*  always @(posedge clk) begin
+/*  	OLD ACTIVE SIGNAL DEFINITION
+
+  always @(posedge clk) begin
     if (reset) active <= 1;
     else begin  //If PC counter points to address 0, then the active flag is set to 0
       if (clk_enable == 1) active <= (instr_address == 32'h00000000) ? 1'b0 : 1'b1;

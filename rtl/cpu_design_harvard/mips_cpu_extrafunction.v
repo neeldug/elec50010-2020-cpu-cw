@@ -37,6 +37,7 @@ module regfile (
   assign reg_v3 = (~reset) ? rf[3] : reg_v3;		//debug (from datapath)
 endmodule
 
+
 module regfile2 #(
     parameter WIDTH = 31
 ) (
@@ -86,7 +87,6 @@ module regfile1 #(
   end
 endmodule
 
-// Implementation of reusable functions used in datapath
 
 module mux2 #(
     parameter WIDTH = 8
@@ -110,6 +110,7 @@ module adder (
   assign y = a + b;
 endmodule
 
+
 module shiftleft2 (
     input  logic [31:0] a,
     output logic [31:0] y
@@ -117,6 +118,7 @@ module shiftleft2 (
 
   assign y = {{a[29:0]}, 2'b00};
 endmodule
+
 
 module shiftleft16 (
     input  logic [31:0] a,
@@ -170,7 +172,11 @@ module flipflopr #(
 
 endmodule
 
-/*
+
+
+
+/*				OLD PC COUNTER
+
 module flipflopr #(
     parameter WIDTH = 32
 ) (
@@ -194,20 +200,6 @@ module flipflopr #(
       x <= 0;
     end
   end
-
-endmodule
-*/
-
-
-
-
-/*
-module endian_switch (
-    input  logic [31:0] in,
-    output logic [31:0] out
-);
-
-  assign out = {in[7:0], in[15:8], in[23:16], in[31:24]};
 
 endmodule
 */

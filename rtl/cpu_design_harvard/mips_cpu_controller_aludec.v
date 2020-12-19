@@ -14,16 +14,17 @@ module aludec (
       alucontrol = 5'b11000;	//Jump instruction use the alu operation needed for Jump Register else don't need alu.
       2'b10:
       case (op)
-        /*			6'b100000: alucontrol = 5'b; //Load byte				
-			6'b100100: alucontrol = 5'b; //Load byte unsigned
-			6'b100001: alucontrol = 5'b; //Load halfword			
-			6'b100101: alucontrol = 5'b; //Load halfword unsigned
-			6'b100011: alucontrol = 5'b; //Load word
-			6'b100010: alucontrol = 5'b; //Load word left         
-			6'b100110: alucontrol = 5'b; //Load word right
-			6'b101000: alucontrol = 5'b; //Store byte
-			6'b101001: alucontrol = 5'b; //Store halfword
-			6'b101011: alucontrol = 5'b; //Store word
+/*
+		6'b100000: alucontrol = 5'b; //Load byte				
+		6'b100100: alucontrol = 5'b; //Load byte unsigned
+		6'b100001: alucontrol = 5'b; //Load halfword			
+		6'b100101: alucontrol = 5'b; //Load halfword unsigned
+		6'b100011: alucontrol = 5'b; //Load word
+		6'b100010: alucontrol = 5'b; //Load word left         
+		6'b100110: alucontrol = 5'b; //Load word right
+		6'b101000: alucontrol = 5'b; //Store byte
+		6'b101001: alucontrol = 5'b; //Store halfword
+		6'b101011: alucontrol = 5'b; //Store word
 */
         6'b001111: alucontrol = 5'b11001;  //Load upper immidiate
         6'b000100: alucontrol = 5'b00100;  //Branch on equal use SUBU
@@ -40,9 +41,9 @@ module aludec (
         6'b000111: alucontrol = 5'b10100;  //Branch on > 0
         6'b000101: alucontrol = 5'b10110;  //Branch on != 0
         6'b001001: alucontrol = 5'b00011;  //ADD unsigned immediate
-        /*
-			6'b000010: alucontrol = 5'b; //Jump
-			6'b000011: alucontrol = 5'b; //Jump and link
+/*
+		6'b000010: alucontrol = 5'b; //Jump
+		6'b000011: alucontrol = 5'b; //Jump and link
 */
         6'b001100: alucontrol = 5'b00000;  //ANDI
         6'b001101: alucontrol = 5'b00001;  //ORI
@@ -73,7 +74,7 @@ module aludec (
           6'b010100: alucontrol = 5'b10010;  //MTLO
           6'b010000: alucontrol = 5'b11010;  //MFHI
           6'b010010: alucontrol = 5'b11011;  //MFLO
-          /*
+/*
 		  6'b001000: alucontrol = 5'b10111; //Jump register JR
 		  6'b001001: alucontrol = 5'b10111; //Jump and link register
 */

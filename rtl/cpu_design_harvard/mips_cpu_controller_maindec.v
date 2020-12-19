@@ -19,11 +19,6 @@ module maindec (
 
   reg [11:0] controls;
 
-/*  initial begin
-    jump1 = 0;
-  end */
-
-
 
 //  assign {regwrite, regdst2, regdst1, alusrc, branch, data_read, data_write, memtoreg1, jump1, jump, aluop} = controls;
   assign regwrite = controls[11];

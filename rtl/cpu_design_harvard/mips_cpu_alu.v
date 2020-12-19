@@ -1,5 +1,5 @@
 module alu (
-    input logic reset, //need to stop the alu to operate before the start of testbench
+    input logic reset,
     input logic [4:0] control,
     input logic [31:0] a,
     input logic [31:0] b,
@@ -92,7 +92,6 @@ module alu (
 
         5'b01010: y = b << a;  //shift left logical variable
 
-
         5'b01011: y = b >>> shamt;  //shift right arithmetic
 
         5'b01100: y = b >> shamt;  //shift right logical
@@ -100,45 +99,6 @@ module alu (
         5'b01101: y = b >>> a;  //shift right arithmetic variable
 
         5'b01110: y = b >> a;  //shift right logical variable
-
-        /*      5'b01011: begin	//shift right arithmetic
-        x = b;
-        for (i = shamt; i > 0; i = i - 1) begin
-          if (b[31] == 1) x = {1'b1, x[31:1]};
-          else x = {1'b0, x[31:1]};
-        end
-        y = x;
-      end
-
-      5'b01100: begin	//shift right logical
-        x = b;
-        for (i = shamt; i > 0; i = i - 1) begin
-          x = {1'b0, x[31:1]};
-        end
-        y = x;
-      end
-
-//	  5'b: y = a >> (b[10:6]);	//shift right logical
-
-      5'b01101: begin	//shift right arithmetic variable
-        x = b;
-        for (i = a[31:0]; i > 0; i = i - 1) begin
-          if (b[31] == 1) x = {1'b1, x[31:1]};
-          else x = {1'b0, x[31:1]};
-        end
-        y = x;
-      end
-
-      5'b01110: begin	//shift right logical variable
-        x = b;
-        for (i = a[31:0]; i > 0; i = i - 1) begin
-          x = {1'b0, x[31:1]};
-        end
-        y = x;
-      end
-*/
-        //	  5'b: y = a >> b;	//shift right logical variable
-
 
         5'b01111: begin  //Divid: DIV
           if (a[31] == b[31]) begin
@@ -170,7 +130,7 @@ module alu (
         end
 
 
-        5'b10001: HI = a;  //MTHI: move to High 								?????????????
+        5'b10001: HI = a;  //MTHI: move to High
 
         5'b10010: LO = a;  //MTLO: move to Low
 
@@ -193,7 +153,7 @@ module alu (
           end else y = {31'b0, 1'b1};
         end
 
-        /*      
+/*      
       5'b10101: begin	//Branch on = 0  
         if (a == 32'b0) begin
           y = 32'b0;
@@ -220,23 +180,22 @@ module alu (
         5'b11010: y = HI;  //MFHI
 
         5'b11011: y = LO;  //MFLO
-        /*      
-      5'b11100: y=
+/*      
+      	5'b11100: *empty*
       
-      5'b11101: y=
+      	5'b11101: *empty*
 */
         default:  y = 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;  //???	 
       endcase
 
     end else begin  //If reset signal is asserted, then sets both registers HI and LO to zero
-      y = 0;
       HI = 0;
       LO = 0;
     end
 
   end
 
-
+  // Zero flag is determined from the result of the ALU
   always @(y) begin
     if (y == 32'b0) begin
       zero = 1;
@@ -246,28 +205,3 @@ module alu (
   end
 
 endmodule
-
-
-
-
-
-
-
-/*		Synthax error
-
-function [63:0] sra32 (input [63:0] a);
-reg [31:0] x;
-		
-	begin											
-		x = a;
-		for(i = 32; i>0; i = i-1)begin
-			if(a[63] == 1)
-				x = {1'b1,x[63:1]};
-			else
-				x = {1'b0,x[63:1]};
-			end
-		sra32 = x;
-	end
-endfunction
-
-*/
