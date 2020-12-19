@@ -16,7 +16,7 @@ module mips_cpu_harvard (
     input logic [31:0] data_readdata,
     
     //output logic pcsrc, pcsrclast					//debug
-    output logic [31:0] register_v3,				//debug (+ @datapath)
+    output logic [31:0] register_debug,				//debug (+ @datapath)
     output logic [31:0] alu1, alu2					//debug (+ @datapath)
 );
 
@@ -69,7 +69,7 @@ module mips_cpu_harvard (
       .data_writedata(data_writedata),
       .register_v0(register_v0), //
       
-	  .register_v3(register_v3),						//debug (+ in datapath.v)
+	  .register_debug(register_debug),						//debug (+ in datapath.v)
       //.pcsrclast(pcsrclast),							//debug (+ in datapath.v)
       .srca(alu1),										//debug (+ in datapath.v)
       .srcb(alu2)										//debug (+ in datapath.v)

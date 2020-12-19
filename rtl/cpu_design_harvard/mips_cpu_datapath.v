@@ -24,7 +24,7 @@ module datapath (
     
     
 	//output logic pcsrclast							//debug
-	output logic [31:0] register_v3,				//debug (+ @regfile and in extrafunction.v)
+	output logic [31:0] register_debug,				//debug (+ @regfile and in extrafunction.v)
 	output logic [31:0] srca, srcb					//debug
 );
 
@@ -150,24 +150,20 @@ module datapath (
   // --------------  Jump-to-PC Datapath ------------
 
   logic [31:0] jumpregsh;
-  logic [31:0] jump_address_sh, jumpreg_address_sh, next_jump_address;
+  logic [31:0] jump_address_sh, jumpreg_address, next_jump_address;
 
   // Double shift left of jump address from instr. (j/jal)
   shiftleft2 jsh (
       .a({6'b0, instr_readdata[25:0]}),
       .y(jump_address_sh)
   );
-
-  // Double shift left of jump address from register (jr/jalr)
-  shiftleft2 jsh2 (
-      .a(result2),
-      .y(jumpreg_address_sh)
-  );
+  
+  assign jumpreg_address = result2;	// note: the result of the ALU is the address we need to jump to
   
   // MUX to select either address from data of regular jump instr. (j/jal) or address from register of jump register instr. (jr/jalr)
   mux2 #(32) pcmux1 (
       .a({pcplus4[31:28], jump_address_sh[27:0]}),
-      .b(jumpreg_address_sh),
+      .b(jumpreg_address),
       .s(jump1),
       .y(next_jump_address)
   );  //note: jump1 is high when we jump to value in register.
@@ -199,7 +195,7 @@ module datapath (
       .rd1(srca),
       .rd2(data_writedata),
       .reg_v0(register_v0),	//
-      .reg_v3(register_v3)							//debug (+ in extrafunction.v)
+      .reg_debug(register_debug)							//debug (+ in extrafunction.v)
   );
 
   // MUX to select which part of the instr. is the destination register
@@ -240,7 +236,7 @@ module datapath (
 
   // MUX to select either result from ALU or from Memory
   mux2 #(32) resmux (
-      data_address,
+      data_address, // note: this is the output of the ALU
       result1,
       memtoreg1,
       result2
