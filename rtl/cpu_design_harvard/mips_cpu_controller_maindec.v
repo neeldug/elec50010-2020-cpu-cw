@@ -1,7 +1,9 @@
 module maindec (
+	input logic clk,
     input logic [5:0] op,
     funct,
     input logic [4:0] dest,
+    output logic storeloop,
     output logic memtoreg1,
     data_write,
     data_read,
@@ -16,8 +18,11 @@ module maindec (
     output logic [2:0] loadcontrol
 );
 
-
+  reg [1:0] x;
   reg [11:0] controls;
+initial begin
+	x = 0;
+end
 
 
 //  assign {regwrite, regdst2, regdst1, alusrc, branch, data_read, data_write, memtoreg1, jump1, jump, aluop} = controls;
@@ -59,7 +64,7 @@ module maindec (
         default: controls = 12'b101000000010;  //R-type instructions 
       endcase
 
-      6'b100000: begin
+      6'b100000: begin        	
         controls = 12'b100101010000;  //Load byte
         loadcontrol = 3'b000;
       end
@@ -91,7 +96,28 @@ module maindec (
         loadcontrol = 3'b111;
       end
 
-      6'b101000: controls = 12'b000100100000;  //Store byte
+      6'b101000: begin
+/*      	always @(posedge clk) begin
+      	 if(x == 2'b00) begin
+        	storeloop <= 1;
+        	controls <= 12'b111101010000;  //Load word into reg$30
+        	loadcontrol <= 3'b101;
+        	x <= 2'b01;
+        	end
+        if(x==2'b01) begin
+        	storeloop1 <= 1;
+        	controls <= 12'b100000000010;  // do in alu $t= {$30[31:8], $t[7:0]}
+        	x <= 2'b10;
+        	end
+        if(x==2'b10) begin
+        	storeloop1 <= 0;
+        	controls <= 12'b000100100000;  //Store byte
+        	x <= 2'b11;
+        	end
+        if(x==2'b11) begin
+        	storeloop <= 0;
+        	end		*/
+        end
       6'b101001: controls = 12'b000100100000;  //Store halfword
       6'b101011: controls = 12'b000100100000;  //Store word
       6'b000100: controls = 12'b000010000010;  //Branch on = 0

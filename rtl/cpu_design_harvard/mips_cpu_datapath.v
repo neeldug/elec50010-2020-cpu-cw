@@ -3,6 +3,7 @@ module datapath (
     reset,
     clk_enable,
     output logic active,
+    input logic storeloop,
     input logic memtoreg2,
     memtoreg1,
     input logic alusrc,
@@ -23,9 +24,11 @@ module datapath (
     output logic [31:0] register_v0,
     
     
-	//output logic pcsrclast							//debug
+	//output logic pcsrclast						//debug
 	output logic [31:0] register_v3,				//debug (+ @regfile and in extrafunction.v)
-	output logic [31:0] srca, srcb					//debug
+	output logic [31:0] srca, srcb,					//debug
+	
+	input logic storeloop1
 );
 
 
@@ -38,6 +41,8 @@ module datapath (
   
   //logic [31:0] srca, srcb;							//non-debug
   logic pcsrclast;									//non-debug
+  logic [31:0] rda, reg32;
+  logic [31:0] resultregfile, resultstore;
 
 
 
@@ -173,31 +178,57 @@ module datapath (
       .ra1(instr_readdata[25:21]),
       .ra2(instr_readdata[20:16]),
       .wa3(writereg),
-      .wd3(result),
-      .rd1(srca),
+      .wd3(resultregfile),
+      .rd1(rda),
       .rd2(data_writedata),
       .reg_v0(register_v0),	//
       .reg_v3(register_v3)							//debug (+ in extrafunction.v)
   );
+  
+  
+  // Register file used for merging data in Registers and in Data memory in Store instructions (SB and SH).
+  regfile1 #(32) register32 (
+  	  .clk(clk),
+  	  .reset(reset),
+  	  .we(storeloop),
+  	  .d(resultstore),
+  	  .q(reg32)
+  ); // Write enable, WE: storeloop, is high during Store instructions.
+  
+  // MUX for alu input selection in store instructions [stage 2: merging byte(s) stored and initial value in RAM]. 
+  mux2 #(32) srcaslct (
+      .a(rda),
+      .b(reg32),
+      .s(storeloop),
+      .y(srca)
+  ); // note: storeloop is high for SB and SH instructions only.
+  
+  
+  // DEMUX for implementation of the Store instructions.
+  demux2 #(32) wdchoice (
+  	  .a(result),
+  	  .s(storeloop),
+  	  .y1(resultregfile),
+  	  .y2(resultstore)
+  ); // note: storeloop is high for SB and SH instructions only.
 
-  // MUX to select which part of the instr. is the destination register
+ 
+  // MUX to select which part of the instr. is the destination register.
   mux2 #(5) wrmux (
       .a(instr_readdata[20:16]),
       .b(instr_readdata[15:11]),
       .s(regdst1),
       .y(writereg1)
   );  // note: regdst1 is high for R-type instructions else select I-type.
+  
 
-  //  MUX to select either register address from instr. or register $31 
-  mux2 #(5) wrmux2 (
+  //  MUX to select either register address from instr. or register $31.
+  mux2 #(5) wrmux3 (
       .a(writereg1),
       .b(5'b11111),
       .s(regdst2),
       .y(writereg)
   );  // note: regdst2 is high for link instructions (store value in $31).
-
-
-
 
 
 

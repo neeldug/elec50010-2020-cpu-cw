@@ -87,9 +87,22 @@ module regfile1 #(
   end
 endmodule
 
+module demux2 #(
+    parameter WIDTH = 32
+) (
+    input logic [WIDTH - 1:0] a,
+    input logic s,
+    output logic [WIDTH - 1:0] y1,
+    y2
+);
+
+  assign y1 = s? 0 : a;
+  assign y2 = s? a : 0;
+endmodule
+
 
 module mux2 #(
-    parameter WIDTH = 8
+    parameter WIDTH = 32
 ) (
     input logic [WIDTH - 1:0] a,
     b,
@@ -148,16 +161,9 @@ module flipflopr #(
     input logic [WIDTH-1:0] d,
     output logic [WIDTH-1:0] q
 );
-  logic x;
-
-  initial begin
-  	x = 1'b0;
-  end
-  
   always @(negedge reset) begin
-    x = 1'b1;
-    active = 1'b1;
-    q = 32'hBFC00000;
+    active <= 1'b1;
+    q <= 32'hBFC00000;
   end
 
   always_ff @(posedge clk) begin

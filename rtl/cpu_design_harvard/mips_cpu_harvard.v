@@ -20,17 +20,20 @@ module mips_cpu_harvard (
     output logic [31:0] alu1, alu2					//debug (+ @datapath)
 );
 
-  logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc;
+  logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc, storeloop, storeloop1;
   
   logic [4:0] alucontrol;
   logic [2:0] loadcontrol;
   
   
   controller control (
+  	  .clk(clk),
       .op(instr_readdata[31:26]),
       .funct(instr_readdata[5:0]),
       .dest(instr_readdata[20:16]),
       .zero(zero),
+      .storeloop(storeloop),
+      .storeloop1(storeloop1),
       .memtoreg2(memtoreg2),
       .memtoreg1(memtoreg1),
       .data_write(data_write),
@@ -49,6 +52,8 @@ module mips_cpu_harvard (
       .clk(clk),
       .reset(reset),
       .clk_enable(clk_enable),
+      .storeloop(storeloop),
+      .storeloop1(storeloop1),
       .active(active),
       .memtoreg2(memtoreg2),
       .memtoreg1(memtoreg1),
