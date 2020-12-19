@@ -6,17 +6,17 @@
 - [x] ANDI
 - [x] BEQ
 - [x] BGEZ
-- [ ] BGEZAL
+- [x] BGEZAL
 - [x] BGTZ
 - [x] BLEZ
 - [x] BLTZ
-- [ ] BLTZAL
+- [x] BLTZAL
 - [x] BNE
 - [x] DIV
 - [x] DIVU
-- [ ] J
+- [x] J
 - [ ] JALR
-- [ ] JAL
+- [x] JAL
 - [x] JR
 - [x] LB
 - [x] LBU
