@@ -210,7 +210,7 @@ module datapath (
       .y(writereg1)
   );  // note: regdst1 is high for R-type instructions else select I-type.
 
-  //  MUX to select either register address from instr. or register $31 
+  //  MUX to select either register address from instr. or register $31 (for jr/jalr)
   mux2 #(5) wrmux2 (
       .a(writereg1),
       .b(5'b11111),

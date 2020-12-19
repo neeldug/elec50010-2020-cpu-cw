@@ -74,9 +74,9 @@ module regfile1 #(
 );
 
 
-  always @(negedge reset)
+  always @(negedge reset) begin
   	q <= 32'hBFC00004;
-
+  end
 
   always_ff @(posedge clk) begin
     if (reset) begin  //sets all the regs in the regfile to 0 is reset signal is high
@@ -148,14 +148,8 @@ module flipflopr #(
     input logic [WIDTH-1:0] d,
     output logic [WIDTH-1:0] q
 );
-  logic x;
-
-  initial begin
-  	x = 1'b0;
-  end
   
   always @(negedge reset) begin
-    x = 1'b1;
     active = 1'b1;
     q = 32'hBFC00000;
   end
