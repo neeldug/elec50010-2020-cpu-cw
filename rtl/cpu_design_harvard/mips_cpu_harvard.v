@@ -2,7 +2,7 @@ module mips_cpu_harvard (
     input logic clk,
     reset,
     output logic active,
-    output logic [31:0] register_v0, //register_v3,
+    output logic [31:0] register_v0,
 
     input logic clk_enable,
 
@@ -13,10 +13,11 @@ module mips_cpu_harvard (
     output logic data_write,  //control signal Data memory write enable for data
     output logic data_read,
     output logic [31:0] data_writedata,
-    input logic [31:0] data_readdata
+    input logic [31:0] data_readdata//
     
-    //output logic pcsrc, pcsrclast				//DEBUGGING
-    //output logic [31:0] alu1, alu2			//DEBUGGING
+    //output logic pcsrc, pcsrclast						//debug
+    //output logic [31:0] register_debug,				//debug (+ @datapath)
+    //output logic [31:0] alu1, alu2					//debug (+ @datapath)
 );
 
   logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc;
@@ -48,6 +49,7 @@ module mips_cpu_harvard (
       .clk(clk),
       .reset(reset),
       .clk_enable(clk_enable),
+      .active(active),
       .memtoreg2(memtoreg2),
       .memtoreg1(memtoreg1),
       .alusrc(alusrc),
@@ -65,13 +67,18 @@ module mips_cpu_harvard (
       .data_readdata(data_readdata),
       .data_address(data_address),
       .data_writedata(data_writedata),
-      .register_v0(register_v0)
-//      .register_v3(register_v3),
-//      .pcsrclast(pcsrclast)
+      .register_v0(register_v0)//
+      
+	  //.register_debug(register_debug),				//debug (+ in datapath.v)
+      //.pcsrclast(pcsrclast),							//debug (+ in datapath.v)
+      //.srca(alu1),									//debug (+ in datapath.v)
+      //.srcb(alu2)										//debug (+ in datapath.v)
   );
   
 
 
+
+/*  	OLD ACTIVE SIGNAL DEFINITION
 
   always @(posedge clk) begin
     if (reset) active <= 1;
@@ -80,6 +87,8 @@ module mips_cpu_harvard (
       else active <= 0;
     end
   end
+*/
+
 
 endmodule
 

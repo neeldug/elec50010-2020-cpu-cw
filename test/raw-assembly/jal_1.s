@@ -19,4 +19,3 @@ main:
 label:	
 	JR $31
 	ADDU $2,$2,3
-

@@ -6,6 +6,7 @@ module controller (
     output logic memtoreg2,
     memtoreg1,
     output logic data_write,
+    output logic data_read,
     output logic pcsrc,
     alusrc,
     output logic regdst2,
@@ -26,6 +27,7 @@ module controller (
       .dest(dest),
       .memtoreg1(memtoreg1),
       .data_write(data_write),
+      .data_read(data_read),
       .branch(branch),
       .alusrc(alusrc),
       .regdst2(regdst2),
@@ -46,8 +48,8 @@ module controller (
   );
 
   always_comb begin
-    pcsrc = (branch & zero);
-    memtoreg2 = (jump | pcsrc);
+    pcsrc = (branch && zero);
+    memtoreg2 = (jump || pcsrc);
   end
 
 endmodule
