@@ -1,5 +1,5 @@
 module alu (
-    input logic reset,
+    input logic reset, //need to stop the alu to operate before the start of testbench
     input logic [4:0] control,
     input logic [31:0] a,
     input logic [31:0] b,
@@ -229,6 +229,7 @@ module alu (
       endcase
 
     end else begin  //If reset signal is asserted, then sets both registers HI and LO to zero
+      y = 0;
       HI = 0;
       LO = 0;
     end

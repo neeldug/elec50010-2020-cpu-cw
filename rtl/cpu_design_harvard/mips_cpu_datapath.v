@@ -2,6 +2,7 @@ module datapath (
     input logic clk,
     reset,
     clk_enable,
+    output logic active,
     input logic memtoreg2,
     memtoreg1,
     input logic alusrc,
@@ -42,13 +43,19 @@ module datapath (
 
 
 
+  // --------------  Delay Slot Implementation  ------------
 
-
-
-
-  //  ---------------  Program Counter Datapath  --------------
-
-  regfile1 #(31) jumpbrmem (			//delay slot?
+  // Flip-flop to save the state of the control signal of branch instr.
+  regfile2 #(0) pcsrcreg (
+      .clk(clk),
+      .reset(reset),
+      .we(1'b1),
+      .d(pcsrc),		// note: pcsrc = (branch & zero)
+      .q(pcsrclast)
+  );
+  
+  // Flip-flop to save the adress to go to in the next cycle
+  regfile1 #(32) jumpbrmem (
       .clk(clk),
       .reset(reset),
       .we(memtoreg2),
@@ -56,29 +63,38 @@ module datapath (
       .q(pcnextbrout)
   );
 
-  regfile2 #(0) pcsrcreg (				//delay slot?
-      .clk(clk),
-      .reset(reset),
-      .we(1'b1),
-      .d(pcsrc),
-      .q(pcsrclast)
-  );
+  // MUX to select either normal PC+4 or old address from branch or jump instr.
+  mux2 #(32) pcmux3 (
+      .a(pcplus4),
+      .b(pcnextbrout),
+      .s(pcsrclast),  //pcsrc
+      .y(pcnextbr1)
+  );  // note: pcsrclast is high when we were in a branch instruction and the condition (zero flag) were met.
 
-  mux2 #(32) pcmux (					//delay slot?
+  // MUX to select either normal PC+4 or old address from branch or jump instr.
+  mux2 #(32) pcmux (
       .a(pcnextbr1),
       .b(pcplus4),
       .s(memtoreg2),
-      .y(pcnextbr)
+      .y(pcnextbr)		// note: this goes in the Program Counter
   );
+  
+
+
+
+  //  ---------------  Program Counter Datapath  --------------
 
   // Program Counter register
   flipflopr #(32) pcreg (
       .clk(clk),
       .reset(reset),
       .clk_enable(clk_enable),
+      .active(active),
       .d(pcnextbr),
       .q(instr_address)
   );
+
+  // Info: we read the instruction at the address of the Program Counter 
 
   // PC+4
   adder pcpl4 (
@@ -105,15 +121,6 @@ module datapath (
       .b(pcplus4),
       .y(pcbranch)
   );
-
-  // MUX to select either normal PC+4 or new address from branch instr.)
-  mux2 #(32) pcmux3 (
-      .a(pcplus4),
-      .b(pcnextbrout),
-      .s(pcsrclast),  //pcsrc
-      .y(pcnextbr1)
-  );  // note: pcsrc is high when we are in a branch instruction and the condition. (zero flag) are met.
-
 
 
 
@@ -148,7 +155,7 @@ module datapath (
       .a(pcbranch),
       .b(pcnextbr2),
       .s(jump),
-      .y(pcnextbrin)
+      .y(pcnextbrin)		//note: this goes inside the delay_slot block
   );  // note: jump is high when we are in a jump instruction.
 
 

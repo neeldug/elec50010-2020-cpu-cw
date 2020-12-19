@@ -49,6 +49,7 @@ module mips_cpu_harvard (
       .clk(clk),
       .reset(reset),
       .clk_enable(clk_enable),
+      .active(active),
       .memtoreg2(memtoreg2),
       .memtoreg1(memtoreg1),
       .alusrc(alusrc),
@@ -70,20 +71,22 @@ module mips_cpu_harvard (
       
 	  .register_v3(register_v3),						//debug (+ in datapath.v)
       //.pcsrclast(pcsrclast),							//debug (+ in datapath.v)
-      .srca(alu1),
-      .srcb(alu2)
+      .srca(alu1),										//debug (+ in datapath.v)
+      .srcb(alu2)										//debug (+ in datapath.v)
   );
   
 
 
 
-  always @(posedge clk) begin
+/*  always @(posedge clk) begin
     if (reset) active <= 1;
     else begin  //If PC counter points to address 0, then the active flag is set to 0
       if (clk_enable == 1) active <= (instr_address == 32'h00000000) ? 1'b0 : 1'b1;
       else active <= 0;
     end
   end
+*/
+
 
 endmodule
 
