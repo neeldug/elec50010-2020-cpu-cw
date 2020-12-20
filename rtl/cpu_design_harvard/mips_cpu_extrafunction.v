@@ -44,17 +44,19 @@ module regfile2 #(
     input logic clk,
     reset,
     input logic we,
-    input logic [WIDTH-1:0] d,
-    output logic [WIDTH-1:0] q
+    input logic [31:0] wd,
+    output logic [31:0] rd
 );
+	
+  reg [31:0] reg32;
 
-  always_ff @(posedge clk) begin
-    if (reset) begin  //sets all the regs in the regfile to 0 is reset signal is high
-      q <= 0;
-    end else begin
-        q <= we ? d : 0;
-    end
+  always @(posedge clk) begin
+    if (reset) reg32 = 0;
+    else if (we) reg32 = wd;
   end
+  
+  assign rd = reg32;    
+    
 endmodule
 
 
@@ -84,17 +86,21 @@ module regfile1 #(
 endmodule
 
 
-module demux2 #(
-    parameter WIDTH = 32
-) (
-    input logic [WIDTH - 1:0] a,
+module demux2 (
+    input logic [31:0] data, 
+    input logic [4:0] address,
     input logic s,
-    output logic [WIDTH - 1:0] y1,
-    y2
+    output logic [31:0] y1,
+    y2,
+    output logic [4:0] y_address
 );
 
-  assign y1 = s ? 0 : a;
-  assign y2 = s ? a : 0;
+  // regfile output
+  assign y1 = s ? 0 : data;
+  assign y_address = s ? 0 : address;
+  // parallel reg output
+  assign y2 = s ? data : 0;
+  
 endmodule
 
 

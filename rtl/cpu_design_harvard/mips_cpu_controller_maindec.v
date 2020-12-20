@@ -16,14 +16,20 @@ module maindec (
     output logic jump1,
     jump,
     output logic [1:0] aluop, state,
-    output logic [2:0] loadcontrol
+    output logic [2:0] loadcontrol,
+    
+    output mux_stage2, mux_stage3
 );
+
+logic mux_stage2, mux_stage3;
 
   reg [11:0] controls;
 initial begin
 	stall = 0;
 	state = 2'b0;
 	storeloop = 0;
+	mux_stage2 = 0;
+	mux_stage3 = 0;
 end
 
 
@@ -102,19 +108,27 @@ end
       	 if(state == 2'b00) begin
       	 	stall = 1;
         	storeloop = 1;
+        	mux_stage2 = 0;
+        	mux_stage3 = 0;
         	controls = 12'b000101010000;  //Load word into register "32"
         	loadcontrol = 3'b101;
         	state = 2'b01;
         	end
         if(state == 2'b01) begin
+        	mux_stage2 = 1;
+        	mux_stage3 = 0;
         	controls = 12'b000000000010;  // do in alu $32= {$32[31:8], $t[7:0]}
         	state = 2'b10;
         	end
         if(state == 2'b10) begin
+        	mux_stage2 = 0;
+        	mux_stage3 = 1;
         	controls = 12'b000100100000;  //Store byte
         	state = 2'b11;
         	end
         if(state == 2'b11) begin
+        	mux_stage2 = 0;
+        	mux_stage3 = 0;
         	storeloop = 0; 
         	stall = 0;
         	end	

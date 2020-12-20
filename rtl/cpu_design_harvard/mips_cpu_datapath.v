@@ -25,7 +25,9 @@ module datapath (
     output logic [31:0] register_v0,
 
 	output logic [31:0] register_debug,				//debug (+ @regfile and in extrafunction.v)
-	output logic [31:0] srca, srcb					//debug
+	output logic [31:0] srca, srcb,					//debug
+	
+	input mux_stage2, mux_stage3
 );
 
 
@@ -37,8 +39,7 @@ module datapath (
   logic [31:0] pcresult;
 //  assign stall = 0; //temp
   								
-  logic [31:0] rda, reg32;
-  logic [31:0] resultregfile, resultstore;
+
 //  logic [31:0] srca, srcb;							//non-debug
 
 
@@ -160,6 +161,11 @@ module datapath (
 
   //  ------------------  Register file Datapath  ---------------------
 
+  logic [31:0] rda, rdb, reg32; //outputs
+  logic [31:0] result_regfile, result_store; //inputs
+  logic [4:0] result_address;
+
+
   //Register file module
   regfile register (
       .clk(clk),
@@ -167,42 +173,54 @@ module datapath (
       .we3(regwrite),
       .ra1(instr_readdata[25:21]),
       .ra2(instr_readdata[20:16]),
-      .wa3(writereg),
-      .wd3(resultregfile),
+      .wa3(result_address),
+      .wd3(result_regfile),
       .rd1(rda),
-      .rd2(data_writedata),
+      .rd2(rdb),
       .reg_v0(register_v0),
       .reg_debug(register_debug)							//debug (+ in extrafunction.v)
   );
-  
+
+  // DEMUX for implementation of the Store instructions.
+  demux2 wdchoice (
+  	  .data(result),
+  	  .address(writereg),
+  	  .s(storeloop),
+  	  .y1(result_regfile),
+  	  .y2(result_store),
+  	  .y_address(result_address)
+  ); // note: storeloop is high for SB and SH instructions only.
   
   // Register file used for merging data in Registers and in Data memory in Store instructions (SB and SH).
   regfile2 #(32) register32 (
   	  .clk(clk),
   	  .reset(reset),
   	  .we(storeloop),
-  	  .d(resultstore),
-  	  .q(reg32)
+  	  .wd(result_store),
+  	  .rd(reg32)
   ); // Write enable, WE: storeloop, is high during Store instructions.
   
   // MUX for alu input selection in store instructions [stage 2: merging byte(s) stored and initial value in RAM]. 
-  mux2 #(32) srcaslct (
+  mux2 #(32) srca_select (
       .a(rda),
       .b(reg32),
-      .s(storeloop),
+      .s(mux_stage2),
       .y(srca)
   ); // note: storeloop is high for SB and SH instructions only.
   
-  
-  // DEMUX for implementation of the Store instructions.
-  demux2 #(32) wdchoice (
-  	  .a(result),
-  	  .s(storeloop),
-  	  .y1(resultregfile),
-  	  .y2(resultstore)
+    // MUX for alu input selection in store instructions [stage 3: storing back in RAM]. 
+  mux2 #(32) srcb_select (
+      .a(rdb),
+      .b(reg32),
+      .s(mux_stage3),
+      .y(data_writedata)
   ); // note: storeloop is high for SB and SH instructions only.
+  
 
- 
+
+
+
+
   // MUX to select which part of the instr. is the destination register.
   mux2 #(5) wrmux (
       .a(instr_readdata[20:16]),

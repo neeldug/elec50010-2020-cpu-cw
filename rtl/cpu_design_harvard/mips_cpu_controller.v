@@ -18,7 +18,9 @@ module controller (
     output logic jump1,
     jump,
     output logic [4:0] alucontrol,
-    output logic [2:0] loadcontrol
+    output logic [2:0] loadcontrol,
+    
+    output mux_stage2, mux_stage3
 );
 
   logic [1:0] aluop, state;
@@ -43,7 +45,10 @@ module controller (
       .jump(jump),
       .state(state),
       .aluop(aluop),
-      .loadcontrol(loadcontrol)
+      .loadcontrol(loadcontrol),
+      
+      .mux_stage2(mux_stage2),
+      .mux_stage3(mux_stage3)
   );
 
   aludec ad (
