@@ -38,9 +38,9 @@ reg [31:0] c;
         if ((a % 4) == 0) begin
           y = {c[7:0], b[24:0]};
         end else if ((a % 4) == 1) begin
-          y = {c[16:0], b[16:0};
+          y = {c[16:0], b[16:0]};
         end else if ((a % 4) == 2) begin
-          y = {c[24:0], b[7:0};
+          y = {c[24:0], b[7:0]};
         end else begin
           y = c[31:0];
         end
