@@ -181,9 +181,9 @@ module alu (
 
         5'b11011: y = LO;  //MFLO
       
-      	5'b11100: y = {b[31:8] , a[7:0]}; // Store byte: SB
+      	5'b11100: y = {a[31:8], b[7:0]}; // Store byte: SB
       
-      	5'b11101: y = {b[31:16] , a[15:0]}; // Store halfword: SH
+      	5'b11101: y = {a[31:16], b[15:0]}; // Store halfword: SH
 
         default:  y = 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;  //???	 
       endcase

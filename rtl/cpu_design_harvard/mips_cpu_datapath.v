@@ -25,9 +25,9 @@ module datapath (
 
 	output logic [31:0] register_debug,				//debug (+ @regfile and in extrafunction.v)
 	output logic [31:0] srca, srcb,					//debug
+	output logic [31:0] reg32,						//debug
 	
-	output logic [31:0] instr_data,					//debug
-	output logic [31:0] reg32						//debug
+	output logic [31:0] instr_data
 );
 
 
@@ -218,7 +218,7 @@ module datapath (
   assign result_address = parallel_path ? 5'b0 : writereg;
   
   // Register file used for merging data in Registers and in Data memory in Store instructions (SB and SH).
-  regfile2 #(32) register32 (
+  regfile2 register32 (
   	  .clk(clk),
   	  .reset(reset),
   	  .we(parallel_path),

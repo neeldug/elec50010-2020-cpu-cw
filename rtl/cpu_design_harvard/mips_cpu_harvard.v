@@ -30,9 +30,9 @@ module mips_cpu_harvard (
   
   controller control (
   	  .clk(clk),
-      .op(instr_readdata[31:26]),
-      .funct(instr_readdata[5:0]),
-      .dest(instr_readdata[20:16]),
+      .op(instr_scheduler[31:26]),		//updated
+      .funct(instr_scheduler[5:0]),
+      .dest(instr_scheduler[20:16]),
       .zero(zero),
       .memtoreg2(memtoreg2),
       .memtoreg1(memtoreg1),
@@ -79,7 +79,7 @@ module mips_cpu_harvard (
       //.pcsrclast(pcsrclast),							//debug (+ in datapath.v)
       .srca(alu1),									//debug (+ in datapath.v)
       .srcb(alu2),										//debug (+ in datapath.v)
-      .instr_data(instr_scheduler),					//debug (+ in datapath.v)
+      .instr_data(instr_scheduler),
       .reg32(reg32)									//debug (+ in datapath.v)
   );
   

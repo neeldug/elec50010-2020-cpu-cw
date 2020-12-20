@@ -33,14 +33,12 @@ module regfile (
 
   assign rd1 = (ra1 != 0) ? rf[ra1] : 0;
   assign rd2 = (ra2 != 0) ? rf[ra2] : 0;
-  assign reg_v0 = (~reset) ? rf[2] : 0;
-  assign reg_debug = (~reset) ? rf[3] : reg_debug;		//debug (from datapath)
+  assign reg_v0 = rf[2];
+  assign reg_debug = rf[3];		//debug (from datapath)
 endmodule
 
 
-module regfile2 #(
-    parameter WIDTH = 31
-) (
+module regfile2 (
     input logic clk,
     reset,
     input logic we,
@@ -51,8 +49,8 @@ module regfile2 #(
   reg [31:0] reg32;
 
   always @(posedge clk) begin
-    if (reset) reg32 = 0;
-    else if (we) reg32 = wd;
+    if (reset) reg32 <= 0;
+    else if (we) reg32 <= wd;
   end
   
   assign rd = reg32;    
@@ -225,7 +223,7 @@ module sb_sh_scheduler (
   		end else if (state == 2'b01) begin
   			mux_stage2 = 1;
   			mux_stage3 = 0;
-  			normal_or_scheduled_instr_data = {6'b0, 5'b0/*reg32*/, t, 5'b0/*reg32*/, 5'b11111, 6'b111111}; //alu byte operation
+  			normal_or_scheduled_instr_data = {6'b0, 5'b0/*reg32*/, t, 5'b0/*reg32*/, 5'b0, 6'b111111}; //alu byte operation
   			
   			state = 2'b10;
   		end else if (state == 2'b10) begin
@@ -277,6 +275,9 @@ module sb_sh_scheduler (
   		end
   	end
   	else begin
+  		mux_stage2 = 0;
+  		mux_stage3 = 0;
+  		parallel_path = 0;
   		normal_or_scheduled_instr_data = normal_instr_data;
   	end
   end
