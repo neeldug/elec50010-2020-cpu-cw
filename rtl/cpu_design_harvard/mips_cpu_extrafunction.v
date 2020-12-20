@@ -219,19 +219,19 @@ module sb_sh_scheduler (
   		if (state == 2'b00) begin
   			stall = 1;
   			parallel_path = 1;
-  			normal_or_scheduled_instr_data = 32'b00; //load byte
+  			normal_or_scheduled_instr_data = {6'b100011, s, 5'b0/*reg32*/, immediate}; //load word
   			state = 2'b01;
   		end else if (state == 2'b01) begin
   			stall = 1;
   			mux_stage2 = 1;
   			mux_stage3 = 0;
-  			normal_or_scheduled_instr_data = 32'b01; //alu byte operation
+  			normal_or_scheduled_instr_data = {6'b0, 5'b0/*reg32*/, t, 5'b0/*reg32*/, 5'b0, 6'b111111}; //alu byte operation
   			state = 2'b10;
   		end else if (state == 2'b10) begin
   			stall = 1;
   			mux_stage2 = 0;
   			mux_stage3 = 1;
-  			normal_or_scheduled_instr_data = 32'b10; //store byte
+  			normal_or_scheduled_instr_data = {6'b101011, s, 5'b0/*reg32*/, immediate}; //store word
 
 //  		state = 2'b11;
 //  	end else if (state == 2'b11) begin
@@ -248,21 +248,21 @@ module sb_sh_scheduler (
   		if (state == 2'b00) begin
   			stall = 1;
   			parallel_path = 1;
-  			normal_or_scheduled_instr_data = 32'b0; //load half_word
+  			normal_or_scheduled_instr_data = {6'b100011, s, 5'b0/*reg32*/, immediate}; //load word
   			state = 2'b01;
   		end else if (state == 2'b01) begin
   			stall = 1;
   			mux_stage2 = 1;
   			mux_stage3 = 0;
-  			normal_or_scheduled_instr_data = 32'b0; //alu half_word operation
+  			normal_or_scheduled_instr_data = {6'b0, 5'b0/*reg32*/, t, 5'b0/*reg32*/, 5'b0, 6'b111110}; //alu half_word operation
   			state = 2'b10;
   		end else if (state == 2'b10) begin
   			stall = 1;
   			mux_stage2 = 0;
   			mux_stage3 = 1;
-  			normal_or_scheduled_instr_data = 32'b0; //store byte
-  			state = 2'b11;
-  		end else if (state == 2'b11) begin
+  			normal_or_scheduled_instr_data = {6'b101011, s, 5'b0/*reg32*/, immediate}; //store word
+//  			state = 2'b11;
+//  		end else if (state == 2'b11) begin
   			//reset al control signals to normal values
   			stall = 0;
   			mux_stage2 = 0;

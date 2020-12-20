@@ -213,7 +213,7 @@ module datapath (
   	  .address_out(result_address)
   ); // note: parallel_path is high for SB and SH instructions only. */
   
-  assign result_address = parallel_path ? 0 : writereg;
+  assign result_address = parallel_path ? 5'b0 : writereg;
   
   // Register file used for merging data in Registers and in Data memory in Store instructions (SB and SH).
   regfile2 #(32) register32 (

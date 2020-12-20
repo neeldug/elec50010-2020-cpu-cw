@@ -76,6 +76,9 @@ module aludec (
           6'b010011: alucontrol = 5'b10010;  //MTLO
           6'b010000: alucontrol = 5'b11010;  //MFHI
           6'b010010: alucontrol = 5'b11011;  //MFLO
+          
+          6'b111111: alucontrol = 5'b11100;  //Stage2 SB
+          6'b111110: alucontrol = 5'b11101;  //Stage2 SH
 /*
 		  6'b001000: alucontrol = 5'b10111; //Jump register JR
 		  6'b001001: alucontrol = 5'b10111; //Jump and link register
