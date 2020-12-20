@@ -1,10 +1,3 @@
-	.file	1 "jal_2.c"
-	.section .mdebug.abi32
-	.previous
-	.nan	legacy
-	.module	fp=32
-	.module	nooddspreg
-	.abicalls
 	.text
 	.section	.text.foo,"ax",@progbits
 	.align	2
@@ -14,9 +7,6 @@
 	.ent	foo
 	.type	foo, @function
 foo:
-	.frame	$sp,0,$31		# vars= 0, regs= 0/0, args= 0, gp= 0
-	.mask	0x00000000,0
-	.fmask	0x00000000,0
 	.set	noreorder
 	.set	nomacro
 	jr	$31
@@ -34,15 +24,13 @@ foo:
 	.ent	main
 	.type	main, @function
 main:
-	.frame	$sp,32,$31		# vars= 0, regs= 1/0, args= 16, gp= 8
-	.mask	0x80000000,-4
-	.fmask	0x00000000,0
 	.set	noreorder
 	.set	nomacro
 	move $4,$31
 	li $2, 4
+	li $5, 0xbfc00030
 	.option	pic0
-	jal	foo
+	jalr $5
 	nop
 
 	.option	pic2
@@ -54,7 +42,6 @@ main:
 	.set	reorder
 	.end	main
 	.size	main, .-main
-	.ident	"GCC: (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0"
 
 # This c code works similarly but slightly changed to remove stackpointer usage
 # int foo();

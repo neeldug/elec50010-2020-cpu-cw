@@ -16,7 +16,7 @@
 - [x] DIVU
 - [x] J
 - [ ] JALR
-- [ ] JAL
+- [x] JAL
 - [x] JR
 - [x] LB
 - [x] LBU
