@@ -9,12 +9,6 @@ module aludec (
 );
 
   always @(*)
-   if(storeloop) begin
-   	if (state == 2'b00) alucontrol = 5'b00011;
-   	else if (state == 2'b01) alucontrol = 5'b11100;
-   	else if (state == 2'b10) alucontrol = 5'b00011;
-   	else if (state == 2'b11) alucontrol = 5'b11000;
-   end else begin
     case (aluop)  //edge what if we have a 2'b11 eventhough it is illegal.
 
       2'b00: alucontrol = 5'b00011;  //ADDI -- USED FOR LOAD AND STORE INSTRUCTIONS
@@ -92,7 +86,6 @@ module aludec (
       endcase
       default: alucontrol = 5'bxxxxx;  //case aluop= 11 ???
     endcase
-   end
 endmodule
 
 

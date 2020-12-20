@@ -103,7 +103,7 @@ module datapath (
       .clk(clk),
       .clk_enable(clk_enable),
       .reset(reset),
-      .normal_instr_data(instr_data),
+      .normal_instr_data(instr_readdata),
       //outputs
       .stall(stall),
       .parallel_path(parallel_path),
@@ -216,7 +216,7 @@ module datapath (
   	  .clk(clk),
   	  .reset(reset),
   	  .we(parallel_path),
-  	  .wd(result_store),
+  	  .wd(result_parallel),
   	  .rd(reg32)
   ); // Write enable, WE: storeloop, is high during Store instructions.
   
@@ -224,17 +224,17 @@ module datapath (
   mux2 #(32) srca_select (
       .a(rda),
       .b(reg32),
-      .s(mux_stage2),
+      .s(1),
       .y(srca)
-  ); // note: storeloop is high for SB and SH instructions only.
+  ); // note: mux_stage2 is high for SB and SH instructions when we need to use the ALU.
   
     // MUX for alu input selection in store instructions [stage 3: storing back in RAM]. 
   mux2 #(32) srcb_select (
       .a(rdb),
       .b(reg32),
-      .s(mux_stage3),
+      .s(1),
       .y(data_writedata)
-  ); // note: storeloop is high for SB and SH instructions only.
+  ); // note: mux_stage3 is high for SB and SH instructions when we need to write back to memory.
   
 
 
