@@ -234,7 +234,7 @@ module sb_sh_scheduler (
   			normal_or_scheduled_instr_data = 32'b0; //store byte
   			state = 2'b11;
   		end else if (state == 2'b11) begin
-  			//reset al control signals to normal values
+  			//reset all control signals to normal values
   			stall = 0;
   			mux_stage2 = 0;
   			mux_stage3 = 0;

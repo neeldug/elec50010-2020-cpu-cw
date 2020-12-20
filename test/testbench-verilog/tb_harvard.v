@@ -26,6 +26,7 @@ module tb_harvard;
 
 	logic [31:0] register_debug;				//debug
 	logic [31:0] alu1, alu2;					//debug
+	logic [31:0] instr_scheduler;				//debug
 
 
 
@@ -58,7 +59,8 @@ module tb_harvard;
 //      .pcsrc(pcsrc),							//debug
       .register_debug(register_debug),		//debug
       .alu1(alu1),							//debug
-      .alu2(alu2)								//debug
+      .alu2(alu2),								//debug
+      .instr_scheduler(instr_scheduler)			//debug
   );
 
   //Setting up a clock
@@ -107,10 +109,12 @@ module tb_harvard;
 
 
 //Debugging logs for cycle 0
-	  $fdisplay(STDERR, "  ");
+/*	  $fdisplay(STDERR, "  ");
       $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, active: %d", cycle_count, register_v0, active);
       $fdisplay(STDERR, "Instruction address: %h, Instruction: %b", instr_address, instr_readdata);
-      $fdisplay(STDERR, "register_v3: %d, ALUa: %h, ALUb: %h, ALUresult: %h", register_debug, alu1, alu2, data_address); //*/
+      $fdisplay(STDERR, "register_v3: %d, ALUa: %h, ALUb: %h, ALUresult: %h", register_debug, alu1, alu2, data_address);
+      $fdisplay(STDERR, "Instruction out of scheduler: %b", instr_scheduler);
+      //*/
 
 
     //Looping until the CPU finished (sets active low)
@@ -119,10 +123,12 @@ module tb_harvard;
       cycle_count++;
 
       //Debugging logs for cycles 1+
-	  $fdisplay(STDERR, "  ");
+/*	  $fdisplay(STDERR, "  ");
       $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, active: %d", cycle_count, register_v0, active);
       $fdisplay(STDERR, "Instruction address: %h, Instruction: %b", instr_address, instr_readdata);
-      $fdisplay(STDERR, "register_v3: %d, ALUa: %h, ALUb: %h, ALUresult: %h", register_debug, alu1, alu2, data_address); //*/
+      $fdisplay(STDERR, "register_v3: %d, ALUa: %h, ALUb: %h, ALUresult: %h", register_debug, alu1, alu2, data_address);
+      $fdisplay(STDERR, "Instruction out of scheduler: %b", instr_scheduler);
+      //*/
 
 
     end

@@ -24,7 +24,9 @@ module datapath (
     output logic [31:0] register_v0,
 
 	output logic [31:0] register_debug,				//debug (+ @regfile and in extrafunction.v)
-	output logic [31:0] srca, srcb					//debug
+	output logic [31:0] srca, srcb,					//debug
+	
+	output logic [31:0] instr_data					//debug
 );
 
 
@@ -38,7 +40,7 @@ module datapath (
 //  logic [31:0] srca, srcb;							//non-debug
 
   logic stall;
-  logic [31:0] instr_data; // note: either instr_readdata (from instr. mem.) or the instr. from the SB/SH scheduler
+  //logic [31:0] instr_data; // note: either instr_readdata (from instr. mem.) or the instr. from the SB/SH scheduler					//non-debug
 
 
 
@@ -224,7 +226,7 @@ module datapath (
   mux2 #(32) srca_select (
       .a(rda),
       .b(reg32),
-      .s(1),
+      .s(1'b0),
       .y(srca)
   ); // note: mux_stage2 is high for SB and SH instructions when we need to use the ALU.
   
@@ -232,7 +234,7 @@ module datapath (
   mux2 #(32) srcb_select (
       .a(rdb),
       .b(reg32),
-      .s(1),
+      .s(1'b0),
       .y(data_writedata)
   ); // note: mux_stage3 is high for SB and SH instructions when we need to write back to memory.
   
