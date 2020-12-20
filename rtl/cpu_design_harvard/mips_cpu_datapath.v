@@ -26,7 +26,8 @@ module datapath (
 	output logic [31:0] register_debug,				//debug (+ @regfile and in extrafunction.v)
 	output logic [31:0] srca, srcb,					//debug
 	
-	output logic [31:0] instr_data					//debug
+	output logic [31:0] instr_data,					//debug
+	output logic [31:0] reg32						//debug
 );
 
 
@@ -183,7 +184,8 @@ module datapath (
 
   //  ------------------  Register file Datapath  ---------------------
 
-  logic [31:0] rda, rdb, reg32; //outputs of registers
+  logic [31:0] rda, rdb; //outputs of registers
+  //logic [31:0] reg32;
   logic [31:0] result_regfile, result_parallel; //inputs to register
   logic [4:0] result_address;
 

@@ -18,7 +18,8 @@ module mips_cpu_harvard (
     //output logic pcsrc, pcsrclast						//debug
     output logic [31:0] register_debug,				//debug (+ @datapath)
     output logic [31:0] alu1, alu2,					//debug (+ @datapath)
-    output logic [31:0] instr_scheduler				//debug (+ @datapath)
+    output logic [31:0] instr_scheduler,			//debug (+ @datapath)
+    output logic [31:0] reg32						//debug (+ @datapath)
 );
 
   logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc, storeloop;
@@ -78,7 +79,8 @@ module mips_cpu_harvard (
       //.pcsrclast(pcsrclast),							//debug (+ in datapath.v)
       .srca(alu1),									//debug (+ in datapath.v)
       .srcb(alu2),										//debug (+ in datapath.v)
-      .instr_data(instr_scheduler)					//debug (+ in datapath.v)
+      .instr_data(instr_scheduler),					//debug (+ in datapath.v)
+      .reg32(reg32)									//debug (+ in datapath.v)
   );
   
 
