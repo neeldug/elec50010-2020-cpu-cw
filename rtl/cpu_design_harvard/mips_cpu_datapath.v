@@ -270,6 +270,7 @@ module datapath (
 
   // Load Selector module
   loadselector loadsel (
+  	  .b(data_writedata),
       .a(data_readdata),
       .controls(loadcontrol),
       .y(result1)
