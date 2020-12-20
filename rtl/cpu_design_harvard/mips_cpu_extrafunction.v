@@ -90,16 +90,16 @@ module demux2 (
     input logic [31:0] data, 
     input logic [4:0] address,
     input logic s,
-    output logic [31:0] y1,
-    y2,
-    output logic [4:0] y_address
+    output logic [31:0] normal_out,
+    parallel_out,
+    output logic [4:0] address_out
 );
 
   // regfile output
-  assign y1 = s ? 0 : data;
-  assign y_address = s ? 0 : address;
+  assign normal_out = s ? 0 : data;
+  assign address_out = s ? 0 : address;
   // parallel reg output
-  assign y2 = s ? data : 0;
+  assign parallel_out = s ? data : 0;
   
 endmodule
 
@@ -179,6 +179,97 @@ module flipflopr #(
       if (d==32'b0) active <= 0;
       q <= d;
     end
+  end
+
+endmodule
+
+
+
+
+module sb_sh_scheduler (
+	input logic clk, clk_enable, reset,
+	input logic [31:0] normal_instr_data,
+	output logic [31:0] normal_or_scheduled_instr_data,
+	
+	output logic stall, mux_stage2, mux_stage3, parallel_path
+);
+
+  logic [1:0] state;
+  
+  logic [5:0] opcode;
+  logic [4:0] s; //dest
+  logic [4:0] t; //source
+  logic [15:0] immediate;
+  
+  assign opcode = normal_instr_data[31:26];
+  assign s = normal_instr_data[25:21];
+  assign t = normal_instr_data[20:16];
+  assign immediate = normal_instr_data[15:0];
+  
+  initial begin 
+  	state = 2'b00;
+  	stall = 0;
+  	mux_stage2 = 0;
+  	mux_stage3 = 0;
+  	parallel_path = 0;
+  end
+
+  always @(posedge clk) begin
+  	if (opcode == 6'b101000) begin
+  		if (state == 2'b00) begin
+  			stall = 1;
+  			parallel_path = 1;
+  			normal_or_scheduled_instr_data = 32'b0; //load byte
+  			state = 2'b01;
+  		end else if (state == 2'b01) begin
+  			stall = 1;
+  			mux_stage2 = 1;
+  			mux_stage3 = 0;
+  			normal_or_scheduled_instr_data = 32'b0; //alu byte operation
+  			state = 2'b10;
+  		end else if (state == 2'b10) begin
+  			stall = 1;
+  			mux_stage2 = 0;
+  			mux_stage3 = 1;
+  			normal_or_scheduled_instr_data = 32'b0; //store byte
+  			state = 2'b11;
+  		end else if (state == 2'b11) begin
+  			//reset al control signals to normal values
+  			stall = 0;
+  			mux_stage2 = 0;
+  			mux_stage3 = 0;
+  			parallel_path = 0;
+  			state = 2'b00;
+  		end
+  	end
+  	else if (opcode == 6'b101001) begin
+  		if (state == 2'b00) begin
+  			stall = 1;
+  			parallel_path = 1;
+  			normal_or_scheduled_instr_data = 32'b0; //load half_word
+  			state = 2'b01;
+  		end else if (state == 2'b01) begin
+  			stall = 1;
+  			mux_stage2 = 1;
+  			mux_stage3 = 0;
+  			normal_or_scheduled_instr_data = 32'b0; //alu half_word operation
+  			state = 2'b10;
+  		end else if (state == 2'b10) begin
+  			stall = 1;
+  			mux_stage2 = 0;
+  			mux_stage3 = 1;
+  			normal_or_scheduled_instr_data = 32'b0; //store byte
+  			state = 2'b11;
+  		end else if (state == 2'b11) begin
+  			//reset al control signals to normal values
+  			stall = 0;
+  			mux_stage2 = 0;
+  			mux_stage3 = 0;
+  			parallel_path = 0;
+  			state = 2'b00;
+  		end
+  	end
+  	else normal_or_scheduled_instr_data = normal_instr_data;
   end
 
 endmodule

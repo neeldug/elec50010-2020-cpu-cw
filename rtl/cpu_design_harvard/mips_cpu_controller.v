@@ -4,7 +4,6 @@ module controller (
     funct,
     input logic [4:0] dest,
     input logic zero,
-    output logic stall,
     output logic storeloop,
     output logic memtoreg2,
     memtoreg1,
@@ -18,9 +17,7 @@ module controller (
     output logic jump1,
     jump,
     output logic [4:0] alucontrol,
-    output logic [2:0] loadcontrol,
-    
-    output mux_stage2, mux_stage3
+    output logic [2:0] loadcontrol
 );
 
   logic [1:0] aluop, state;
@@ -31,7 +28,6 @@ module controller (
       .op(op),
       .funct(funct),
       .dest(dest),
-      .stall(stall),
       .storeloop(storeloop),
       .memtoreg1(memtoreg1),
       .data_write(data_write),
@@ -45,10 +41,7 @@ module controller (
       .jump(jump),
       .state(state),
       .aluop(aluop),
-      .loadcontrol(loadcontrol),
-      
-      .mux_stage2(mux_stage2),
-      .mux_stage3(mux_stage3)
+      .loadcontrol(loadcontrol)
   );
 
   aludec ad (

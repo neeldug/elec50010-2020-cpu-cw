@@ -20,9 +20,7 @@ module mips_cpu_harvard (
     output logic [31:0] alu1, alu2					//debug (+ @datapath)
 );
 
-  logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc, storeloop, stall;
-  
-  logic mux_stage2, mux_stage3;
+  logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc, storeloop;
   
   logic [4:0] alucontrol;
   logic [2:0] loadcontrol;
@@ -44,20 +42,16 @@ module mips_cpu_harvard (
       .regwrite(regwrite),
       .jump1(jump1),
       .jump(jump),
-      .stall(stall),
       .alucontrol(alucontrol),
       .loadcontrol(loadcontrol),
       
-      .storeloop(storeloop),
-      .mux_stage2(mux_stage2),
-      .mux_stage3(mux_stage3)
+      .storeloop(storeloop)
   );
 
   datapath datap(
       .clk(clk),
       .reset(reset),
       .clk_enable(clk_enable),
-      .stall(stall),
       .storeloop(storeloop),
       .active(active),
       .memtoreg2(memtoreg2),
@@ -82,10 +76,7 @@ module mips_cpu_harvard (
 	  .register_debug(register_debug),				//debug (+ in datapath.v)
       //.pcsrclast(pcsrclast),							//debug (+ in datapath.v)
       .srca(alu1),									//debug (+ in datapath.v)
-      .srcb(alu2),										//debug (+ in datapath.v)
-      
-      .mux_stage2(mux_stage2),
-      .mux_stage3(mux_stage3)
+      .srcb(alu2)										//debug (+ in datapath.v)
   );
   
 

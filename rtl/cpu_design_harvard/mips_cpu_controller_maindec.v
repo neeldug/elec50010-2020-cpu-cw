@@ -16,20 +16,15 @@ module maindec (
     output logic jump1,
     jump,
     output logic [1:0] aluop, state,
-    output logic [2:0] loadcontrol,
-    
-    output mux_stage2, mux_stage3
+    output logic [2:0] loadcontrol
 );
 
 logic mux_stage2, mux_stage3;
 
-  reg [11:0] controls;
+reg [11:0] controls;
+  
 initial begin
-	stall = 0;
-	state = 2'b0;
 	storeloop = 0;
-	mux_stage2 = 0;
-	mux_stage3 = 0;
 end
 
 
@@ -103,8 +98,7 @@ end
         controls = 12'b100101010000;  //Load word right
         loadcontrol = 3'b111;
       end
-
-      6'b101000: begin      	
+/*	  6'b101000: begin      	
       	 if(state == 2'b00) begin
       	 	stall = 1;
         	storeloop = 1;
@@ -114,26 +108,27 @@ end
         	loadcontrol = 3'b101;
         	state = 2'b01;
         	end
-        if(state == 2'b01) begin
+        else if(state == 2'b01) begin
         	mux_stage2 = 1;
         	mux_stage3 = 0;
         	controls = 12'b000000000010;  // do in alu $32= {$32[31:8], $t[7:0]}
         	state = 2'b10;
         	end
-        if(state == 2'b10) begin
+        else if(state == 2'b10) begin
         	mux_stage2 = 0;
         	mux_stage3 = 1;
         	controls = 12'b000100100000;  //Store byte
         	state = 2'b11;
         	end
-        if(state == 2'b11) begin
+        elseif(state == 2'b11) begin
         	mux_stage2 = 0;
         	mux_stage3 = 0;
         	storeloop = 0; 
         	stall = 0;
         	end	
         end
-      6'b101001: controls = 12'b000100100000;  //Store halfword
+      6'b101001: controls = 12'b000100100000;  //Store halfword 
+*/
       6'b101011: controls = 12'b000100100000;  //Store word
       6'b000100: controls = 12'b000010000010;  //Branch on = 0
       6'b000001:

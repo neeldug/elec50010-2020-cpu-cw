@@ -2,7 +2,6 @@ module datapath (
     input logic clk,
     reset,
     clk_enable,
-    stall,
     output logic active,
     input logic storeloop,
     input logic memtoreg2,
@@ -25,9 +24,7 @@ module datapath (
     output logic [31:0] register_v0,
 
 	output logic [31:0] register_debug,				//debug (+ @regfile and in extrafunction.v)
-	output logic [31:0] srca, srcb,					//debug
-	
-	input mux_stage2, mux_stage3
+	output logic [31:0] srca, srcb					//debug
 );
 
 
@@ -37,11 +34,11 @@ module datapath (
   logic [31:0] signimm, signimmsh, immsh16, pcnextbr1, pcnextbr2, jumpsh;
   logic [31:0] result2, result1, result;
   logic [31:0] pcresult;
-//  assign stall = 0; //temp
   								
-
 //  logic [31:0] srca, srcb;							//non-debug
 
+  logic stall;
+  logic [31:0] instr_data; // note: either instr_readdata (from instr. mem.) or the instr. from the SB/SH scheduler
 
 
 
@@ -81,6 +78,9 @@ module datapath (
   );  // note: pcsrc is high when we are in a branch instruction and the condition (zero flag) are met.
 
 
+
+
+
   //  ---------------  Program Counter Datapath  --------------
 
   // Program Counter register
@@ -94,6 +94,26 @@ module datapath (
       .q(instr_address)
   );
 
+
+  // SB and SH scheduler block
+  logic mux_stage2, mux_stage3, parallel_path;
+
+  sb_sh_scheduler scheduler(
+      //inputs
+      .clk(clk),
+      .clk_enable(clk_enable),
+      .reset(reset),
+      .normal_instr_data(instr_data),
+      //outputs
+      .stall(stall),
+      .parallel_path(parallel_path),
+      .mux_stage2(mux_stage2),
+      .mux_stage3(mux_stage3),
+      .normal_or_scheduled_instr_data(instr_data)
+
+  );
+
+
   // Info: we read the instruction at the address of the Program Counter 
 
   // PC+4
@@ -105,7 +125,7 @@ module datapath (
 
   //  Sign-extend the immediate from the instr.
   signext se (
-      .a(instr_readdata[15:0]),
+      .a(instr_data[15:0]),
       .y(signimm)
   );
 
@@ -132,7 +152,7 @@ module datapath (
 
   // Double shift left of jump address from instr. (j/jal)
   shiftleft2 jsh (
-      .a({6'b0, instr_readdata[25:0]}),
+      .a({6'b0, instr_data[25:0]}),
       .y(jump_address_sh)
   );
   
@@ -161,8 +181,8 @@ module datapath (
 
   //  ------------------  Register file Datapath  ---------------------
 
-  logic [31:0] rda, rdb, reg32; //outputs
-  logic [31:0] result_regfile, result_store; //inputs
+  logic [31:0] rda, rdb, reg32; //outputs of registers
+  logic [31:0] result_regfile, result_parallel; //inputs to register
   logic [4:0] result_address;
 
 
@@ -171,8 +191,8 @@ module datapath (
       .clk(clk),
       .reset(reset),
       .we3(regwrite),
-      .ra1(instr_readdata[25:21]),
-      .ra2(instr_readdata[20:16]),
+      .ra1(instr_data[25:21]),
+      .ra2(instr_data[20:16]),
       .wa3(result_address),
       .wd3(result_regfile),
       .rd1(rda),
@@ -185,17 +205,17 @@ module datapath (
   demux2 wdchoice (
   	  .data(result),
   	  .address(writereg),
-  	  .s(storeloop),
-  	  .y1(result_regfile),
-  	  .y2(result_store),
-  	  .y_address(result_address)
-  ); // note: storeloop is high for SB and SH instructions only.
+  	  .s(parallel_path),
+  	  .normal_out(result_regfile),
+  	  .parallel_out(result_parallel),
+  	  .address_out(result_address)
+  ); // note: parallel_path is high for SB and SH instructions only.
   
   // Register file used for merging data in Registers and in Data memory in Store instructions (SB and SH).
   regfile2 #(32) register32 (
   	  .clk(clk),
   	  .reset(reset),
-  	  .we(storeloop),
+  	  .we(parallel_path),
   	  .wd(result_store),
   	  .rd(reg32)
   ); // Write enable, WE: storeloop, is high during Store instructions.
@@ -223,8 +243,8 @@ module datapath (
 
   // MUX to select which part of the instr. is the destination register.
   mux2 #(5) wrmux (
-      .a(instr_readdata[20:16]),
-      .b(instr_readdata[15:11]),
+      .a(instr_data[20:16]),
+      .b(instr_data[15:11]),
       .s(regdst1),
       .y(writereg1)
   );  // note: regdst1 is high for R-type instructions else select I-type.
@@ -293,32 +313,9 @@ module datapath (
       .control(alucontrol),
       .a(srca),
       .b(srcb),
-      .shamt(instr_readdata[10:6]),
+      .shamt(instr_data[10:6]),
       .zero(zero),
       .y(data_address)
   );
 
 endmodule
-
-
-
-
-
-
-
-
-
-
-  /*			SAVE of jump datapath
-  mux2 #(32) pcmux1 (
-      .a({6'b0, instr_readdata[25:0]}),
-      .b(result2),
-      .s(jump1),
-      .y(pcnextbr2)
-  );  // jump1 is high when we jump to value in register.
-
-  shiftleft2 jsh (
-      .a(pcnextbr2),
-      .y(jumpsh)
-  );  // Instruction in PC are every 4 so we need to multiply by 4.
-  */
