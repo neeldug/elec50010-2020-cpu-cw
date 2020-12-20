@@ -196,29 +196,31 @@ module datapath (
       .ra1(instr_data[25:21]),
       .ra2(instr_data[20:16]),
       .wa3(result_address),
-      .wd3(result_regfile),
+      .wd3(result),
       .rd1(rda),
       .rd2(rdb),
       .reg_v0(register_v0),
       .reg_debug(register_debug)							//debug (+ in extrafunction.v)
   );
 
-  // DEMUX for implementation of the Store instructions.
+/*  // DEMUX for implementation of the Store instructions.
   demux2 wdchoice (
   	  .data(result),
   	  .address(writereg),
-  	  .s(parallel_path),
+  	  .s(1'b0),
   	  .normal_out(result_regfile),
   	  .parallel_out(result_parallel),
   	  .address_out(result_address)
-  ); // note: parallel_path is high for SB and SH instructions only.
+  ); // note: parallel_path is high for SB and SH instructions only. */
+  
+  assign result_address = parallel_path ? 0 : writereg;
   
   // Register file used for merging data in Registers and in Data memory in Store instructions (SB and SH).
   regfile2 #(32) register32 (
   	  .clk(clk),
   	  .reset(reset),
   	  .we(parallel_path),
-  	  .wd(result_parallel),
+  	  .wd(result),
   	  .rd(reg32)
   ); // Write enable, WE: storeloop, is high during Store instructions.
   
@@ -226,7 +228,7 @@ module datapath (
   mux2 #(32) srca_select (
       .a(rda),
       .b(reg32),
-      .s(1'b0),
+      .s(mux_stage2),
       .y(srca)
   ); // note: mux_stage2 is high for SB and SH instructions when we need to use the ALU.
   
@@ -234,7 +236,7 @@ module datapath (
   mux2 #(32) srcb_select (
       .a(rdb),
       .b(reg32),
-      .s(1'b0),
+      .s(mux_stage3),
       .y(data_writedata)
   ); // note: mux_stage3 is high for SB and SH instructions when we need to write back to memory.
   

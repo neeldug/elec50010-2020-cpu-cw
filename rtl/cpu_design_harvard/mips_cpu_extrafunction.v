@@ -214,32 +214,34 @@ module sb_sh_scheduler (
   	parallel_path = 0;
   end
 
-  always @(posedge clk) begin
+  always @(negedge clk) begin
   	if (opcode == 6'b101000) begin
   		if (state == 2'b00) begin
   			stall = 1;
   			parallel_path = 1;
-  			normal_or_scheduled_instr_data = 32'b0; //load byte
+  			normal_or_scheduled_instr_data = 32'b00; //load byte
   			state = 2'b01;
   		end else if (state == 2'b01) begin
   			stall = 1;
   			mux_stage2 = 1;
   			mux_stage3 = 0;
-  			normal_or_scheduled_instr_data = 32'b0; //alu byte operation
+  			normal_or_scheduled_instr_data = 32'b01; //alu byte operation
   			state = 2'b10;
   		end else if (state == 2'b10) begin
   			stall = 1;
   			mux_stage2 = 0;
   			mux_stage3 = 1;
-  			normal_or_scheduled_instr_data = 32'b0; //store byte
-  			state = 2'b11;
-  		end else if (state == 2'b11) begin
+  			normal_or_scheduled_instr_data = 32'b10; //store byte
+
+//  		state = 2'b11;
+//  	end else if (state == 2'b11) begin
   			//reset all control signals to normal values
   			stall = 0;
   			mux_stage2 = 0;
   			mux_stage3 = 0;
   			parallel_path = 0;
-  			state = 2'b00;
+  	  		
+  	  		state = 2'b00;
   		end
   	end
   	else if (opcode == 6'b101001) begin
@@ -266,10 +268,13 @@ module sb_sh_scheduler (
   			mux_stage2 = 0;
   			mux_stage3 = 0;
   			parallel_path = 0;
+  			
   			state = 2'b00;
   		end
   	end
-  	else normal_or_scheduled_instr_data = normal_instr_data;
+  	else begin
+  		normal_or_scheduled_instr_data = normal_instr_data;
+  	end
   end
 
 endmodule
