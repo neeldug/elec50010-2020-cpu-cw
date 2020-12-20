@@ -38,7 +38,7 @@ module regfile (
 endmodule
 
 
-module regfile2 (
+module register_parallel (
     input logic clk,
     reset,
     input logic we,
@@ -215,70 +215,55 @@ module sb_sh_scheduler (
   always @(negedge clk) begin
   	if (opcode == 6'b101000) begin
   		if (state == 2'b00) begin
-  			stall = 1;
-  			parallel_path = 1;
-  			normal_or_scheduled_instr_data = {6'b100011, s, 5'b0/*reg32*/, immediate}; //load word in memory location that is the dest of the full instruction into reg32
+  			stall <= 1;
+  			parallel_path <= 1;
+  			normal_or_scheduled_instr_data <= {6'b100011, s, 5'b0/*reg32*/, immediate}; //load word in memory location that is the dest of the full instruction into reg32
   			
-  			state = 2'b01;
+  			state <= 2'b01;
   		end else if (state == 2'b01) begin
-  			mux_stage2 = 1;
-  			mux_stage3 = 0;
-  			normal_or_scheduled_instr_data = {6'b0, 5'b0/*reg32*/, t, 5'b0/*reg32*/, 5'b0, 6'b111111}; //alu byte operation
+  			mux_stage2 <= 1;
+  			mux_stage3 <= 0;
+  			normal_or_scheduled_instr_data <= {6'b0, 5'b0/*reg32*/, t, 5'b0/*reg32*/, 5'b0, 6'b111111}; //alu byte operation
   			
-  			state = 2'b10;
+  			state <= 2'b10;
   		end else if (state == 2'b10) begin
-  			mux_stage2 = 0;
-  			mux_stage3 = 1;
-  			normal_or_scheduled_instr_data = {6'b101011, s, 5'b0/*reg32*/, immediate}; //store word in reg32 back into memory location that is the dest of the full instruction
+  			mux_stage2 <= 0;
+  			mux_stage3 <= 1;
+  			normal_or_scheduled_instr_data <= {6'b101011, s, 5'b0/*reg32*/, immediate}; //store word in reg32 back into memory location that is the dest of the full instruction
 
-//  		state = 2'b11;
-//  	end else if (state == 2'b11) begin
-
-  			//reset all control signals to normal values
-  			mux_stage2 = 0;
-  			mux_stage3 = 0;
-  			parallel_path = 0;
-  			stall = 0;
-  	  		
-  	  		state = 2'b00;
+  			//unstall PC and delay slot
+  			stall <= 0;
+  	  		state <= 2'b00;
   		end
   	end
   	else if (opcode == 6'b101001) begin
   		if (state == 2'b00) begin
-  			stall = 1;
-  			parallel_path = 1;
-  			normal_or_scheduled_instr_data = {6'b100011, s, 5'b0/*reg32*/, immediate}; //load word
+  			stall <= 1;
+  			parallel_path <= 1;
+  			normal_or_scheduled_instr_data <= {6'b100011, s, 5'b0/*reg32*/, immediate}; //load word
   			
-  			state = 2'b01;
+  			state <= 2'b01;
   		end else if (state == 2'b01) begin
-  			mux_stage2 = 1;
-  			mux_stage3 = 0;
-  			normal_or_scheduled_instr_data = {6'b0, 5'b0/*reg32*/, t, 5'b0/*reg32*/, 5'b0, 6'b111110}; //alu half_word operation
+  			mux_stage2 <= 1;
+  			mux_stage3 <= 0;
+  			normal_or_scheduled_instr_data <= {6'b0, 5'b0/*reg32*/, t, 5'b0/*reg32*/, 5'b0, 6'b111110}; //alu half_word operation
   			
-  			state = 2'b10;
+  			state <= 2'b10;
   		end else if (state == 2'b10) begin
-			mux_stage2 = 0;
-  			mux_stage3 = 1;
-  			normal_or_scheduled_instr_data = {6'b101011, s, 5'b0/*reg32*/, immediate}; //store word
-  			//reset all control signals to normal values
-  			
-//  		state = 2'b11;
-//  	end else if (state == 2'b11) begin
+			mux_stage2 <= 0;
+  			mux_stage3 <= 1;
+  			normal_or_scheduled_instr_data <= {6'b101011, s, 5'b0/*reg32*/, immediate}; //store word
 			
-			//reset all control signals to normal values
-  			mux_stage2 = 0;
-  			mux_stage3 = 0;
-  			parallel_path = 0;
-  			stall = 0;
-  			
-  			state = 2'b00;
+			//unstall PC and delay slot
+  			stall <= 0;
+  			state <= 2'b00;
   		end
   	end
   	else begin
-  		mux_stage2 = 0;
-  		mux_stage3 = 0;
-  		parallel_path = 0;
-  		normal_or_scheduled_instr_data = normal_instr_data;
+  		mux_stage2 <= 0;
+  		mux_stage3 <= 0;
+  		parallel_path <= 0;
+  		normal_or_scheduled_instr_data <= normal_instr_data;
   	end
   end
 

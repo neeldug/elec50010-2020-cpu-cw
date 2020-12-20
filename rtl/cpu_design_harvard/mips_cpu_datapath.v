@@ -218,7 +218,7 @@ module datapath (
   assign result_address = parallel_path ? 5'b0 : writereg;
   
   // Register file used for merging data in Registers and in Data memory in Store instructions (SB and SH).
-  regfile2 register32 (
+  register_parallel register32 (
   	  .clk(clk),
   	  .reset(reset),
   	  .we(parallel_path),

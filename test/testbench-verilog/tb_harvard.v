@@ -4,7 +4,7 @@ module tb_harvard;
 
   parameter INSTR_INIT_FILE = ""  /*default test case if not specified*/;
   parameter DATA_INIT_FILE = ""  /*default data if not specified*/;
-  parameter TIMEOUT_CYCLES = 20;
+  parameter TIMEOUT_CYCLES = 15;
 
   logic clk;
   logic reset;
@@ -111,11 +111,12 @@ module tb_harvard;
 
 
 //Debugging logs for cycle 0
-	  $fdisplay(STDERR, "  ");
+/*	  $fdisplay(STDERR, "  ");
       $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, active: %d", cycle_count, register_v0, active);
       $fdisplay(STDERR, "Instruction address: %h, Instruction: %b", instr_address, instr_readdata);
       $fdisplay(STDERR, "register_debug: %d, ALUa: %h, ALUb: %h, ALUresult: %h", register_debug, alu1, alu2, data_address);
       $fdisplay(STDERR, "Instruction scheduler: %b, reg_parallel: %h", instr_scheduler, reg32);
+      $fdisplay(STDERR, "Data going in memory: %h", data_writedata);
       //*/
 
 
@@ -125,11 +126,12 @@ module tb_harvard;
       cycle_count++;
 
       //Debugging logs for cycles 1+
-	  $fdisplay(STDERR, "  ");
+/*	  $fdisplay(STDERR, "  ");
       $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, active: %d", cycle_count, register_v0, active);
       $fdisplay(STDERR, "Instruction address: %h, Instruction: %b", instr_address, instr_readdata);
       $fdisplay(STDERR, "register_debug: %d, ALUa: %h, ALUb: %h, ALUresult: %h", register_debug, alu1, alu2, data_address);
       $fdisplay(STDERR, "Instruction scheduler: %b, reg_parallel: %h", instr_scheduler, reg32);
+      $fdisplay(STDERR, "Data going in memory: %h", data_writedata);
       //*/
 
 
