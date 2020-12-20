@@ -17,7 +17,6 @@ MIPS_LDFLAGS = -nostdlib -Wl,-melf32btsmip -march=mips1 -nostartfiles -mno-check
 %.mips.o: %.c
 	$(MIPS_CC) $(MIPS_CPPFLAGS) -c $< -o $@
 
-
 %.c:
 	@echo "Invalid output"
 
