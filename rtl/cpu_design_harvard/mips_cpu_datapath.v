@@ -3,6 +3,7 @@ module datapath (
     reset,
     clk_enable,
     output logic active,
+    input logic storeloop,
     input logic memtoreg2,
     memtoreg1,
     input logic alusrc,
@@ -20,10 +21,13 @@ module datapath (
     input logic [31:0] data_readdata,
     output logic [31:0] data_address,
     data_writedata,
-    output logic [31:0] register_v0//
-    
-	//output logic [31:0] register_debug,				//debug (+ @regfile and in extrafunction.v)
-	//output logic [31:0] srca, srcb					//debug
+    output logic [31:0] register_v0,
+
+	output logic [31:0] register_debug,				//debug (+ @regfile and in extrafunction.v)
+	output logic [31:0] srca, srcb,					//debug
+	output logic [31:0] reg32,						//debug
+	
+	output logic [31:0] instr_data
 );
 
 
@@ -33,10 +37,11 @@ module datapath (
   logic [31:0] signimm, signimmsh, immsh16, pcnextbr1, pcnextbr2, jumpsh;
   logic [31:0] result2, result1, result;
   logic [31:0] pcresult;
+  								
+//  logic [31:0] srca, srcb;							//non-debug
+
   logic stall;
-  assign stall = 0; //temp
-  
-  logic [31:0] srca, srcb;							//non-debug
+  //logic [31:0] instr_data; // note: either instr_readdata (from instr. mem.) or the instr. from the SB/SH scheduler					//non-debug
 
 
 
@@ -76,6 +81,9 @@ module datapath (
   );  // note: pcsrc is high when we are in a branch instruction and the condition (zero flag) are met.
 
 
+
+
+
   //  ---------------  Program Counter Datapath  --------------
 
   // Program Counter register
@@ -89,6 +97,26 @@ module datapath (
       .q(instr_address)
   );
 
+
+  // SB and SH scheduler block
+  logic mux_stage2, mux_stage3, parallel_path;
+
+  sb_sh_scheduler scheduler(
+      //inputs
+      .clk(clk),
+      .clk_enable(clk_enable),
+      .reset(reset),
+      .normal_instr_data(instr_readdata),
+      //outputs
+      .stall(stall),
+      .parallel_path(parallel_path),
+      .mux_stage2(mux_stage2),
+      .mux_stage3(mux_stage3),
+      .normal_or_scheduled_instr_data(instr_data)
+
+  );
+
+
   // Info: we read the instruction at the address of the Program Counter 
 
   // PC+4
@@ -100,7 +128,7 @@ module datapath (
 
   //  Sign-extend the immediate from the instr.
   signext se (
-      .a(instr_readdata[15:0]),
+      .a(instr_data[15:0]),
       .y(signimm)
   );
 
@@ -127,7 +155,7 @@ module datapath (
 
   // Double shift left of jump address from instr. (j/jal)
   shiftleft2 jsh (
-      .a({6'b0, instr_readdata[25:0]}),
+      .a({6'b0, instr_data[25:0]}),
       .y(jump_address_sh)
   );
   
@@ -156,29 +184,78 @@ module datapath (
 
   //  ------------------  Register file Datapath  ---------------------
 
+  logic [31:0] rda, rdb; //outputs of registers
+  //logic [31:0] reg32;
+  logic [31:0] result_regfile, result_parallel; //inputs to register
+  logic [4:0] result_address;
+
+
   //Register file module
   regfile register (
       .clk(clk),
       .reset(reset),
       .we3(regwrite),
-      .ra1(instr_readdata[25:21]),
-      .ra2(instr_readdata[20:16]),
-      .wa3(writereg),
+      .ra1(instr_data[25:21]),
+      .ra2(instr_data[20:16]),
+      .wa3(result_address),
       .wd3(result),
-      .rd1(srca),
-      .rd2(data_writedata),
-      .reg_v0(register_v0)//
-      //.reg_debug(register_debug)							//debug (+ in extrafunction.v)
+      .rd1(rda),
+      .rd2(rdb),
+      .reg_v0(register_v0),
+      .reg_debug(register_debug)							//debug (+ in extrafunction.v)
   );
 
-  // MUX to select which part of the instr. is the destination register
+/*  // DEMUX for implementation of the Store instructions.
+  demux2 wdchoice (
+  	  .data(result),
+  	  .address(writereg),
+  	  .s(1'b0),
+  	  .normal_out(result_regfile),
+  	  .parallel_out(result_parallel),
+  	  .address_out(result_address)
+  ); // note: parallel_path is high for SB and SH instructions only. */
+  
+  assign result_address = parallel_path ? 5'b0 : writereg;
+  
+  // Register file used for merging data in Registers and in Data memory in Store instructions (SB and SH).
+  register_parallel register32 (
+  	  .clk(clk),
+  	  .reset(reset),
+  	  .we(parallel_path),
+  	  .wd(result),
+  	  .rd(reg32)
+  ); // Write enable, WE: storeloop, is high during Store instructions.
+  
+  // MUX for alu input selection in store instructions [stage 2: merging byte(s) stored and initial value in RAM]. 
+  mux2 #(32) srca_select (
+      .a(rda),
+      .b(reg32),
+      .s(mux_stage2),
+      .y(srca)
+  ); // note: mux_stage2 is high for SB and SH instructions when we need to use the ALU.
+  
+    // MUX for alu input selection in store instructions [stage 3: storing back in RAM]. 
+  mux2 #(32) srcb_select (
+      .a(rdb),
+      .b(reg32),
+      .s(mux_stage3),
+      .y(data_writedata)
+  ); // note: mux_stage3 is high for SB and SH instructions when we need to write back to memory.
+  
+
+
+
+
+
+  // MUX to select which part of the instr. is the destination register.
   mux2 #(5) wrmux (
-      .a(instr_readdata[20:16]),
-      .b(instr_readdata[15:11]),
+      .a(instr_data[20:16]),
+      .b(instr_data[15:11]),
       .s(regdst1),
       .y(writereg1)
   );  // note: regdst1 is high for R-type instructions else select I-type.
-
+  
+  
   //  MUX to select either register address from instr. or register $31 (for jr/jalr)
   mux2 #(5) wrmux2 (
       .a(writereg1),
@@ -189,16 +266,7 @@ module datapath (
 
 
 
-
-
-
   //  --------------- Out-of-Memory Datapath -------------------
-
-  // Load selector bit (word/byte/LSB...)							//??????????????
-  shiftleft16 immshift16 (
-      .a({16'b0, instr_readdata[15:0]}),
-      .y(immsh16)
-  );  // note: extended the instr_readdata to fit declaration of shiftleft16
 
   // Load Selector module
   loadselector loadsel (
@@ -251,32 +319,9 @@ module datapath (
       .control(alucontrol),
       .a(srca),
       .b(srcb),
-      .shamt(instr_readdata[10:6]),
+      .shamt(instr_data[10:6]),
       .zero(zero),
       .y(data_address)
   );
 
 endmodule
-
-
-
-
-
-
-
-
-
-
-  /*			SAVE of jump datapath
-  mux2 #(32) pcmux1 (
-      .a({6'b0, instr_readdata[25:0]}),
-      .b(result2),
-      .s(jump1),
-      .y(pcnextbr2)
-  );  // jump1 is high when we jump to value in register.
-
-  shiftleft2 jsh (
-      .a(pcnextbr2),
-      .y(jumpsh)
-  );  // Instruction in PC are every 4 so we need to multiply by 4.
-  */

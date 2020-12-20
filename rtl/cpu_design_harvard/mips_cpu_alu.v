@@ -180,11 +180,11 @@ module alu (
         5'b11010: y = HI;  //MFHI
 
         5'b11011: y = LO;  //MFLO
-/*      
-      	5'b11100: *empty*
       
-      	5'b11101: *empty*
-*/
+      	5'b11100: y = {a[31:8], b[7:0]}; // Store byte: SB
+      
+      	5'b11101: y = {a[31:16], b[15:0]}; // Store halfword: SH
+
         default:  y = 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;  //???	 
       endcase
 

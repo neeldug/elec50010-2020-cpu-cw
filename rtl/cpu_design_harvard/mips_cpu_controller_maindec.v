@@ -1,23 +1,31 @@
 module maindec (
+	input logic clk,
     input logic [5:0] op,
     funct,
     input logic [4:0] dest,
+    output logic storeloop,
     output logic memtoreg1,
     data_write,
     data_read,
     output logic branch,
     alusrc,
+    output logic stall,
     output logic regdst2,
     regdst1,
     output logic regwrite,
     output logic jump1,
     jump,
-    output logic [1:0] aluop,
+    output logic [1:0] aluop, state,
     output logic [2:0] loadcontrol
 );
 
+logic mux_stage2, mux_stage3;
 
-  reg [11:0] controls;
+reg [11:0] controls;
+  
+initial begin
+	storeloop = 0;
+end
 
 
 //  assign {regwrite, regdst2, regdst1, alusrc, branch, data_read, data_write, memtoreg1, jump1, jump, aluop} = controls;
@@ -59,7 +67,7 @@ module maindec (
         default: controls = 12'b101000000010;  //R-type instructions 
       endcase
 
-      6'b100000: begin
+      6'b100000: begin        	
         controls = 12'b100101010000;  //Load byte
         loadcontrol = 3'b000;
       end
@@ -90,9 +98,37 @@ module maindec (
         controls = 12'b100101010000;  //Load word right
         loadcontrol = 3'b111;
       end
-
-      6'b101000: controls = 12'b000100100000;  //Store byte
-      6'b101001: controls = 12'b000100100000;  //Store halfword
+/*	  6'b101000: begin      	
+      	 if(state == 2'b00) begin
+      	 	stall = 1;
+        	storeloop = 1;
+        	mux_stage2 = 0;
+        	mux_stage3 = 0;
+        	controls = 12'b000101010000;  //Load word into register "32"
+        	loadcontrol = 3'b101;
+        	state = 2'b01;
+        	end
+        else if(state == 2'b01) begin
+        	mux_stage2 = 1;
+        	mux_stage3 = 0;
+        	controls = 12'b000000000010;  // do in alu $32= {$32[31:8], $t[7:0]}
+        	state = 2'b10;
+        	end
+        else if(state == 2'b10) begin
+        	mux_stage2 = 0;
+        	mux_stage3 = 1;
+        	controls = 12'b000100100000;  //Store byte
+        	state = 2'b11;
+        	end
+        elseif(state == 2'b11) begin
+        	mux_stage2 = 0;
+        	mux_stage3 = 0;
+        	storeloop = 0; 
+        	stall = 0;
+        	end	
+        end
+      6'b101001: controls = 12'b000100100000;  //Store halfword 
+*/
       6'b101011: controls = 12'b000100100000;  //Store word
       6'b000100: controls = 12'b000010000010;  //Branch on = 0
       6'b000001:

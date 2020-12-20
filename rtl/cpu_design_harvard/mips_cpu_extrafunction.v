@@ -9,8 +9,8 @@ module regfile (
     input logic [31:0] wd3,
     output logic [31:0] rd1,
     rd2,
-    reg_v0//
-	//reg_debug											//debug (from datapath)
+    reg_v0,
+	reg_debug											//debug (from datapath)
 );
 
   reg [31:0] rf[31:0];
@@ -33,33 +33,28 @@ module regfile (
 
   assign rd1 = (ra1 != 0) ? rf[ra1] : 0;
   assign rd2 = (ra2 != 0) ? rf[ra2] : 0;
-  assign reg_v0 = (~reset) ? rf[2] : 0;
-  //assign reg_debug = (~reset) ? rf[31] : reg_debug;		//debug (from datapath)
+  assign reg_v0 = rf[2];
+  assign reg_debug = rf[3];		//debug (from datapath)
 endmodule
 
 
-module regfile2 #(
-    parameter WIDTH = 31
-) (
+module register_parallel (
     input logic clk,
     reset,
     input logic we,
-    input logic [WIDTH:0] d,
-    output logic [WIDTH:0] q
+    input logic [31:0] wd,
+    output logic [31:0] rd
 );
-  reg i;
+	
+  reg [31:0] reg32;
 
-  always_ff @(posedge clk) begin
-    if (reset) begin  //sets all the regs in the regfile to 0 is reset signal is high
-      q <= 0;
-      i <= 1;
-    end else begin
-      if (we) begin
-        q <= i ? 0 : d;
-        i <= 0;
-      end
-    end
+  always @(posedge clk) begin
+    if (reset) reg32 <= 0;
+    else if (we) reg32 <= wd;
   end
+  
+  assign rd = reg32;    
+    
 endmodule
 
 
@@ -89,8 +84,26 @@ module regfile1 #(
 endmodule
 
 
+module demux2 (
+    input logic [31:0] data, 
+    input logic [4:0] address,
+    input logic s,
+    output logic [31:0] normal_out,
+    parallel_out,
+    output logic [4:0] address_out
+);
+
+  // regfile output
+  assign normal_out = s ? 0 : data;
+  assign address_out = s ? 0 : address;
+  // parallel reg output
+  assign parallel_out = s ? data : 0;
+  
+endmodule
+
+
 module mux2 #(
-    parameter WIDTH = 8
+    parameter WIDTH = 32
 ) (
     input logic [WIDTH - 1:0] a,
     b,
@@ -164,6 +177,94 @@ module flipflopr #(
       if (d==32'b0) active <= 0;
       q <= d;
     end
+  end
+
+endmodule
+
+
+
+
+module sb_sh_scheduler (
+	input logic clk, clk_enable, reset,
+	input logic [31:0] normal_instr_data,
+	output logic [31:0] normal_or_scheduled_instr_data,
+	
+	output logic stall, mux_stage2, mux_stage3, parallel_path
+);
+
+  logic [1:0] state;
+  
+  logic [5:0] opcode;
+  logic [4:0] s; //dest in memory of store byte/halfword
+  logic [4:0] t; //source register of byte/halfword to load
+  logic [15:0] immediate;
+  
+  assign opcode = normal_instr_data[31:26];
+  assign s = normal_instr_data[25:21];
+  assign t = normal_instr_data[20:16];
+  assign immediate = normal_instr_data[15:0];
+  
+  initial begin 
+  	state = 2'b00;
+  	stall = 0;
+  	mux_stage2 = 0;
+  	mux_stage3 = 0;
+  	parallel_path = 0;
+  end
+
+  always @(negedge clk) begin
+  	if (opcode == 6'b101000) begin
+  		if (state == 2'b00) begin
+  			stall <= 1;
+  			parallel_path <= 1;
+  			normal_or_scheduled_instr_data <= {6'b100011, s, 5'b0/*reg32*/, immediate}; //load word in memory location that is the dest of the full instruction into reg32
+  			
+  			state <= 2'b01;
+  		end else if (state == 2'b01) begin
+  			mux_stage2 <= 1;
+  			mux_stage3 <= 0;
+  			normal_or_scheduled_instr_data <= {6'b0, 5'b0/*reg32*/, t, 5'b0/*reg32*/, 5'b0, 6'b111111}; //alu byte operation
+  			
+  			state <= 2'b10;
+  		end else if (state == 2'b10) begin
+  			mux_stage2 <= 0;
+  			mux_stage3 <= 1;
+  			normal_or_scheduled_instr_data <= {6'b101011, s, 5'b0/*reg32*/, immediate}; //store word in reg32 back into memory location that is the dest of the full instruction
+
+  			//unstall PC and delay slot
+  			stall <= 0;
+  	  		state <= 2'b00;
+  		end
+  	end
+  	else if (opcode == 6'b101001) begin
+  		if (state == 2'b00) begin
+  			stall <= 1;
+  			parallel_path <= 1;
+  			normal_or_scheduled_instr_data <= {6'b100011, s, 5'b0/*reg32*/, immediate}; //load word
+  			
+  			state <= 2'b01;
+  		end else if (state == 2'b01) begin
+  			mux_stage2 <= 1;
+  			mux_stage3 <= 0;
+  			normal_or_scheduled_instr_data <= {6'b0, 5'b0/*reg32*/, t, 5'b0/*reg32*/, 5'b0, 6'b111110}; //alu half_word operation
+  			
+  			state <= 2'b10;
+  		end else if (state == 2'b10) begin
+			mux_stage2 <= 0;
+  			mux_stage3 <= 1;
+  			normal_or_scheduled_instr_data <= {6'b101011, s, 5'b0/*reg32*/, immediate}; //store word
+			
+			//unstall PC and delay slot
+  			stall <= 0;
+  			state <= 2'b00;
+  		end
+  	end
+  	else begin
+  		mux_stage2 <= 0;
+  		mux_stage3 <= 0;
+  		parallel_path <= 0;
+  		normal_or_scheduled_instr_data <= normal_instr_data;
+  	end
   end
 
 endmodule
