@@ -1,4 +1,5 @@
-module maindec (
+module main_decoder (
+    input logic clk,
     input logic [5:0] op,
     funct,
     input logic [4:0] dest,
@@ -7,20 +8,25 @@ module maindec (
     data_read,
     output logic branch,
     alusrc,
+    output logic stall,
     output logic regdst2,
     regdst1,
     output logic regwrite,
     output logic jump1,
     jump,
     output logic [1:0] aluop,
+    state,
     output logic [2:0] loadcontrol
 );
-
 
   reg [11:0] controls;
 
 
-//  assign {regwrite, regdst2, regdst1, alusrc, branch, data_read, data_write, memtoreg1, jump1, jump, aluop} = controls;
+  /* 
+ Using an array, we can write:
+	assign {regwrite, regdst2, regdst1, alusrc, branch, data_read, data_write, memtoreg1, jump1, jump, aluop} = controls;
+*/
+
   assign regwrite = controls[11];
   assign regdst2 = controls[10];
   assign regdst1 = controls[9];
@@ -33,8 +39,6 @@ module maindec (
   assign jump = controls[2];
   assign aluop = controls[1:0];
 
-  // Assign 11 elements names as aluop consist of 2 bits so rightfully fills the reg controls.
-  // Correspond to the bits below from left to right in the same order (starting with regwrite and ending with aluop).
 
 
   always @(*)
@@ -50,11 +54,10 @@ module maindec (
         end
         6'b001001: begin  //Jump register and link JALR & link in reg $31
           controls = 12'b110010001101;
-         // jump1 = 1;					//We set both as J-type to extract value in reg$a aluop: [01]
+          //We set both as J-type to extract value in reg$a aluop: [01]
         end
         6'b001000: begin  //Jump register
           controls = 12'b000010001101;
-         // jump1 = 1;
         end
         default: controls = 12'b101000000010;  //R-type instructions 
       endcase
@@ -90,9 +93,10 @@ module maindec (
         controls = 12'b100101010000;  //Load word right
         loadcontrol = 3'b111;
       end
-
-      6'b101000: controls = 12'b000100100000;  //Store byte
-      6'b101001: controls = 12'b000100100000;  //Store halfword
+      /*
+	  6'b101000: //SB handled by the SB_SH_Scheduler 
+      6'b101001: //SH handled by the SB_SH_Scheduler 
+*/
       6'b101011: controls = 12'b000100100000;  //Store word
       6'b000100: controls = 12'b000010000010;  //Branch on = 0
       6'b000001:
@@ -121,5 +125,4 @@ endmodule
 
 // We are currently setting all the control signals by looking at the opcode of the instructions.
 // We created an reg (=array) of control signals so that it is easier to implement.
-// In order to understand this section please refer to page 376 of the book (table 7.3) for team.
 

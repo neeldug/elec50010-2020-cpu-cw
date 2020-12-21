@@ -153,14 +153,6 @@ module alu (
           end else y = {31'b0, 1'b1};
         end
 
-/*      
-      5'b10101: begin	//Branch on = 0  
-        if (a == 32'b0) begin
-          y = 32'b0;
-        end else y = {31'b0, 1'b1};
-      end
-*/
-
         5'b10110: begin  //Branch on a != b   
           if (a != b) begin
             y = 32'b0;
@@ -180,12 +172,12 @@ module alu (
         5'b11010: y = HI;  //MFHI
 
         5'b11011: y = LO;  //MFLO
-/*      
-      	5'b11100: *empty*
-      
-      	5'b11101: *empty*
-*/
-        default:  y = 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;  //???	 
+
+        5'b11100: y = {a[31:8], b[7:0]};  // Store byte: SB
+
+        5'b11101: y = {a[31:16], b[15:0]};  // Store halfword: SH
+
+        default: y = 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;  //???	 
       endcase
 
     end else begin  //If reset signal is asserted, then sets both registers HI and LO to zero

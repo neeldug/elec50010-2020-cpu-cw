@@ -1,69 +1,59 @@
-module controller (
-	input logic clk,
-	reset,
-	input logic waitrequest,
+module decoder (
+    input logic clk,
     input logic [5:0] op,
     funct,
     input logic [4:0] dest,
     input logic zero,
     output logic memtoreg2,
     memtoreg1,
-    output logic memwrite,
-    alusrca,
+    output logic data_write,
+    output logic data_read,
+    output logic pcsrc,
+    alusrc,
     output logic regdst2,
     regdst1,
     output logic regwrite,
     output logic jump1,
     jump,
-    output logic iord,
-    output logic pcen,
-    output logic pcwrite,
-    irwrite,
-    output logic [1:0] alusrcb,
-    output logic [1:0] pcsrc,
     output logic [4:0] alucontrol,
     output logic [2:0] loadcontrol
 );
 
-  logic [1:0] aluop;
+  logic [1:0] aluop, state;
   logic branch;
 
-  maindec md (
-  	  .clk(clk),
-  	  .reset(reset),
+  main_decoder maindec (
+      .clk(clk),
       .op(op),
       .funct(funct),
       .dest(dest),
       .memtoreg1(memtoreg1),
-      .memwrite(memwrite),
+      .data_write(data_write),
+      .data_read(data_read),
       .branch(branch),
-      .alusrca( alusrca),
-      .alusrcb(alusrcb),
+      .alusrc(alusrc),
       .regdst2(regdst2),
       .regdst1(regdst1),
       .regwrite(regwrite),
       .jump1(jump1),
       .jump(jump),
-      .aluop(aluop),
       .state(state),
+      .aluop(aluop),
       .loadcontrol(loadcontrol)
   );
 
-  aludec ad (
-      .clk(clk),
-  	  .reset(reset),
+  alu_decoder aludec (
       .funct(funct),
       .op(op),
+      .state(state),
       .dest(dest),
       .aluop(aluop),
-      .state(state),
       .alucontrol(alucontrol)
   );
-  
-  always @(posedge clk) begin
-    pcsrc <= (branch & zero);
-    memtoreg2 <= (jump | pcsrc);
-    pcen <= (pcwrite | pcsrc);
+
+  always_comb begin
+    pcsrc = (branch && zero);
+    memtoreg2 = (jump || pcsrc);
   end
-  
+
 endmodule
