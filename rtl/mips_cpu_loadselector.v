@@ -30,8 +30,6 @@ reg [31:0] c;
 
       3'b011: y = {16'b0, a[15:0]};  	//Load halfword unsigned
 
-//    3'b100: y = b;					//Load upper Immediate
-
       3'b101: y = a;  					//Load word
 
       3'b110: begin  					//Load word left

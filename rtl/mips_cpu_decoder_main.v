@@ -1,9 +1,8 @@
-module maindec (
+module main_decoder (
 	input logic clk,
     input logic [5:0] op,
     funct,
     input logic [4:0] dest,
-    output logic storeloop,
     output logic memtoreg1,
     data_write,
     data_read,
@@ -19,16 +18,14 @@ module maindec (
     output logic [2:0] loadcontrol
 );
 
-logic mux_stage2, mux_stage3;
-
 reg [11:0] controls;
-  
-initial begin
-	storeloop = 0;
-end
 
 
-//  assign {regwrite, regdst2, regdst1, alusrc, branch, data_read, data_write, memtoreg1, jump1, jump, aluop} = controls;
+/* 
+ Using an array, we can write:
+	assign {regwrite, regdst2, regdst1, alusrc, branch, data_read, data_write, memtoreg1, jump1, jump, aluop} = controls;
+*/
+
   assign regwrite = controls[11];
   assign regdst2 = controls[10];
   assign regdst1 = controls[9];
@@ -40,10 +37,7 @@ end
   assign jump1 = controls[3];
   assign jump = controls[2];
   assign aluop = controls[1:0];
-
-  // Assign 11 elements names as aluop consist of 2 bits so rightfully fills the reg controls.
-  // Correspond to the bits below from left to right in the same order (starting with regwrite and ending with aluop).
-
+  
 
   always @(*)
     case (op)
@@ -98,36 +92,9 @@ end
         controls = 12'b100101010000;  //Load word right
         loadcontrol = 3'b111;
       end
-/*	  6'b101000: begin      	
-      	 if(state == 2'b00) begin
-      	 	stall = 1;
-        	storeloop = 1;
-        	mux_stage2 = 0;
-        	mux_stage3 = 0;
-        	controls = 12'b000101010000;  //Load word into register "32"
-        	loadcontrol = 3'b101;
-        	state = 2'b01;
-        	end
-        else if(state == 2'b01) begin
-        	mux_stage2 = 1;
-        	mux_stage3 = 0;
-        	controls = 12'b000000000010;  // do in alu $32= {$32[31:8], $t[7:0]}
-        	state = 2'b10;
-        	end
-        else if(state == 2'b10) begin
-        	mux_stage2 = 0;
-        	mux_stage3 = 1;
-        	controls = 12'b000100100000;  //Store byte
-        	state = 2'b11;
-        	end
-        elseif(state == 2'b11) begin
-        	mux_stage2 = 0;
-        	mux_stage3 = 0;
-        	storeloop = 0; 
-        	stall = 0;
-        	end	
-        end
-      6'b101001: controls = 12'b000100100000;  //Store halfword 
+/*
+	  6'b101000: //SB handled by the SB_SH_Scheduler 
+      6'b101001: //SH handled by the SB_SH_Scheduler 
 */
       6'b101011: controls = 12'b000100100000;  //Store word
       6'b000100: controls = 12'b000010000010;  //Branch on = 0
@@ -157,5 +124,4 @@ endmodule
 
 // We are currently setting all the control signals by looking at the opcode of the instructions.
 // We created an reg (=array) of control signals so that it is easier to implement.
-// In order to understand this section please refer to page 376 of the book (table 7.3) for team.
 

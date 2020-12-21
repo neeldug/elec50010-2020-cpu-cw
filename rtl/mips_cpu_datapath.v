@@ -3,7 +3,6 @@ module datapath (
     reset,
     clk_enable,
     output logic active,
-    input logic storeloop,
     input logic memtoreg2,
     memtoreg1,
     input logic alusrc,
@@ -52,7 +51,7 @@ module datapath (
   logic [31:0] pcnext_delay;
 
   // Flip-flop to save the adress to go to in the next cycle
-  regfile1 #(32) jumpbrmem (
+  delay_slot_register delay_slot (
       .clk(clk),
       .reset(reset),
       .clk_enable(clk_enable),
@@ -87,7 +86,7 @@ module datapath (
   //  ---------------  Program Counter Datapath  --------------
 
   // Program Counter register
-  flipflopr #(32) pcreg (
+  pc_register program_counter (
       .clk(clk),
       .reset(reset),
       .clk_enable(clk_enable),
@@ -204,16 +203,6 @@ module datapath (
       .reg_v0(register_v0),
       .reg_debug(register_debug)							//debug (+ in extrafunction.v)
   );
-
-/*  // DEMUX for implementation of the Store instructions.
-  demux2 wdchoice (
-  	  .data(result),
-  	  .address(writereg),
-  	  .s(1'b0),
-  	  .normal_out(result_regfile),
-  	  .parallel_out(result_parallel),
-  	  .address_out(result_address)
-  ); // note: parallel_path is high for SB and SH instructions only. */
   
   assign result_address = parallel_path ? 5'b0 : writereg;
   
@@ -224,7 +213,7 @@ module datapath (
   	  .we(parallel_path),
   	  .wd(result),
   	  .rd(reg32)
-  ); // Write enable, WE: storeloop, is high during Store instructions.
+  ); // WE: parallel_path, is high during SB and SH instr. as we use the parallel register
   
   // MUX for alu input selection in store instructions [stage 2: merging byte(s) stored and initial value in RAM]. 
   mux2 #(32) srca_select (
@@ -234,7 +223,7 @@ module datapath (
       .y(srca)
   ); // note: mux_stage2 is high for SB and SH instructions when we need to use the ALU.
   
-    // MUX for alu input selection in store instructions [stage 3: storing back in RAM]. 
+  // MUX for alu input selection in store instructions [stage 3: storing back in RAM]. 
   mux2 #(32) srcb_select (
       .a(rdb),
       .b(reg32),
@@ -242,8 +231,7 @@ module datapath (
       .y(data_writedata)
   ); // note: mux_stage3 is high for SB and SH instructions when we need to write back to memory.
   
-
-
+  
 
 
 
@@ -269,7 +257,7 @@ module datapath (
   //  --------------- Out-of-Memory Datapath -------------------
 
   // Load Selector module
-  loadselector loadsel (
+  loadselector load_function_selector (
   	  .b(data_writedata),
       .a(data_readdata),
       .controls(loadcontrol),
@@ -286,7 +274,7 @@ module datapath (
   
   
   // PC+8 for link address to be stored in reg$31
-  adder pcbrlink (
+  adder link_address_calculator (
       .a(pcplus4),
       .b(32'b100),
       .y(pclink)
@@ -306,7 +294,7 @@ module datapath (
 
   //  -------------------  ALU Datapath  -------------------
 
-  // MUX to select either data from register or from immediate as SRCb of ALU
+  // MUX to select either data from registers or from immediate as SRCb of ALU
   mux2 #(32) srcbmux (
       data_writedata,
       signimm,
@@ -315,7 +303,7 @@ module datapath (
   );  // note: alusrc is high for instructions using Immediate variable else for srcB instr.
 
   // ALU Module
-  alu alumodule (
+  alu alu_module (
       .reset(reset),
       .control(alucontrol),
       .a(srca),

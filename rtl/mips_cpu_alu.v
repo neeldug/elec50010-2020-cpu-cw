@@ -153,14 +153,6 @@ module alu (
           end else y = {31'b0, 1'b1};
         end
 
-/*      
-      5'b10101: begin	//Branch on = 0  
-        if (a == 32'b0) begin
-          y = 32'b0;
-        end else y = {31'b0, 1'b1};
-      end
-*/
-
         5'b10110: begin  //Branch on a != b   
           if (a != b) begin
             y = 32'b0;

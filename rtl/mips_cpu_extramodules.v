@@ -58,15 +58,13 @@ module register_parallel (
 endmodule
 
 
-module regfile1 #(
-    parameter WIDTH = 32
-) (
+module delay_slot_register (
     input logic clk,
     reset,
     clk_enable,
     stall,
-    input logic [WIDTH-1:0] d,
-    output logic [WIDTH-1:0] q
+    input logic [31:0] d,
+    output logic [31:0] q
 );
 
 
@@ -81,24 +79,6 @@ module regfile1 #(
       if (clk_enable & (~stall)) q <= d;
     end
   end
-endmodule
-
-
-module demux2 (
-    input logic [31:0] data, 
-    input logic [4:0] address,
-    input logic s,
-    output logic [31:0] normal_out,
-    parallel_out,
-    output logic [4:0] address_out
-);
-
-  // regfile output
-  assign normal_out = s ? 0 : data;
-  assign address_out = s ? 0 : address;
-  // parallel reg output
-  assign parallel_out = s ? data : 0;
-  
 endmodule
 
 
@@ -152,16 +132,14 @@ module signext (
 endmodule
 
 
-module flipflopr #(
-    parameter WIDTH = 32
-) (
+module pc_register (
     input logic clk,
     reset,
     clk_enable,
     stall,
     output logic active,
-    input logic [WIDTH-1:0] d,
-    output logic [WIDTH-1:0] q
+    input logic [31:0] d,
+    output logic [31:0] q
 );
   
   always @(negedge reset) begin
@@ -180,8 +158,6 @@ module flipflopr #(
   end
 
 endmodule
-
-
 
 
 module sb_sh_scheduler (
