@@ -1,6 +1,7 @@
 module loadselector (
     input  logic [31:0] a,
-    b, offset,
+    b,
+    offset,
     input  logic [ 2:0] controls,
     output logic [31:0] y
 );

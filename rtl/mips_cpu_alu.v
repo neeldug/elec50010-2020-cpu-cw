@@ -176,11 +176,11 @@ module alu (
         5'b11100: y = {a[31:8], b[7:0]};  // Store byte: SB
 
         5'b11101: y = {a[31:16], b[15:0]};  // Store halfword: SH
-        
+
         5'b11110: begin  // Load word left and right
-        	 x = a+b;
-        	 y = {x[31:2], 2'b0};
-			end
+          x = a + b;
+          y = {x[31:2], 2'b0};
+        end
         default: y = 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx;  //???	 
       endcase
 
