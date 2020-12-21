@@ -14,6 +14,8 @@ module alu_decoder (
       alucontrol = 5'b11000;	 //note: JR and JALR use the alu, J and JAL don't (but still go through this case as it doesn't change anything)
       2'b10:
       case (op)
+        6'b100010: alucontrol = 5'b11110;  //Load word left
+        6'b100110: alucontrol = 5'b11110;  //Load word right
         6'b001111: alucontrol = 5'b11001;  //Load upper immidiate
         6'b000100: alucontrol = 5'b00100;  //Branch on equal use SUBU
         6'b000001:

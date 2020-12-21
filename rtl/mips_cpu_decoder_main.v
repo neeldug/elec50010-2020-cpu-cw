@@ -14,12 +14,13 @@ module main_decoder (
     output logic regwrite,
     output logic jump1,
     jump,
+    output logic signextbitwiseop,
     output logic [1:0] aluop,
     state,
     output logic [2:0] loadcontrol
 );
 
-  reg [11:0] controls;
+  reg [12:0] controls;
 
 
   /* 
@@ -27,9 +28,10 @@ module main_decoder (
 	assign {regwrite, regdst2, regdst1, alusrc, branch, data_read, data_write, memtoreg1, jump1, jump, aluop} = controls;
 */
 
-  assign regwrite = controls[11];
-  assign regdst2 = controls[10];
-  assign regdst1 = controls[9];
+  assign regwrite = controls[12];
+  assign regdst2 = controls[11];
+  assign regdst1 = controls[10];
+  assign signextbitwiseop = controls[9];
   assign alusrc = controls[8];
   assign branch = controls[7];
   assign data_read = controls[6];
@@ -47,78 +49,78 @@ module main_decoder (
       case (funct)
         //No need to write enable register as HI and LO are reg in ALU module.
         6'b010001: begin  //Move to High MTHI
-          controls = 12'b000000000010;
+          controls = 13'b0000000000010;
         end
         6'b010100: begin  //Move to Low MTLO
-          controls = 12'b000000000010;
+          controls = 13'b0000000000010;
         end
         6'b001001: begin  //Jump register and link JALR & link in reg $31
-          controls = 12'b110010001101;
+          controls = 13'b1100010001101;
           //We set both as J-type to extract value in reg$a aluop: [01]
         end
         6'b001000: begin  //Jump register
-          controls = 12'b000010001101;
+          controls = 13'b0000010001101;
         end
-        default: controls = 12'b101000000010;  //R-type instructions 
+        default: controls = 13'b1010000000010;  //R-type instructions 
       endcase
 
       6'b100000: begin
-        controls = 12'b100101010000;  //Load byte
+        controls = 13'b1000101010000;  //Load byte
         loadcontrol = 3'b000;
       end
       6'b100100: begin
-        controls = 12'b100101010000;  //Load byte unsigned
+        controls = 13'b1000101010000;  //Load byte unsigned
         loadcontrol = 3'b001;
       end
       6'b100001: begin
-        controls = 12'b100101110000;  //Load halfword
+        controls = 13'b1000101110000;  //Load halfword
         loadcontrol = 3'b010;
       end
       6'b100101: begin
-        controls = 12'b100101010000;  //Load halfword unisigned
+        controls = 13'b1000101010000;  //Load halfword unisigned
         loadcontrol = 3'b011;
       end
       6'b001111: begin
-        controls = 12'b100101000010;  //Load upper immidiate
+        controls = 13'b1000101000010;  //Load upper immidiate
       end
       6'b100011: begin
-        controls = 12'b100101010000;  //Load word
+        controls = 13'b1000101010000;  //Load word
         loadcontrol = 3'b101;
       end
       6'b100010: begin
-        controls = 12'b100101010000;  //Load word left
+        controls = 13'b1000101010010;  //Load word left
         loadcontrol = 3'b110;
       end
       6'b100110: begin
-        controls = 12'b100101010000;  //Load word right
+        controls = 13'b1000101010010;  //Load word right
         loadcontrol = 3'b111;
       end
       /*
 	  6'b101000: //SB handled by the SB_SH_Scheduler 
       6'b101001: //SH handled by the SB_SH_Scheduler 
 */
-      6'b101011: controls = 12'b000100100000;  //Store word
-      6'b000100: controls = 12'b000010000010;  //Branch on = 0
+      6'b101011: controls = 13'b0000100100000;  //Store word
+      6'b000100: controls = 13'b0000010000010;  //Branch on = 0
       6'b000001:
       case (dest)
-        5'b00001: controls = 12'b000010000010;  //Branch on >= 0
-        5'b10001: controls = 12'b110010000010;  //Branch on >= 0 /link (regwrite active)
-        5'b00000: controls = 12'b000010000010;  //Branch on < 0
-        5'b10000: controls = 12'b110010000010;  //Branch on < 0 /link
-        default:  controls = 12'bxxxxxxxxxxxx;
+        5'b00001: controls = 13'b0000010000010;  //Branch on >= 0
+        5'b10001: controls = 13'b1100010000010;  //Branch on >= 0 /link (regwrite active)
+        5'b00000: controls = 13'b0000010000010;  //Branch on < 0
+        5'b10000: controls = 13'b1100010000010;  //Branch on < 0 /link
+        default:  controls = 13'bxxxxxxxxxxxx;
       endcase
-      6'b000111: controls = 12'b000010000010;  //Branch on > 0
-      6'b000110: controls = 12'b000010000010;  //Branch on = 0
-      6'b000101: controls = 12'b000010000010;  //Branch on != 0
-      6'b001001: controls = 12'b100100000010;  //ADD unsigned immediate
-      6'b000010: controls = 12'b000010000101;  //Jump
-      6'b000011: controls = 12'b110010000101;  //Jump and link
-      6'b001100: controls = 12'b100100000010;  //ANDI
-      6'b001101: controls = 12'b100100000010;  //ORI
-      6'b001110: controls = 12'b100100000010;  //XORI
-      6'b001010: controls = 12'b100100000010;  //Set on less than immediate (signed)
-      6'b001011: controls = 12'b100100000010;  //Set on less than immediate unsigned
-      default: controls = 12'bxxxxxxxxxxxx;  //???
+      6'b000111: controls = 13'b0000010000010;  //Branch on > 0
+      6'b000110: controls = 13'b0000010000010;  //Branch on = 0
+      6'b000101: controls = 13'b0000010000010;  //Branch on != 0
+      6'b001001: controls = 13'b1000100000010;  //ADD unsigned immediate
+      6'b000010: controls = 13'b0000010000101;  //Jump
+      6'b000011: controls = 13'b1100010000101;  //Jump and link
+      6'b001100: controls = 13'b1001100000010;  //ANDI
+      6'b001101: controls = 13'b1001100000010;  //ORI
+      6'b001110: controls = 13'b1001100000010;  //XORI
+      6'b001010: controls = 13'b1000100000010;  //Set on less than immediate (signed)
+      6'b001011: controls = 13'b1000100000010;  //Set on less than immediate unsigned
+      default: controls = 13'bxxxxxxxxxxxxx;  //???
     endcase
 endmodule
 
