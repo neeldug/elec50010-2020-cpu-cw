@@ -37,6 +37,7 @@ module mips_cpu_harvard (
       .memtoreg2(memtoreg2),
       .memtoreg1(memtoreg1),
       .data_write(data_write),
+      .data_read(data_read),
       .pcsrc(pcsrc),
       .alusrc(alusrc),
       .regdst2(regdst2),

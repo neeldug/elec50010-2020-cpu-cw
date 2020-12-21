@@ -38,6 +38,7 @@ reg [11:0] controls;
   assign jump = controls[2];
   assign aluop = controls[1:0];
   
+  
 
   always @(*)
     case (op)
@@ -52,11 +53,10 @@ reg [11:0] controls;
         end
         6'b001001: begin  //Jump register and link JALR & link in reg $31
           controls = 12'b110010001101;
-         // jump1 = 1;					//We set both as J-type to extract value in reg$a aluop: [01]
+					//We set both as J-type to extract value in reg$a aluop: [01]
         end
         6'b001000: begin  //Jump register
           controls = 12'b000010001101;
-         // jump1 = 1;
         end
         default: controls = 12'b101000000010;  //R-type instructions 
       endcase
