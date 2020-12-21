@@ -36,31 +36,10 @@ module regfile (
 endmodule
 
 
-module register_parallel (
-    input logic clk,
-    reset,
-    input logic we,
-    input logic [31:0] wd,
-    output logic [31:0] rd
-);
-
-  reg [31:0] reg32;
-
-  always @(posedge clk) begin
-    if (reset) reg32 <= 0;
-    else if (we) reg32 <= wd;
-  end
-
-  assign rd = reg32;
-
-endmodule
-
-
 module delay_slot_register (
     input logic clk,
     reset,
     clk_enable,
-    stall,
     input logic [31:0] d,
     output logic [31:0] q
 );
@@ -74,7 +53,7 @@ module delay_slot_register (
     if (reset) begin  //sets all the regs in the regfile to 0 is reset signal is high
       q <= 0;
     end else begin
-      if (clk_enable & (~stall)) q <= d;
+      if (clk_enable) q <= d;
     end
   end
 endmodule
@@ -140,7 +119,6 @@ module pc_register (
     input logic clk,
     reset,
     clk_enable,
-    stall,
     output logic active,
     input logic [31:0] d,
     output logic [31:0] q
@@ -154,106 +132,9 @@ module pc_register (
   always_ff @(posedge clk) begin
     if (reset) begin
       q <= 32'b0;
-    end else if (clk_enable & (~stall)) begin
+    end else if (clk_enable) begin
       if (d == 32'b0) active <= 0;
       q <= d;
-    end
-  end
-
-endmodule
-
-
-module sb_sh_scheduler (
-    input logic clk,
-    clk_enable,
-    reset,
-    input logic [31:0] normal_instr_data,
-    output logic [31:0] normal_or_scheduled_instr_data,
-
-    output logic stall,
-    mux_stage2,
-    mux_stage3,
-    parallel_path
-);
-
-  logic [ 1:0] state;
-
-  logic [ 5:0] opcode;
-  logic [ 4:0] s;  //dest in memory of store byte/halfword
-  logic [ 4:0] t;  //source register of byte/halfword to load
-  logic [15:0] immediate;
-
-  assign opcode = normal_instr_data[31:26];
-  assign s = normal_instr_data[25:21];
-  assign t = normal_instr_data[20:16];
-  assign immediate = normal_instr_data[15:0];
-
-  initial begin
-    state = 2'b00;
-    stall = 0;
-    mux_stage2 = 0;
-    mux_stage3 = 0;
-    parallel_path = 0;
-  end
-
-  always @(negedge clk) begin
-    if (opcode == 6'b101000) begin  //Store-byte instruction
-      if (state == 2'b00) begin
-        stall <= 1;
-        parallel_path <= 1;
-        normal_or_scheduled_instr_data <= {
-          6'b100011, s, 5'b0  /*reg32*/, immediate
-        };  //load word in memory location that is the dest of the full instruction into reg32
-
-        state <= 2'b01;
-      end else if (state == 2'b01) begin
-        mux_stage2 <= 1;
-        mux_stage3 <= 0;
-        normal_or_scheduled_instr_data <= {
-          6'b0, 5'b0  /*reg32*/, t, 5'b0  /*reg32*/, 5'b0, 6'b111111
-        };  //alu byte operation
-
-        state <= 2'b10;
-      end else if (state == 2'b10) begin
-        mux_stage2 <= 0;
-        mux_stage3 <= 1;
-        normal_or_scheduled_instr_data <= {
-          6'b101011, s, 5'b0  /*reg32*/, immediate
-        };  //store word in reg32 back into memory location that is the dest of the full instruction
-
-        //unstall PC and delay slot
-        stall <= 0;
-        state <= 2'b00;
-      end
-    end else if (opcode == 6'b101001) begin  //Store-halfword instruction
-      if (state == 2'b00) begin
-        stall <= 1;
-        parallel_path <= 1;
-        normal_or_scheduled_instr_data <= {6'b100011, s, 5'b0  /*reg32*/, immediate};  //load word
-
-        state <= 2'b01;
-      end else if (state == 2'b01) begin
-        mux_stage2 <= 1;
-        mux_stage3 <= 0;
-        normal_or_scheduled_instr_data <= {
-          6'b0, 5'b0  /*reg32*/, t, 5'b0  /*reg32*/, 5'b0, 6'b111110
-        };  //alu half_word operation
-
-        state <= 2'b10;
-      end else if (state == 2'b10) begin
-        mux_stage2 <= 0;
-        mux_stage3 <= 1;
-        normal_or_scheduled_instr_data <= {6'b101011, s, 5'b0  /*reg32*/, immediate};  //store word
-
-        //unstall PC and delay slot
-        stall <= 0;
-        state <= 2'b00;
-      end
-    end else begin
-      mux_stage2 <= 0;
-      mux_stage3 <= 0;
-      parallel_path <= 0;
-      normal_or_scheduled_instr_data <= normal_instr_data;
     end
   end
 
