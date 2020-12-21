@@ -1,7 +1,7 @@
 module alu_decoder (
     input  logic [5:0] funct,
     op,
-    input logic [1:0] state,
+    input  logic [1:0] state,
     input  logic [4:0] dest,
     input  logic [1:0] aluop,
     output logic [4:0] alucontrol
@@ -10,7 +10,8 @@ module alu_decoder (
   always @(*)
     case (aluop)
       2'b00: alucontrol = 5'b00011;  //note: ADDI is used for Load and Store instructions
-      2'b01: alucontrol = 5'b11000;	 //note: JR and JALR use the alu, J and JAL don't (but still go through this case as it doesn't change anything)
+      2'b01:
+      alucontrol = 5'b11000;	 //note: JR and JALR use the alu, J and JAL don't (but still go through this case as it doesn't change anything)
       2'b10:
       case (op)
         6'b001111: alucontrol = 5'b11001;  //Load upper immidiate
@@ -18,7 +19,8 @@ module alu_decoder (
         6'b000001:
         case (dest)
           5'b00001: alucontrol = 5'b10101;  //Branch on >= 0
-          5'b10001: alucontrol = 5'b10101;  //Branch on >= 0 & link (regwrite active) use SLT mod in control sign
+          5'b10001:
+          alucontrol = 5'b10101;  //Branch on >= 0 & link (regwrite active) use SLT mod in control sign
           5'b00000: alucontrol = 5'b10011;  //Branch on < 0 
           5'b10000: alucontrol = 5'b10011;  //Branch on < 0 & link
           default: alucontrol = 5'bxxxxx;
@@ -56,13 +58,13 @@ module alu_decoder (
           6'b010011: alucontrol = 5'b10010;  //MTLO
           6'b010000: alucontrol = 5'b11010;  //MFHI
           6'b010010: alucontrol = 5'b11011;  //MFLO
-          
+
           6'b111111: alucontrol = 5'b11100;  //SB - used for the 2nd stage of the finite state machine
           6'b111110: alucontrol = 5'b11101;  //SH - used for the 2nd stage of the finite state machine
-          
-          default:   alucontrol = 5'bxxxxx;
+
+          default: alucontrol = 5'bxxxxx;
         endcase
-        default: alucontrol = 5'bxxxxx;	
+        default: alucontrol = 5'bxxxxx;
       endcase
       default: alucontrol = 5'bxxxxx;
     endcase

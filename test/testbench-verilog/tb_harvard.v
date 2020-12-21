@@ -24,9 +24,9 @@ module tb_harvard;
   logic [31:0] data_writedata;
   logic [31:0] data_readdata;
 
-//	logic [31:0] alu1, alu2;					//debug
-//	logic [31:0] instr_schedule;				//debug
-//	logic [31:0] reg32;							//debug
+  //	logic [31:0] alu1, alu2;					//debug
+  //	logic [31:0] instr_schedule;				//debug
+  //	logic [31:0] reg32;							//debug
 
 
 
@@ -80,7 +80,8 @@ module tb_harvard;
 
   initial begin
     while (active) begin
-      assert(data_read != 1 && data_write != 1) else begin
+      assert (data_read != 1 && data_write != 1)
+      else begin
         $fatal(1, "Tried to read and write data simultaneously");
       end
     end
@@ -108,8 +109,8 @@ module tb_harvard;
     //Setting clk_enable high (may need to happen earlier - we shall see)
 
 
-//Debugging logs for cycle 0
-/*	  $fdisplay(STDERR, "  ");
+    //Debugging logs for cycle 0
+    /*	  $fdisplay(STDERR, "  ");
       $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, active: %d", cycle_count, register_v0, active);
       $fdisplay(STDERR, "Instruction address: %h, Instruction: %b", instr_address, instr_readdata);
       $fdisplay(STDERR, "ALUa: %h, ALUb: %h, ALUresult: %h", alu1, alu2, data_address);
@@ -122,8 +123,8 @@ module tb_harvard;
       @(posedge clk);
       cycle_count++;
 
-//Debugging logs for cycles 1+
-/*	  $fdisplay(STDERR, "  ");
+      //Debugging logs for cycles 1+
+      /*	  $fdisplay(STDERR, "  ");
       $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, active: %d", cycle_count, register_v0, active);
       $fdisplay(STDERR, "Instruction address: %h, Instruction: %b", instr_address, instr_readdata);
       $fdisplay(STDERR, "ALUa: %h, ALUb: %h, ALUresult: %h", alu1, alu2, data_address);

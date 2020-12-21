@@ -1,5 +1,5 @@
 module main_decoder (
-	input logic clk,
+    input logic clk,
     input logic [5:0] op,
     funct,
     input logic [4:0] dest,
@@ -14,14 +14,15 @@ module main_decoder (
     output logic regwrite,
     output logic jump1,
     jump,
-    output logic [1:0] aluop, state,
+    output logic [1:0] aluop,
+    state,
     output logic [2:0] loadcontrol
 );
 
-reg [11:0] controls;
+  reg [11:0] controls;
 
 
-/* 
+  /* 
  Using an array, we can write:
 	assign {regwrite, regdst2, regdst1, alusrc, branch, data_read, data_write, memtoreg1, jump1, jump, aluop} = controls;
 */
@@ -37,8 +38,8 @@ reg [11:0] controls;
   assign jump1 = controls[3];
   assign jump = controls[2];
   assign aluop = controls[1:0];
-  
-  
+
+
 
   always @(*)
     case (op)
@@ -53,7 +54,7 @@ reg [11:0] controls;
         end
         6'b001001: begin  //Jump register and link JALR & link in reg $31
           controls = 12'b110010001101;
-					//We set both as J-type to extract value in reg$a aluop: [01]
+          //We set both as J-type to extract value in reg$a aluop: [01]
         end
         6'b001000: begin  //Jump register
           controls = 12'b000010001101;
@@ -61,7 +62,7 @@ reg [11:0] controls;
         default: controls = 12'b101000000010;  //R-type instructions 
       endcase
 
-      6'b100000: begin        	
+      6'b100000: begin
         controls = 12'b100101010000;  //Load byte
         loadcontrol = 3'b000;
       end
@@ -92,7 +93,7 @@ reg [11:0] controls;
         controls = 12'b100101010000;  //Load word right
         loadcontrol = 3'b111;
       end
-/*
+      /*
 	  6'b101000: //SB handled by the SB_SH_Scheduler 
       6'b101001: //SH handled by the SB_SH_Scheduler 
 */

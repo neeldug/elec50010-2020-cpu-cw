@@ -23,8 +23,8 @@ module datapath (
     output logic [31:0] register_v0,
     output logic [31:0] instr_data
 
-//	output logic [31:0] srca, srcb,					//debug
-//	output logic [31:0] reg32,						//debug
+    //	output logic [31:0] srca, srcb,					//debug
+    //	output logic [31:0] reg32,						//debug
 );
 
 
@@ -34,11 +34,11 @@ module datapath (
   logic [31:0] signimm, signimmsh, immsh16, pcnextbr1, pcnextbr2, jumpsh;
   logic [31:0] result2, result1, result;
   logic [31:0] pcresult;
-  								
-  logic [31:0] srca, srcb;							//non-debug
 
-  logic stall;
-  logic [31:0] reg32;							//non-debug
+  logic [31:0] srca, srcb;  //non-debug
+
+  logic        stall;
+  logic [31:0] reg32;  //non-debug
 
 
 
@@ -66,9 +66,9 @@ module datapath (
       .b(32'b100),
       .y(pcplus4delay)
   );
-  
+
   logic [31:0] pcbranch_pcplus4delay;
-  
+
   // MUX to select either normal PC+4 or address from branch instr.
   mux2 #(32) pcmux3 (
       .a(pcplus4delay),
@@ -98,7 +98,7 @@ module datapath (
   // SB and SH scheduler block
   logic mux_stage2, mux_stage3, parallel_path;
 
-  sb_sh_scheduler scheduler(
+  sb_sh_scheduler scheduler (
       //inputs
       .clk(clk),
       .clk_enable(clk_enable),
@@ -155,9 +155,9 @@ module datapath (
       .a({6'b0, instr_data[25:0]}),
       .y(jump_address_sh)
   );
-  
+
   assign jumpreg_address = result2;	// note: the result of the ALU is the address we need to jump to
-  
+
   // MUX to select either address from data of regular jump instr. (j/jal) or address from register of jump register instr. (jr/jalr)
   mux2 #(32) pcmux1 (
       .a({pcplus4[31:28], jump_address_sh[27:0]}),
@@ -165,13 +165,13 @@ module datapath (
       .s(jump1),
       .y(next_jump_address)
   );  //note: jump1 is high when we jump to value in register.
-  
+
   // MUX to select either (PC+4 || PC from branch instr.) or (Address from data of j/jal || Address from register of jr/jalr)
   mux2 #(32) pcmux2 (
       .a(pcbranch_pcplus4delay),
       .b(next_jump_address),
       .s(jump),
-      .y(pcnext)		//note: this goes inside the delay_slot block
+      .y(pcnext)  //note: this goes inside the delay_slot block
   );  // note: jump is high when we are in a jump instruction.
 
 
@@ -181,9 +181,9 @@ module datapath (
 
   //  ------------------  Register file Datapath  ---------------------
 
-  logic [31:0] rda, rdb; //outputs of registers
+  logic [31:0] rda, rdb;  //outputs of registers
   //logic [31:0] reg32;
-  logic [31:0] result_regfile, result_parallel; //inputs to register
+  logic [31:0] result_regfile, result_parallel;  //inputs to register
   logic [4:0] result_address;
 
 
@@ -200,35 +200,35 @@ module datapath (
       .rd2(rdb),
       .reg_v0(register_v0)
   );
-  
+
   assign result_address = parallel_path ? 5'b0 : writereg;
-  
+
   // Register file used for merging data in Registers and in Data memory in Store instructions (SB and SH).
   register_parallel register32 (
-  	  .clk(clk),
-  	  .reset(reset),
-  	  .we(parallel_path),
-  	  .wd(result),
-  	  .rd(reg32)
-  ); // WE: parallel_path, is high during SB and SH instr. as we use the parallel register
-  
+      .clk(clk),
+      .reset(reset),
+      .we(parallel_path),
+      .wd(result),
+      .rd(reg32)
+  );  // WE: parallel_path, is high during SB and SH instr. as we use the parallel register
+
   // MUX for alu input selection in store instructions [stage 2: merging byte(s) stored and initial value in RAM]. 
   mux2 #(32) srca_select (
       .a(rda),
       .b(reg32),
       .s(mux_stage2),
       .y(srca)
-  ); // note: mux_stage2 is high for SB and SH instructions when we need to use the ALU.
-  
+  );  // note: mux_stage2 is high for SB and SH instructions when we need to use the ALU.
+
   // MUX for alu input selection in store instructions [stage 3: storing back in RAM]. 
   mux2 #(32) srcb_select (
       .a(rdb),
       .b(reg32),
       .s(mux_stage3),
       .y(data_writedata)
-  ); // note: mux_stage3 is high for SB and SH instructions when we need to write back to memory.
-  
-  
+  );  // note: mux_stage3 is high for SB and SH instructions when we need to write back to memory.
+
+
 
 
 
@@ -239,8 +239,8 @@ module datapath (
       .s(regdst1),
       .y(writereg1)
   );  // note: regdst1 is high for R-type instructions else select I-type.
-  
-  
+
+
   //  MUX to select either register address from instr. or register $31 (for jr/jalr)
   mux2 #(5) wrmux2 (
       .a(writereg1),
@@ -255,7 +255,7 @@ module datapath (
 
   // Load Selector module
   loadselector load_function_selector (
-  	  .b(data_writedata),
+      .b(data_writedata),
       .a(data_readdata),
       .controls(loadcontrol),
       .y(result1)
@@ -263,20 +263,20 @@ module datapath (
 
   // MUX to select either result from ALU or from Memory
   mux2 #(32) resmux (
-      data_address, // note: this is the output of the ALU
+      data_address,  // note: this is the output of the ALU
       result1,
       memtoreg1,
       result2
   );  // note: memtoreg1 is high for load instructions (value in RAM) else take result from ALU.
-  
-  
+
+
   // PC+8 for link address to be stored in reg$31
   adder link_address_calculator (
       .a(pcplus4),
       .b(32'b100),
       .y(pclink)
   );
-  
+
   // MUX to select either the result from ALU/Memory or the link address to be stored in the register file
   mux2 #(32) resmux2 (
       result2,

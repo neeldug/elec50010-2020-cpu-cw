@@ -1,5 +1,5 @@
 module decoder (
-	input logic clk,
+    input logic clk,
     input logic [5:0] op,
     funct,
     input logic [4:0] dest,
@@ -23,7 +23,7 @@ module decoder (
   logic branch;
 
   main_decoder maindec (
-  	  .clk(clk),
+      .clk(clk),
       .op(op),
       .funct(funct),
       .dest(dest),
