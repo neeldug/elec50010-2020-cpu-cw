@@ -16,10 +16,22 @@ module mips_cpu_harvard (
     input logic [31:0] data_readdata
 );
 
-  logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc, signextbitwiseop;
+  logic
+      memtoreg1,
+      memtoreg2,
+      branch,
+      alusrc,
+      regdst1,
+      regdst2,
+      regwrite,
+      jump1,
+      jump,
+      zero,
+      pcsrc,
+      signextbitwiseop;
 
-  logic [ 4:0] alucontrol;
-  logic [ 2:0] loadcontrol;
+  logic [4:0] alucontrol;
+  logic [2:0] loadcontrol;
 
   decoder control_path (
       .clk(clk),
