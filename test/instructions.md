@@ -24,8 +24,8 @@
 - [x] LHU
 - [x] LUI
 - [x] LW
-- [ ] LWL
-- [ ] LWR
+- [x] LWL
+- [x] LWR
 - [x] MTHI
 - [x] MTLO
 - [x] MULT
