@@ -15,17 +15,17 @@ module mips_cpu_harvard (
     output logic [31:0] data_writedata,
     input logic [31:0] data_readdata
 
-    //output logic [31:0] alu1, alu2,				//debug (+ @datapath)
-    //output logic [31:0] reg32,					//debug (+ @datapath)
-    //output logic [31:0] instr_schedule			//debug
+//    output logic [31:0] alu1, alu2,				//debug (+ @datapath)
+//    output logic [31:0] rdb,					//debug (+ @datapath)
+//    output logic [31:0] instr_schedule			//debug
 );
 
-  logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc;
+  logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc, signextbitwiseop;
 
   logic [ 4:0] alucontrol;
   logic [ 2:0] loadcontrol;
 
-  logic [31:0] instr_schedule;
+  logic [31:0] instr_schedule;	//non debug
 
 
   decoder control_path (
@@ -42,6 +42,7 @@ module mips_cpu_harvard (
       .alusrc(alusrc),
       .regdst2(regdst2),
       .regdst1(regdst1),
+      .signextbitwiseop(signextbitwiseop),
       .regwrite(regwrite),
       .jump1(jump1),
       .jump(jump),
@@ -60,6 +61,7 @@ module mips_cpu_harvard (
       .pcsrc(pcsrc),
       .regdst2(regdst2),
       .regdst1(regdst1),
+      .signextbitwiseop(signextbitwiseop),
       .regwrite(regwrite),
       .jump1(jump1),
       .jump(jump),
@@ -74,9 +76,9 @@ module mips_cpu_harvard (
       .register_v0(register_v0),
       .instr_data(instr_schedule)
 
-      //.srca(alu1),									//debug (+ in datapath.v)
-      //.srcb(alu2),									//debug (+ in datapath.v)
-      //.reg32(reg32)									//debug (+ in datapath.v)
+ //     .srca(alu1),									//debug (+ in datapath.v)
+//      .srcb(alu2),									//debug (+ in datapath.v)
+//      .rdb(rdb)									//debug (+ in datapath.v)
   );
 
 
