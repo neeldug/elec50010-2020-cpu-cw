@@ -10,16 +10,14 @@ module mips_cpu_harvard (
     input  logic [31:0] instr_readdata,		//Data stored at address determined by PCnext
 
     output logic [31:0] data_address,		//ALU_result
-    output logic data_write,				//control signal Data memory write enable for data
-    output logic data_read,					//Instruction from either the instr. memory, or the scheduler when SB or SH instr. are detected
+    output logic data_write,				//Control signal Data memory write enable for data
+    output logic data_read,					//Control signal to request a read from memory		//TO IMPLEMENT
     output logic [31:0] data_writedata,
-    input logic [31:0] data_readdata,
+    input logic [31:0] data_readdata
     
-    //output logic pcsrc,							//debug
-    output logic [31:0] register_debug,				//debug (+ @datapath)
-    output logic [31:0] alu1, alu2,					//debug (+ @datapath)
-    output logic [31:0] instr_scheduler,			//debug (+ @datapath)
-    output logic [31:0] reg32						//debug (+ @datapath)
+    //output logic [31:0] alu1, alu2,				//debug (+ @datapath)
+    //output logic [31:0] reg32,					//debug (+ @datapath)
+    //output logic [31:0] instr_schedule			//debug
 );
 
   logic memtoreg1, memtoreg2, branch, alusrc, regdst1, regdst2, regwrite, jump1, jump, zero, pcsrc;
@@ -27,12 +25,14 @@ module mips_cpu_harvard (
   logic [4:0] alucontrol;
   logic [2:0] loadcontrol;
   
+  logic [31:0] instr_schedule;
+  
   
   decoder control_path (
   	  .clk(clk),
-      .op(instr_scheduler[31:26]),
-      .funct(instr_scheduler[5:0]),
-      .dest(instr_scheduler[20:16]),
+      .op(instr_schedule[31:26]),
+      .funct(instr_schedule[5:0]),
+      .dest(instr_schedule[20:16]),
       .zero(zero),
       .memtoreg2(memtoreg2),
       .memtoreg1(memtoreg1),
@@ -71,12 +71,11 @@ module mips_cpu_harvard (
       .data_address(data_address),
       .data_writedata(data_writedata),
       .register_v0(register_v0),
+      .instr_data(instr_schedule)
       
-	  .register_debug(register_debug),				//debug (+ in datapath.v)
-      .srca(alu1),									//debug (+ in datapath.v)
-      .srcb(alu2),										//debug (+ in datapath.v)
-      .instr_data(instr_scheduler),
-      .reg32(reg32)									//debug (+ in datapath.v)
+      //.srca(alu1),									//debug (+ in datapath.v)
+      //.srcb(alu2),									//debug (+ in datapath.v)
+      //.reg32(reg32)									//debug (+ in datapath.v)
   );
 
 

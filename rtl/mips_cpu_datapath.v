@@ -21,12 +21,10 @@ module datapath (
     output logic [31:0] data_address,
     data_writedata,
     output logic [31:0] register_v0,
+    output logic [31:0] instr_data
 
-	output logic [31:0] register_debug,				//debug (+ @regfile and in extrafunction.v)
-	output logic [31:0] srca, srcb,					//debug
-	output logic [31:0] reg32,						//debug
-	
-	output logic [31:0] instr_data
+//	output logic [31:0] srca, srcb,					//debug
+//	output logic [31:0] reg32,						//debug
 );
 
 
@@ -37,10 +35,10 @@ module datapath (
   logic [31:0] result2, result1, result;
   logic [31:0] pcresult;
   								
-//  logic [31:0] srca, srcb;							//non-debug
+  logic [31:0] srca, srcb;							//non-debug
 
   logic stall;
-  //logic [31:0] instr_data; // note: either instr_readdata (from instr. mem.) or the instr. from the SB/SH scheduler					//non-debug
+  logic [31:0] reg32;							//non-debug
 
 
 
@@ -200,8 +198,7 @@ module datapath (
       .wd3(result),
       .rd1(rda),
       .rd2(rdb),
-      .reg_v0(register_v0),
-      .reg_debug(register_debug)							//debug (+ in extrafunction.v)
+      .reg_v0(register_v0)
   );
   
   assign result_address = parallel_path ? 5'b0 : writereg;
