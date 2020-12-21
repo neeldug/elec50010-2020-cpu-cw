@@ -187,7 +187,7 @@ module sb_sh_scheduler (
   end
 
   always @(negedge clk) begin
-  	if (opcode == 6'b101000) begin
+  	if (opcode == 6'b101000) begin		//Store-byte instruction
   		if (state == 2'b00) begin
   			stall <= 1;
   			parallel_path <= 1;
@@ -210,7 +210,7 @@ module sb_sh_scheduler (
   	  		state <= 2'b00;
   		end
   	end
-  	else if (opcode == 6'b101001) begin
+  	else if (opcode == 6'b101001) begin		//Store-halfword instruction
   		if (state == 2'b00) begin
   			stall <= 1;
   			parallel_path <= 1;
