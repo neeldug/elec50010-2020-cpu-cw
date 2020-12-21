@@ -102,13 +102,13 @@ module signext (
     output logic [31:0] y
 );
 
-always @(*) begin
-	if(selector) begin
-	  y = {16'b0, a};
-	end else begin
-	  y = {{16{a[15]}}, a};
-	end
-end
+  always @(*) begin
+    if (selector) begin
+      y = {16'b0, a};
+    end else begin
+      y = {{16{a[15]}}, a};
+    end
+  end
 endmodule
 
 
