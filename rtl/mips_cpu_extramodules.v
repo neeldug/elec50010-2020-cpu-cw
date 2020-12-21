@@ -12,7 +12,7 @@ module regfile (
     reg_v0
 );
 
-  reg [31:0] rf[31:0];
+  reg [31:0] rf[32];
 
   integer i;
 
@@ -101,7 +101,7 @@ module signext (
     input  logic selector,
     output logic [31:0] y
 );
-always @* begin
+always @(*) begin
 	if(selector) begin
 	  y = {16'b0, a};
 	end else begin

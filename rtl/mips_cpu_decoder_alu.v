@@ -7,7 +7,7 @@ module alu_decoder (
     output logic [4:0] alucontrol
 );
 
-  always @(*)
+  always_comb begin
     case (aluop)
       2'b00: alucontrol = 5'b00011;  //note: ADDI is used for Load and Store instructions
       2'b01:
@@ -70,6 +70,7 @@ module alu_decoder (
       endcase
       default: alucontrol = 5'bxxxxx;
     endcase
+  end
 endmodule
 
 

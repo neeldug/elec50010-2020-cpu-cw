@@ -206,10 +206,10 @@ module datapath (
 
   // MUX to select either result from ALU or from Memory
   mux2 #(32) resmux (
-      data_address,  // note: this is the output of the ALU
-      result1,
-      memtoreg1,
-      result2
+      .a(data_address),  // note: this is the output of the ALU
+      .b(result1),
+      .s(memtoreg1),
+      .y(result2)
   );  // note: memtoreg1 is high for load instructions (value in RAM) else take result from ALU.
 
 
@@ -222,10 +222,10 @@ module datapath (
 
   // MUX to select either the result from ALU/Memory or the link address to be stored in the register file
   mux2 #(32) resmux2 (
-      result2,
-      pclink,
-      memtoreg2,
-      result
+      .a(result2),
+      .b(pclink),
+      .s(memtoreg2),
+      .y(result)
   );  // note: memtoreg2 is high for Branch with condition met and Jump with link instructions.
 
 
@@ -236,10 +236,10 @@ module datapath (
 
   // MUX to select either data from registers or from immediate as SRCb of ALU
   mux2 #(32) srcbmux (
-      data_writedata,
-      signimm,
-      alusrc,
-      srcb
+      .a(data_writedata),
+      .b(signimm),
+      .s(alusrc),
+      .y(srcb)
   );  // note: alusrc is high for instructions using Immediate variable else for srcB instr.
 
   // ALU Module

@@ -43,7 +43,7 @@ module main_decoder (
 
 
 
-  always @(*)
+  always_comb begin
     case (op)
       6'b000000:
       case (funct)
@@ -107,7 +107,7 @@ module main_decoder (
         5'b10001: controls = 13'b1100010000010;  //Branch on >= 0 /link (regwrite active)
         5'b00000: controls = 13'b0000010000010;  //Branch on < 0
         5'b10000: controls = 13'b1100010000010;  //Branch on < 0 /link
-        default:  controls = 13'bxxxxxxxxxxxx;
+        default:  controls = 13'bxxxxxxxxxxxxx;
       endcase
       6'b000111: controls = 13'b0000010000010;  //Branch on > 0
       6'b000110: controls = 13'b0000010000010;  //Branch on = 0
@@ -122,6 +122,7 @@ module main_decoder (
       6'b001011: controls = 13'b1000100000010;  //Set on less than immediate unsigned
       default: controls = 13'bxxxxxxxxxxxxx;  //???
     endcase
+  end
 endmodule
 
 
