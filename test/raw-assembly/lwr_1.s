@@ -10,7 +10,7 @@ main:
 	LI $3, 0x10000000
 	LI $4, 0x12345678
 	SW $4, 0($3)
-	LWR $2, 2($3)
+	LWR $2, 3($3)
 	JR $31
 	.end main
     .set	noreorder
