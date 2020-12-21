@@ -9,6 +9,7 @@ module datapath (
     pcsrc,
     input logic regdst2,
     regdst1,
+    input logic signextbitwiseop,
     input logic regwrite,
     input logic jump1,
     jump,
@@ -23,8 +24,8 @@ module datapath (
     output logic [31:0] register_v0,
     output logic [31:0] instr_data
 
-    //	output logic [31:0] srca, srcb,					//debug
-    //	output logic [31:0] reg32,						//debug
+//    	output logic [31:0] srca, srcb,				//debug
+//    	output logic [31:0] rdb						//debug
 );
 
 
@@ -36,7 +37,6 @@ module datapath (
   logic [31:0] pcresult;
 
   logic [31:0] srca, srcb;  //non-debug
-
   logic        stall;
   logic [31:0] reg32;  //non-debug
 
@@ -126,6 +126,7 @@ module datapath (
   //  Sign-extend the immediate from the instr.
   signext se (
       .a(instr_data[15:0]),
+      .selector(signextbitwiseop),
       .y(signimm)
   );
 
@@ -255,8 +256,9 @@ module datapath (
 
   // Load Selector module
   loadselector load_function_selector (
-      .b(data_writedata),
+      .b(rdb),
       .a(data_readdata),
+      .offset(srcb),
       .controls(loadcontrol),
       .y(result1)
   );
