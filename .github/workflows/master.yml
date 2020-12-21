@@ -21,10 +21,8 @@ jobs:
       - name: Generate Temp Files
         working-directory: ./test
         run: ./generate_all_c_files.sh
-      - name: Run Testbench (Bus)
-        run: ./test/test_mips_cpu_bus.sh
       - name: Run Testbench (Harvard)
-        run: ./test/test_mips_cpu_harvard.sh rtl/cpu_design_harvard
+        run: ./test/test_mips_cpu_harvard.sh rtl
   lint:
     runs-on: ubuntu-latest
     container: neeld/mips
@@ -35,5 +33,5 @@ jobs:
         with:
           fetch-depth: 0
       - name: Run Linter (Harvard)
-        working-directory: ./rtl/cpu_design_harvard
+        working-directory: ./rtl
         run: verible-verilog-lint --lint_fatal=false *.v
