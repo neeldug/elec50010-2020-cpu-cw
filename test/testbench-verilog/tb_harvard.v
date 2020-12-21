@@ -10,8 +10,6 @@ module tb_harvard;
   logic reset;
   logic active;
   logic [31:0] register_v0;
-  integer cycle_count = 0;
-  integer STDERR = 32'h8000_0002;
 
   logic clk_enable;
 
@@ -23,12 +21,6 @@ module tb_harvard;
   logic data_read;
   logic [31:0] data_writedata;
   logic [31:0] data_readdata;
-
-// 	logic [31:0] alu1, alu2;					//debug
-//	logic [31:0] instr_schedule;				//debug
-//  	logic [31:0] rdb;							//debug
-
-
 
 
   instruction_mem #(INSTR_INIT_FILE) instRAMInst (
@@ -56,11 +48,6 @@ module tb_harvard;
       .data_read(data_read),
       .data_writedata(data_writedata),
       .data_readdata(data_readdata)
-
-//      .alu1(alu1),								//debug
-//      .alu2(alu2),								//debug
-//     .instr_schedule(instr_schedule),			//debug
-//     .rdb(rdb)					    		//debug
   );
 
   //Setting up a clock
@@ -108,29 +95,9 @@ module tb_harvard;
 
     //Setting clk_enable high (may need to happen earlier - we shall see)
 
-
-    //Debugging logs for cycle 0
-/*    	  $fdisplay(STDERR, "  ");
-      $fdisplay(STDERR, "Cycle Count: %d, register_v0: %d, active: %d", cycle_count, register_v0, active);
-      $fdisplay(STDERR, "Instruction address: %h, Instruction: %b", instr_address, instr_readdata);
-      $fdisplay(STDERR, "ALUa: %h, ALUb: %h, ALUresult: %h", alu1, alu2, data_address);
-      $fdisplay(STDERR, "Instruction out of scheduler: %b, rdb: %h", instr_schedule, rdb);
-      // */
-
-
     //Looping until the CPU finished (sets active low)
     while (active) begin
       @(posedge clk);
-      cycle_count++;
-
-      //Debugging logs for cycles 1+
-/*      	  $fdisplay(STDERR, "  ");
-      $fdisplay(STDERR, "Cycle Count: %d, register_v0: %h, active: %d", cycle_count, register_v0, active);
-      $fdisplay(STDERR, "Instruction address: %h, Instruction: %b", instr_address, instr_readdata);
-      $fdisplay(STDERR, "ALUa: %h, ALUb: %h, ALUresult: %h", alu1, alu2, data_address);
-      $fdisplay(STDERR, "Instruction out of scheduler: %b, rdb: %h", instr_schedule, rdb);
-      // */
-
     end
 
     $display("%d", register_v0);

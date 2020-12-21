@@ -22,21 +22,17 @@ module datapath (
     output logic [31:0] data_address,
     data_writedata,
     output logic [31:0] register_v0
-
-//    	output logic [31:0] srca, srcb,				//debug
-//    	output logic [31:0] rdb						//debug
 );
 
 
   // Instanciation of all wires required
   logic [4:0] writereg1, writereg;
-  logic [31:0] pcnext, pcnextbr, pcrst, pcplus4, pcbranch, pclink, pcnextbrin, pcnextbrout;
-  logic [31:0] signimm, signimmsh, immsh16, pcnextbr1, pcnextbr2, jumpsh;
+  logic [31:0] pcnext, pcplus4, pcbranch, pclink;
+  logic [31:0] signimm, signimmsh, immsh16;
   logic [31:0] result2, result1, result;
   logic [31:0] pcresult;
 
-  logic [31:0] srca, srcb;  //non-debug
-  logic [31:0] reg32;  //non-debug
+  logic [31:0] srca, srcb;
 
 
 
