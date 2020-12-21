@@ -13,10 +13,6 @@ module regfile (
 );
 
   reg [31:0] rf[31:0];
-  //three ported register file
-  //read two ports combinationally
-  //write third port on rising edge of clock
-  //register 0 hardwir3d to 0
 
   integer i;
 
